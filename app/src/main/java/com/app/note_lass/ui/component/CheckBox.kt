@@ -2,12 +2,15 @@ package com.app.note_lass.ui.component
 
 import android.text.Layout.Alignment
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
@@ -31,7 +34,7 @@ data class ToggleableInfo(
     val text : String
 )
 @Composable
-fun CheckBox(modifier : Modifier = Modifier){
+fun CheckBox(){
 
     val checkboxes = remember{
         mutableStateListOf(
@@ -50,44 +53,54 @@ fun CheckBox(modifier : Modifier = Modifier){
     }
 
     Row(
-        modifier = modifier.fillMaxSize()
-
+        modifier = Modifier.size(width = 400.dp, height = 56.dp)
     ) {
         checkboxes.forEachIndexed { index, info ->
+            Box(modifier = Modifier.weight(1f)){
             Row(
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(0.dp)
             ) {
-                Checkbox(
-                    checked = selectedOption.intValue == index,
-                    onCheckedChange = {
-                        isChecked ->
-                        checkboxes[index] = info.copy(
-                            isChecked= isChecked
+
+                    Checkbox(
+                        checked = selectedOption.intValue == index,
+                        onCheckedChange = { isChecked ->
+                            checkboxes[index] = info.copy(
+                                isChecked = isChecked
+                            )
+                            selectedOption.intValue = index
+                        },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = PrimarayBlue,
+                            uncheckedColor = PrimaryGray,
+                            checkmarkColor = Color.White
+                        ),
+                        modifier = Modifier.weight(1f)
+
                         )
-                        selectedOption.intValue = index
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = PrimarayBlue,
-                        uncheckedColor = PrimaryGray,
-                        checkmarkColor = Color.White
-                    )
-                )
-                if(selectedOption.intValue == index) {
-                    Text(
-                        text = info.text,
-                        style = NoteLassTheme.Typography.twenty_600_pretendard,
-                        color = Color.Black
-                    )
-                }else{
-                    Text(
-                        text = info.text,
-                        style = NoteLassTheme.Typography.twenty_600_pretendard,
-                        color = PrimaryGray
-                    )
+                    if (selectedOption.intValue == index) {
+                        Text(
+                            text = info.text,
+                            style = NoteLassTheme.Typography.twenty_600_pretendard,
+                            color = Color.Black,
+                            modifier = Modifier.weight(3f)
+                        )
+                    } else {
+                        Text(
+                            text = info.text,
+                            style = NoteLassTheme.Typography.twenty_600_pretendard,
+                            color = PrimaryGray,
+                            modifier = Modifier.weight(3f)
+
+                        )
+
                 }
             }
 
         }
+            }
 
     }
 }
@@ -100,6 +113,6 @@ fun checkboxPreview(){
         .size(width = 200.dp, height = 30.dp)
 
     ){
-        CheckBox()
+       CheckBox()
     }
 }

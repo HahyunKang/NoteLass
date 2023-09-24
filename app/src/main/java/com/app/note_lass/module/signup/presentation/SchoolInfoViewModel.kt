@@ -28,7 +28,6 @@ class SchoolInfoViewModel : ViewModel(){
             if(text.isBlank()) {
                 schools
             } else {
-                delay(2000L)
                 schools.filter {
                     it.doesMatchSearchQuery(text)
                 }
