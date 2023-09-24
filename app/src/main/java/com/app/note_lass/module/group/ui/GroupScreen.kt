@@ -1,4 +1,4 @@
-package com.app.note_lass.module.group
+package com.app.note_lass.module.group.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -42,6 +42,7 @@ fun RectangleEnabledButton(
 ){
    Button(onClick = {onClick },
        modifier = Modifier.fillMaxSize(),
+       shape = RoundedCornerShape(8.dp),
        colors = ButtonDefaults.textButtonColors(containerColor = PrimarayBlue),
        contentPadding = PaddingValues(0.dp)
    )
