@@ -2,27 +2,17 @@ package com.app.note_lass.module.note
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.pdf.PdfDocument
-import android.graphics.pdf.PdfRenderer
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
-import android.os.Parcelable
-import android.util.DisplayMetrics
+import android.provider.MediaStore
 import android.util.Log
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.Text
@@ -39,32 +29,22 @@ class NoteActivity: AppCompatActivity() {
 
     private lateinit var _binding: ActivityNoteBinding
 
-
-    private var pdf_bitmap = arrayListOf<Bitmap>()
-
-    private var annoatedBitmap = arrayListOf<Bitmap>()
-
-    private lateinit var mScaleDetector: ScaleGestureDetector
-
     private val binding get() = _binding
 
     private var pdfUri: Uri? = null
+    private var photoUri: Uri? = null
     private lateinit var pdfView: PDFView
+    private lateinit var photoView : ImageView
     private lateinit var titleView: View
     private lateinit var titleText: TextView
     private lateinit var nextButton: TextView
 
 
-
-    private var final_url: Uri? = null
-    private var final_doucument: PdfDocument? = null
-
-
-    private var pfd: ParcelFileDescriptor? = null
-    private var fileOutputStream: FileOutputStream? = null
-    private fun getPdfUri(): Uri? {
-        return intent.getParcelableExtra("pdfUri")
+    private fun getPdfUri() {
+         pdfUri= intent.getParcelableExtra("pdfUri")
+         photoUri = intent.getParcelableExtra("photoUri")
     }
+
 
     private var is_Spen : Boolean = false
 
@@ -92,34 +72,55 @@ class NoteActivity: AppCompatActivity() {
         setContentView(binding.root)
   //      mScaleDetector = ScaleGestureDetector(this, scaleListener)
 
+        var bitmap: Bitmap ?= null
         nextButton = binding.nextButton
         titleView = binding.backgroundTitle
         titleText = binding.pdfTitle
         pdfView = binding.pdf
+        photoView = binding.photo
 
-        pdfUri = getPdfUri()
+        getPdfUri()
+//
+        val titleText =  "Photo"
+//        titleText.text = pdfUri?.lastPathSegment!!
+//        pdfUri?.lastPathSegment!!
 
-        val titleText = binding.pdfTitle
-        titleText.text = pdfUri?.lastPathSegment!!
-        pdfUri?.lastPathSegment!!
 
-        //처음 spen 사용 시 스크롤 방지하기 위해 false로 설정
-        // pdfView.isUserInputEnabled= false
+       if(pdfUri!=null) {
 
-        //초기 화면상태 2배로
-//        pdfView.scaleX = mScaleFactor
-//        pdfView.scaleY = mScaleFactor
+          photoView.visibility = View.GONE
 
-        pdfView.fromUri(pdfUri)
-            .swipeHorizontal(false)
-            .pageSnap(true)
-            .autoSpacing(true)
-            .pageFling(true)
-            .pageFitPolicy(FitPolicy.BOTH)
-            .load()
+           pdfView.fromUri(pdfUri)
+               .swipeHorizontal(false)
+               .pageSnap(true)
+               .autoSpacing(true)
+               .pageFling(true)
+               .pageFitPolicy(FitPolicy.BOTH)
+               .load()
+       }
+        else{
+
+            photoUri?.let {
+                if (Build.VERSION.SDK_INT < 28) {
+                    bitmap= MediaStore.Images
+                        .Media.getBitmap(contentResolver,it)
+
+                } else {
+                    val source = ImageDecoder
+                        .createSource(contentResolver,it)
+                    bitmap= ImageDecoder.decodeBitmap(source)
+                }
+            }
+           photoView.setImageBitmap(bitmap)
+
+
+
+       }
+
+       }
 
        // renderPDF(pdfUri!!)
-        Log.e("pdf", pdfUri!!.encodedPath.toString())
+     //   Log.e("pdf", pdfUri!!.encodedPath.toString())
 
         //view pager adapter
 //        val adapter = ViewPagerAdapter(this, pdf_bitmap, annoatedBitmap, pdfUri!!)
@@ -398,6 +399,6 @@ class NoteActivity: AppCompatActivity() {
 //    }
 
 
-}
+
 
 

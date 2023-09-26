@@ -14,7 +14,7 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController) {
 
     navigation(startDestination = GroupScreen.Home.route, route = GROUP_ROUTE) {
         composable(GroupScreen.Home.route) {
-         AssignmentGradeForAllScreen()
+         AssignmentUploadScreen()
         }
 
     }

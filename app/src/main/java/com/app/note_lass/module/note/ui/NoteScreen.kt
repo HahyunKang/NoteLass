@@ -27,7 +27,6 @@ import com.app.note_lass.module.note.NoteActivity
 @Composable
 fun NoteScreen(){
 
-
         var pdfUri by remember {
             mutableStateOf<Uri?>(null)
         }

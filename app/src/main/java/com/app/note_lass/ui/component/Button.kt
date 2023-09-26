@@ -101,7 +101,7 @@ fun RectangleEnabledWithBorderButton(
     textColor :  Color,
     borderColor : Color
 ){
-    Button(onClick = {onClick },
+    Button(onClick = {onClick() },
         modifier = modifier.fillMaxSize(),
         colors = ButtonDefaults.textButtonColors(containerColor =containerColor),
         shape = RoundedCornerShape(8.dp),
