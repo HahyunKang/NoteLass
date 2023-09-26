@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Scaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,15 +23,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.app.note_lass.module.main.ui.items
 import com.app.note_lass.module.note.NoteActivity
+import com.app.note_lass.ui.component.AppBar
 
 @Composable
-fun NoteScreen(){
+fun NoteScreen() {
 
         var pdfUri by remember {
             mutableStateOf<Uri?>(null)
         }
-    val context = LocalContext.current
+        val context = LocalContext.current
 
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
@@ -58,7 +61,8 @@ fun NoteScreen(){
                 }
             }
         }
-    }
+
+}
 
 
 

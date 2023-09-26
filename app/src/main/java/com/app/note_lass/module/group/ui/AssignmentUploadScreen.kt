@@ -1,19 +1,10 @@
 package com.app.note_lass.module.group.ui
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
-import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -42,9 +32,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.app.note_lass.core.navigation.getFileName
-import com.app.note_lass.core.navigation.getFileSize
-import com.app.note_lass.module.home.assignment.Assignment
+import com.app.note_lass.core.FilePicker.getFileName
+import com.app.note_lass.core.FilePicker.getFileSize
 import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.ui.component.FileUpload
 import com.app.note_lass.ui.component.RectangleEnabledButton
@@ -54,7 +43,6 @@ import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryGray
-import java.io.IOException
 
 @Composable
 fun AssignmentUploadScreen(){

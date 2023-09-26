@@ -66,7 +66,9 @@ fun MainScreen(
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { AppBar(title = items[selectedItemIndex].title, badgeCount = 12, onArrowClick = { /*TODO*/ }, isGroupButton = false)},
+        topBar = {
+            AppBar(title = items[selectedItemIndex].title, badgeCount = 12, onArrowClick = { /*TODO*/ }, isGroupButton = false)
+                 },
         containerColor =  Color(0xFFF5F5FC),
         contentColor = Color.Black,
         bottomBar = {

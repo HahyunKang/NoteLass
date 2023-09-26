@@ -32,45 +32,13 @@ import kotlinx.coroutines.flow.emptyFlow
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    data class NavigationItem(
-        val title : String,
-        val selectedIcon : Int,
-        val unselectedIcon : Int,
-    )
-
-    val items = listOf(
-        NavigationItem(
-            "홈",
-            R.drawable.nav_active_home_small,
-            R.drawable.nav_inactive_home_small,
-        ),
-        NavigationItem(
-            "그룹",
-            R.drawable.nav_active_group_small,
-            R.drawable.nav_inactive_group_small,
-        ),
-        NavigationItem(
-            "노트",
-            R.drawable.nav_active_note_small,
-            R.drawable.nav_inactive_note_small,
-        ),
-        NavigationItem(
-            "환경설정",
-            R.drawable.nav_inactive_setting_small,
-            R.drawable.nav_inactive_setting_small,
-        ),
-    )
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         setContent {
             NotelassTheme {
-                val windowClass = calculateWindowSizeClass(this)
-                val showNavigationRail =  windowClass.widthSizeClass != WindowWidthSizeClass.Compact
-
                 val navController = rememberNavController()
                 RootNavGraph(navController = navController)
 
