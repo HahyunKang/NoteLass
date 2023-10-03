@@ -11,6 +11,9 @@ const val NOTE_ROUTE = "main/note"
 const val SETTING_ROUTE = "main/setting"
 
 sealed class AuthScreen(val route : String){
+    object Login : AuthScreen("auth/login")
+    object SchoolInfo : AuthScreen("auth/info")
+    object SignUp : AuthScreen("auth/signup")
 
 }
 

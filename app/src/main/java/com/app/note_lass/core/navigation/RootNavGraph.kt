@@ -19,15 +19,14 @@ fun RootNavGraph(
 ){
     NavHost(
         navController = navController,
-        startDestination = MAIN_ROUTE,
+        startDestination = AUTH_ROUTE,
         route = ROOT_ROUTE
     ){
         composable(SPLASH_ROUTE){
             SplashScreen()
         }
-        composable(AUTH_ROUTE){
-            SignUpScreen()
-        }
+
+        AuthNavGraph(navController = navController)
 
         composable(route = MAIN_ROUTE){
             MainScreen()

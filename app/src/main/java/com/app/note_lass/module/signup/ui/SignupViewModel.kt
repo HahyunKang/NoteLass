@@ -1,4 +1,4 @@
-package com.app.note_lass.module.signup.presentation
+package com.app.note_lass.module.signup.ui
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import com.app.note_lass.module.signup.domain.usecase.ValidateEmail
 import com.app.note_lass.module.signup.domain.usecase.ValidatePassWord
 import com.app.note_lass.module.signup.domain.usecase.ValidateRepeatedPassWord
+import com.app.note_lass.module.signup.presentation.RegistrationFormEvent
+import com.app.note_lass.module.signup.presentation.RegistrationFormState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -21,7 +23,7 @@ class  SignUpViewModel @Inject constructor(
 
     fun onEvent(event : RegistrationFormEvent){
         when(event){
-            is RegistrationFormEvent.EmailChanged-> {
+            is RegistrationFormEvent.EmailChanged -> {
                 state = state.copy(email = event.email)
                 val emailResult = validateEmail.execute(state.email)
                 //유효하면 success
@@ -31,7 +33,7 @@ class  SignUpViewModel @Inject constructor(
                     state= state.copy(emailError = null)
                 }
             }
-            is RegistrationFormEvent.PassWordChanged->{
+            is RegistrationFormEvent.PassWordChanged ->{
                 state = state.copy(password = event.password)
                 val passwordResult = validatePassWord.execute(state.password)
                 if(!passwordResult.successful)state =
@@ -40,7 +42,7 @@ class  SignUpViewModel @Inject constructor(
                     state = state.copy(passwordError = null)
                 }
             }
-            is RegistrationFormEvent.RepeatedPassWordChanged->{
+            is RegistrationFormEvent.RepeatedPassWordChanged ->{
                 state = state.copy(repeatedPassword = event.repeatedPassword)
                 val repeatedPassWordResult = validateRepeatedPassWord.execute(state.password,state.repeatedPassword)
                 if(!repeatedPassWordResult.successful)state=

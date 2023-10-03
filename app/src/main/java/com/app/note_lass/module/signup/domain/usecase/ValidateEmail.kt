@@ -10,11 +10,6 @@ class ValidateEmail @Inject constructor() {
                 successful = false,
                 errorMessage = "올바른 이메일 주소를 입력해주세요")
         }
-//        if(email.isBlank()){
-//            return ValidationResult(
-//                successful = false
-//            )
-//        }
 
         return ValidationResult(
             successful = true

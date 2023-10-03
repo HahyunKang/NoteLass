@@ -8,12 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
@@ -27,17 +23,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -48,22 +39,20 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.PopupProperties
-import androidx.lifecycle.ViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
-import com.app.note_lass.module.signup.presentation.SchoolInfoViewModel
-import com.app.note_lass.module.signup.presentation.SchoolName
-import com.app.note_lass.module.signup.presentation.SignUpViewModel
+import com.app.note_lass.module.signup.ui.AuthSharedViewModel
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
-import kotlinx.coroutines.launch
 
 @Composable
 fun DropDownMenu(
     menuList : List<String>,
     iconDown : Int,
     iconUp : Int,
-    placeHolder :  String
+    placeHolder :  String,
+    isSelected: (Boolean) -> Unit
 ){
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf("") }
@@ -103,10 +92,10 @@ fun DropDownMenu(
             }
         )
        Box(
-            Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .align(Alignment.BottomStart)
+           Modifier
+               .fillMaxWidth()
+               .verticalScroll(rememberScrollState())
+               .align(Alignment.BottomStart)
         ) {
 
             DropdownMenu(
@@ -124,6 +113,7 @@ fun DropDownMenu(
                         onClick = {
                             selectedText = label
                             expanded = false
+                            isSelected(true)
                         },
                         text = {
                             Text(
@@ -140,10 +130,11 @@ fun DropDownMenu(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun DropDownSearch(
-    viewModel: SchoolInfoViewModel = SchoolInfoViewModel(),
+    viewModel: AuthSharedViewModel = hiltViewModel(),
     icon: Int,
     placeHolder:  String,
     onSearchTextChange: (String) -> Unit,
+    isSelected : (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ){
     var expanded by remember { mutableStateOf(false) }
@@ -151,6 +142,7 @@ fun DropDownSearch(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    //Log.e("selectedText",selectedText)
     val searchText by viewModel.searchText.collectAsState()
     val schools by viewModel.schools.collectAsState()
     var textfieldSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero)}
@@ -162,7 +154,7 @@ fun DropDownSearch(
         OutlinedTextField(
             value =  if(expanded) searchText else selectedText,
             onValueChange = {
-                            it-> onSearchTextChange(it)
+                           onSearchTextChange(it)
                            expanded = true
                             },
             modifier = Modifier
@@ -198,19 +190,19 @@ fun DropDownSearch(
 
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { },
+                onDismissRequest = {  },
                 properties = PopupProperties(focusable = false),
                 modifier = Modifier
                     .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
                     .height(150.dp)
                     .background(color = Color.White)
-                //  .verticalScroll(scrollState)
             ) {
                 schools.forEach { label ->
                     DropdownMenuItem(
                         onClick = {
                             selectedText = label.schoolName
                             expanded = false
+                            isSelected(true)
                             focusManager.clearFocus(true)
                             keyboardController?.hide()
                         },
@@ -232,5 +224,5 @@ fun DropDownSearch(
 fun DropDownPreview(){
     val menuList = listOf("광남고등학교","서울과학고등학교","휘문고등학교","숙명여자고등학교")
 
-    DropDownMenu(menuList = menuList , iconDown =  R.drawable.arrow_down, iconUp = R.drawable.arrow_down, placeHolder ="학교 정보를 입력하세요")
+    //DropDownMenu(menuList = menuList , iconDown =  R.drawable.arrow_down, iconUp = R.drawable.arrow_down, placeHolder ="학교 정보를 입력하세요")
 }

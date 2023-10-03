@@ -1,9 +1,9 @@
 package com.app.note_lass.module.signup.ui
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,14 +21,12 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,19 +36,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.module.signup.presentation.RegistrationFormEvent
-import com.app.note_lass.module.signup.presentation.SignUpViewModel
-import com.app.note_lass.ui.component.RectangleEnabledButton
 import com.app.note_lass.ui.component.RectangleEnabledWithBorderButton
 import com.app.note_lass.ui.component.RectangleUnableButton
 import com.app.note_lass.ui.component.noRippleClickable
@@ -59,18 +52,16 @@ import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
-import com.app.note_lass.ui.theme.PrimaryGreen
 import com.app.note_lass.ui.theme.PrimaryPink
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalFoundationApi::class, ExperimentalFoundationApi::class
 )
 @Composable
 fun SignUpScreen (
-    signUpViewModel: SignUpViewModel = hiltViewModel()
+    signUpViewModel: AuthSharedViewModel = hiltViewModel()
 ){
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -318,13 +309,15 @@ fun SignUpScreen (
             }
 
             Spacer(modifier = Modifier.height(25.dp))
-            val interactionSource = remember { MutableInteractionSource() }
+
             Text(
                 text = "비밀번호 확인",
                 style = NoteLassTheme.Typography.twenty_700_pretendard,
                 color = PrimaryBlack,
                 modifier = Modifier.align(Alignment.Start)
             )
+            val showRepeatedPassword = remember { mutableStateOf(false) }
+
             BasicTextField(
                 value = repeatedPassword,
                 onValueChange = { it ->
@@ -332,6 +325,7 @@ fun SignUpScreen (
                     signUpViewModel.onEvent(RegistrationFormEvent.RepeatedPassWordChanged(repeatedPassword))
 
                 },
+                visualTransformation = if (showRepeatedPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
                 textStyle = NoteLassTheme.Typography.twenty_600_pretendard,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -366,6 +360,16 @@ fun SignUpScreen (
                             color = PrimaryGray
                         )
                     },
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.signup_eye_slash),
+                            tint = PrimaryGray,
+                            contentDescription = null,
+                            modifier = Modifier.noRippleClickable {
+                                showRepeatedPassword.value = !showRepeatedPassword.value
+                            }
+                        )
+                    },
                     contentPadding = PaddingValues(5.dp)
                 )
 
@@ -382,22 +386,6 @@ fun SignUpScreen (
                 )
             }
 
-
-//            androidx.compose.material3.TextField(
-//
-//              ,
-//                colors = TextFieldDefaults.textFieldColors(
-//                    containerColor = Color.White,
-//                    focusedIndicatorColor = Color.Black
-//                ),
-//
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(60.dp)
-//                    .padding(0.dp)
-//                , singleLine = false
-//                )
-
             Spacer(modifier = Modifier.height(78.dp))
 
             Box(modifier = Modifier
@@ -407,7 +395,6 @@ fun SignUpScreen (
 
                 }
             }
-
 
         }
     }

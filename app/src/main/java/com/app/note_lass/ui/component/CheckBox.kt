@@ -34,7 +34,9 @@ data class ToggleableInfo(
     val text : String
 )
 @Composable
-fun CheckBox(){
+fun CheckBox(
+    isChecked: (Boolean) -> Unit
+){
 
     val checkboxes = remember{
         mutableStateListOf(
@@ -71,6 +73,7 @@ fun CheckBox(){
                                 isChecked = isChecked
                             )
                             selectedOption.intValue = index
+                            isChecked(true)
                         },
                         colors = CheckboxDefaults.colors(
                             checkedColor = PrimarayBlue,
@@ -113,6 +116,6 @@ fun checkboxPreview(){
         .size(width = 200.dp, height = 30.dp)
 
     ){
-       CheckBox()
+      // CheckBox()
     }
 }

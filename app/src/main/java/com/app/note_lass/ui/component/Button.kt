@@ -36,6 +36,41 @@ import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryGray
 
 @Composable
+fun RectangleButtonWithStatus(
+    text : String,
+    onClick : () -> Unit,
+    isEnabled : Boolean = false
+){
+    Button(onClick = {onClick() },
+        modifier = Modifier.fillMaxSize(),
+        enabled = isEnabled,
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.textButtonColors(
+            containerColor = PrimarayBlue,
+            disabledContainerColor = PrimaryGray,
+            contentColor = Color.White,
+            disabledContentColor = Color(0xFF9EA4AA)
+        ),
+        contentPadding = PaddingValues(0.dp)
+    )
+    {
+        Text(
+            text,
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                fontWeight = FontWeight(700),
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center,
+            )
+        )
+
+    }
+
+
+}
+
+@Composable
 fun RectangleEnabledButton(
     text : String,
     onClick : () -> Unit

@@ -1,6 +1,7 @@
 package com.app.note_lass.module.login.ui
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,7 +42,9 @@ import com.app.note_lass.ui.component.RectangleEnabledButton
 import com.app.note_lass.ui.theme.PrimarayBlue
 
 @Composable
-fun LoginScreen(){
+fun LoginScreen(
+    onGoToSignUp : () -> Unit
+){
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -172,7 +175,10 @@ fun LoginScreen(){
                     fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                     fontWeight = FontWeight(600),
                     color = Color(0xFF9EA4AA),
-                )
+                ),
+                modifier = Modifier.clickable {
+                    onGoToSignUp()
+                }
             )
             Text(
                 text = "|",
@@ -235,5 +241,5 @@ fun LoginScreen(){
 @Preview
 @Composable
 fun LoginScreenPreview(){
-    LoginScreen()
+   // LoginScreen()
 }
