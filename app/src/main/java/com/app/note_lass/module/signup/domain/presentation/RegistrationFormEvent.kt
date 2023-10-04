@@ -1,4 +1,4 @@
-package com.app.note_lass.module.signup.presentation
+package com.app.note_lass.module.signup.domain.presentation
 
 sealed class RegistrationFormEvent{
 

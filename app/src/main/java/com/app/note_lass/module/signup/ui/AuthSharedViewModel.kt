@@ -1,22 +1,30 @@
 package com.app.note_lass.module.signup.ui
 
 import android.util.Log
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.note_lass.common.Resource
+import com.app.note_lass.core.navigation.AuthScreen
 import com.app.note_lass.module.signup.data.SchoolName
+import com.app.note_lass.module.signup.data.SignUpRequest
 import com.app.note_lass.module.signup.domain.usecase.ValidateEmail
 import com.app.note_lass.module.signup.domain.usecase.ValidatePassWord
 import com.app.note_lass.module.signup.domain.usecase.ValidateRepeatedPassWord
-import com.app.note_lass.module.signup.presentation.RegistrationFormEvent
-import com.app.note_lass.module.signup.presentation.RegistrationFormState
+import com.app.note_lass.module.signup.domain.presentation.RegistrationFormEvent
+import com.app.note_lass.module.signup.domain.presentation.RegistrationFormState
+import com.app.note_lass.module.signup.domain.usecase.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -26,9 +34,16 @@ import javax.inject.Inject
 class AuthSharedViewModel @Inject constructor(
     private val validateEmail: ValidateEmail,
     private val validatePassWord: ValidatePassWord,
-    private val validateRepeatedPassWord: ValidateRepeatedPassWord
+    private val validateRepeatedPassWord: ValidateRepeatedPassWord,
+    private val postSignUp : SignUpUseCase
 ) :ViewModel() {
+   //매번 새로운 객체 생성
     var state by mutableStateOf(RegistrationFormState())
+
+   // var signupState by mutableStateOf(SignupInfo())
+    var signupState =
+        mutableStateOf(SignupInfo())
+
 
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
@@ -47,9 +62,10 @@ class AuthSharedViewModel @Inject constructor(
         SchoolName("원천고등학교"),
         SchoolName("광양고등학교"),
         SchoolName("대원외국어고등학교")
-
         )
+
     private val _schools = MutableStateFlow(schoolNames)
+
     val schools = searchText
         //Flow에서 값을 변환하지 않고 각 값을 처리하기 위한 연산자
         .onEach { _isSearching.update { true } }
@@ -72,7 +88,6 @@ class AuthSharedViewModel @Inject constructor(
 
     fun onSearchTextChange(text: String) {
         Log.e("onSearchText",text)
-
         _searchText.value = text
     }
 
@@ -106,12 +121,46 @@ class AuthSharedViewModel @Inject constructor(
                     state= state.copy(repeatedPasswordError = null)
                 }
             }
-            is RegistrationFormEvent.Submit -> {
 
-            }
+            else -> {}
         }
 
 
+    }
+
+
+    fun postSignUp(signUpState: MutableState<SignupInfo>){
+
+        val signUpRequest : SignUpRequest = SignUpRequest(
+            admissionYear = signUpState.value.admissionYear,
+            classNum = if(signUpState.value.role =="선생님")null else signUpState.value.studentClass.toInt(),
+            email = signUpState.value.email,
+            role  = signUpState.value.role,
+            grade =  if(signUpState.value.role =="선생님")null else signUpState.value.grade.toInt(),
+            name = signUpState.value.name,
+            number =  if(signUpState.value.role =="선생님")null else signUpState.value.studentId.toInt(),
+            password = signUpState.value.password,
+            school = signUpState.value.school
+        )
+        postSignUp(signUpRequest).onEach {
+            result ->
+            when(result)
+            {
+                is Resource.Success -> {
+                    Log.e("signup Api", result.data?.statuscode.toString())
+                }
+
+                is Resource.Loading -> {
+
+                }
+                is Resource.Error -> {
+                    Log.e("signup Api", result.message.toString())
+
+                }
+        }
+
+
+        }.launchIn(viewModelScope)
     }
 }
 

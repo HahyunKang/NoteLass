@@ -52,15 +52,14 @@ fun DropDownMenu(
     iconDown : Int,
     iconUp : Int,
     placeHolder :  String,
-    isSelected: (Boolean) -> Unit
+    isSelected: (Boolean) -> Unit,
+    onGetInfo : (String) -> Unit
 ){
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf("") }
 
     var textfieldSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero)}
-    val globalOffset = remember { mutableStateOf(IntOffset.Zero) }
 
-    var scrollState = rememberScrollState()
     val icon = if (expanded) iconUp
     else
         iconDown
@@ -114,6 +113,7 @@ fun DropDownMenu(
                             selectedText = label
                             expanded = false
                             isSelected(true)
+                            onGetInfo(selectedText)
                         },
                         text = {
                             Text(
@@ -134,6 +134,7 @@ fun DropDownSearch(
     icon: Int,
     placeHolder:  String,
     onSearchTextChange: (String) -> Unit,
+    onGetSearchText : (String) -> Unit,
     isSelected : (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ){
@@ -203,6 +204,7 @@ fun DropDownSearch(
                             selectedText = label.schoolName
                             expanded = false
                             isSelected(true)
+                            onGetSearchText(selectedText)
                             focusManager.clearFocus(true)
                             keyboardController?.hide()
                         },

@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.note_lass.R
+import com.app.note_lass.ui.theme.BackgroundGray
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.NotelassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
@@ -47,9 +48,9 @@ fun RectangleButtonWithStatus(
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.textButtonColors(
             containerColor = PrimarayBlue,
-            disabledContainerColor = PrimaryGray,
+            disabledContainerColor = BackgroundGray,
             contentColor = Color.White,
-            disabledContentColor = Color(0xFF9EA4AA)
+            disabledContentColor = PrimaryGray
         ),
         contentPadding = PaddingValues(0.dp)
     )
@@ -75,7 +76,7 @@ fun RectangleEnabledButton(
     text : String,
     onClick : () -> Unit
 ){
-   Button(onClick = {onClick },
+   Button(onClick = { onClick() },
        modifier = Modifier.fillMaxSize(),
        shape = RoundedCornerShape(8.dp),
        colors = ButtonDefaults.textButtonColors(containerColor = PrimarayBlue),
@@ -103,11 +104,10 @@ fun RectangleUnableButton(
     text : String,
     onClick : () -> Unit
 ){
-    Button(onClick = {onClick },
+    Button(onClick = { onClick() },
         modifier = Modifier.fillMaxSize(),
-        enabled = false,
         shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = PrimaryGray),
+        colors = ButtonDefaults.buttonColors(containerColor = BackgroundGray),
         contentPadding = PaddingValues(0.dp)
     )
     {
@@ -185,7 +185,7 @@ fun RectangleUnableWithBorderButton(
 @Preview
 @Composable
 fun ButtonPreview(){
-    Column() {
+    Column(modifier = Modifier.fillMaxSize()) {
         RectangleEnabledButton(text = "로그인") {
 
         }

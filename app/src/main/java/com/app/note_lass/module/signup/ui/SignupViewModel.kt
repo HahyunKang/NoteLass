@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import com.app.note_lass.module.signup.domain.usecase.ValidateEmail
 import com.app.note_lass.module.signup.domain.usecase.ValidatePassWord
 import com.app.note_lass.module.signup.domain.usecase.ValidateRepeatedPassWord
-import com.app.note_lass.module.signup.presentation.RegistrationFormEvent
-import com.app.note_lass.module.signup.presentation.RegistrationFormState
+import com.app.note_lass.module.signup.domain.presentation.RegistrationFormEvent
+import com.app.note_lass.module.signup.domain.presentation.RegistrationFormState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

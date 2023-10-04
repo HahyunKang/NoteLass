@@ -24,21 +24,28 @@ fun NavGraphBuilder.AuthNavGraph(navController: NavController) {
                 {
                     launchSingleTop = true
                 }
-            })
+              }
+            )
         }
         composable(AuthScreen.SchoolInfo.route){
                 navBackStackEntry ->
             val authSharedViewModel = navBackStackEntry.authSharedViewModel<AuthSharedViewModel>(
                 navController = navController)
-            SchoolInfoScreen(authSharedViewModel, GotoSignUp = {
+            SchoolInfoScreen(authSharedViewModel,
+                GotoSignUp = {
                 navController.navigate(AuthScreen.SignUp.route)
-            })
+                }
+            )
         }
         composable(AuthScreen.SignUp.route){
                 navBackStackEntry ->
             val authSharedViewModel = navBackStackEntry.authSharedViewModel<AuthSharedViewModel>(
                 navController = navController)
-            SignUpScreen(authSharedViewModel)
+            SignUpScreen(authSharedViewModel,
+                onBack = {
+                    navController.popBackStack(AuthScreen.SchoolInfo.route,false)
+                }
+            )
         }
     }
 }

@@ -2,6 +2,7 @@ package com.app.note_lass.module.signup.ui
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -44,7 +45,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
-import com.app.note_lass.module.signup.presentation.RegistrationFormEvent
+import com.app.note_lass.module.signup.domain.presentation.RegistrationFormEvent
+import com.app.note_lass.ui.component.RectangleButtonWithStatus
 import com.app.note_lass.ui.component.RectangleEnabledWithBorderButton
 import com.app.note_lass.ui.component.RectangleUnableButton
 import com.app.note_lass.ui.component.noRippleClickable
@@ -61,15 +63,19 @@ import kotlinx.coroutines.launch
 )
 @Composable
 fun SignUpScreen (
-    signUpViewModel: AuthSharedViewModel = hiltViewModel()
+    signUpViewModel: AuthSharedViewModel,
+    onBack : () -> Unit
 ){
     val interactionSource = remember { MutableInteractionSource() }
 
     val state = signUpViewModel.state
 
+    val signupState = signUpViewModel.signupState
+
     var emailValue by remember {
         mutableStateOf("")
     }
+
     var emailValidationValue by remember {
         mutableStateOf("")
     }
@@ -79,6 +85,11 @@ fun SignUpScreen (
     var repeatedPassword by remember {
         mutableStateOf("")
     }
+    var buttonFilled by remember{
+        mutableStateOf(false)
+    }
+
+
     val scrollState= rememberScrollState()
 
     val bringIntoViewRequester = BringIntoViewRequester()
@@ -86,6 +97,9 @@ fun SignUpScreen (
 
     val bringIntoViewRequester_2 = BringIntoViewRequester()
     val coroutineScope_2 = rememberCoroutineScope()
+
+    buttonFilled = emailValue!="" && state.emailError == null && password != "" && state.passwordError == null
+                   && repeatedPassword != "" && state.repeatedPasswordError == null
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -97,8 +111,8 @@ fun SignUpScreen (
             modifier = Modifier
                 .verticalScroll(scrollState)
                 .align(Alignment.Center)
-                .fillMaxWidth(0.3f)
-                .padding(top =10.dp)
+                .fillMaxWidth(0.45f)
+                .padding(top = 10.dp)
             ,
         ) {
             Text(
@@ -195,8 +209,7 @@ fun SignUpScreen (
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp)
-                    .padding(0.dp)
-                ,
+                    .padding(0.dp),
             ) {
                 TextFieldDefaults.TextFieldDecorationBox(
                     value =emailValidationValue,
@@ -243,7 +256,8 @@ fun SignUpScreen (
                 onValueChange = { it ->
                   password = it
                     signUpViewModel.onEvent(RegistrationFormEvent.PassWordChanged(password))
-                   if(state.repeatedPasswordError==null) signUpViewModel.onEvent(RegistrationFormEvent.RepeatedPassWordChanged(repeatedPassword))
+                   if(state.repeatedPasswordError==null) signUpViewModel.onEvent(
+                       RegistrationFormEvent.RepeatedPassWordChanged(repeatedPassword))
                 },
                 visualTransformation = if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
                 textStyle = NoteLassTheme.Typography.twenty_600_pretendard,
@@ -252,12 +266,12 @@ fun SignUpScreen (
                     .height(60.dp)
                     .padding(0.dp)
                     .onFocusEvent {
-                            coroutineScope.launch {
-                                // This sends a request to all parents that asks them to scroll so
-                                // that this item is brought into view.
-                                Log.e("coroutine_test","Coroutine")
-                                if(it.isFocused) bringIntoViewRequester.bringIntoView()
-                            }
+                        coroutineScope.launch {
+                            // This sends a request to all parents that asks them to scroll so
+                            // that this item is brought into view.
+                            Log.e("coroutine_test", "Coroutine")
+                            if (it.isFocused) bringIntoViewRequester.bringIntoView()
+                        }
 
                     },
 
@@ -334,14 +348,15 @@ fun SignUpScreen (
                         coroutineScope_2.launch {
                             // This sends a request to all parents that asks them to scroll so
                             // that this item is brought into view.
-                            Log.e("coroutine_test","Coroutine_2")
+                            Log.e("coroutine_test", "Coroutine_2")
 
-                            if(it.isFocused) bringIntoViewRequester_2.bringIntoView()
+                            if (it.isFocused) bringIntoViewRequester_2.bringIntoView()
                         }
 
                     }
                 ,
             ) {
+
                 TextFieldDefaults.TextFieldDecorationBox(
                     value = repeatedPassword,
                     innerTextField = it,
@@ -380,7 +395,8 @@ fun SignUpScreen (
                     text = state.repeatedPasswordError,
                     style = NoteLassTheme.Typography.twelve_600_pretendard,
                     color = PrimaryPink,
-                    modifier = Modifier.align(Alignment.Start)
+                    modifier = Modifier
+                        .align(Alignment.Start)
                         .bringIntoViewRequester(bringIntoViewRequester_2)
 
                 )
@@ -391,17 +407,34 @@ fun SignUpScreen (
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)) {
-                RectangleUnableButton(text = "회원가입") {
+                RectangleButtonWithStatus(
+                    text = "회원가입",
+                    onClick = {
+                              signUpViewModel.postSignUp(signupState)
 
-                }
+
+                              },
+                    isEnabled = buttonFilled)
+//
+//                RectangleUnableButton(text = "회원가입") {
+//                    signupState.value = signupState.value.copy(
+//                        email = emailValue,
+//                        password = password
+//                    )
+//                }
             }
 
         }
     }
+
+    BackHandler(onBack =  {
+       onBack()
+      }
+    )
 }
 
 @Preview
 @Composable
 fun SignUpPreviewScreen(){
-    SignUpScreen()
+   // SignUpScreen()
 }

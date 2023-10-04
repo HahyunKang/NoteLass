@@ -35,7 +35,8 @@ data class ToggleableInfo(
 )
 @Composable
 fun CheckBox(
-    isChecked: (Boolean) -> Unit
+    isChecked: (Boolean) -> Unit,
+    onGetRole : (String) -> Unit
 ){
 
     val checkboxes = remember{
@@ -72,6 +73,9 @@ fun CheckBox(
                             checkboxes[index] = info.copy(
                                 isChecked = isChecked
                             )
+                            if(index==0) onGetRole("선생님")
+                            else { onGetRole("학생") }
+
                             selectedOption.intValue = index
                             isChecked(true)
                         },
