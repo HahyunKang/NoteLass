@@ -1,6 +1,7 @@
 package com.app.note_lass.module.signup.data
 
 import androidx.compose.runtime.InternalComposeTracingApi
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
@@ -11,5 +12,5 @@ interface SignupApi {
     @POST("api/auth/signup")
     suspend fun postSignUp(
         @Body signUpRequest : SignUpRequest,
-    ): Response<Unit>
+    ): Response<ResponseBody?>
 }

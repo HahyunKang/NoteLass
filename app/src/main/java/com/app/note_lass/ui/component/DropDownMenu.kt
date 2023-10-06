@@ -1,9 +1,11 @@
 package com.app.note_lass.ui.component
 
 import android.util.Log
+import androidx.compose.animation.expandIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +20,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -42,7 +46,9 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.module.signup.ui.AuthSharedViewModel
+import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
+import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
 
@@ -88,7 +94,15 @@ fun DropDownMenu(
             trailingIcon = {
                 Icon(painter = painterResource(id = icon), "contentDescription",
                     Modifier.clickable { expanded = !expanded })
-            }
+            },
+            colors = TextFieldDefaults.colors(
+                disabledTextColor =   PrimaryBlack,
+                disabledIndicatorColor = Gray50,
+                focusedIndicatorColor = PrimarayBlue,
+                disabledContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
+            )
         )
        Box(
            Modifier
@@ -121,7 +135,8 @@ fun DropDownMenu(
                                 style = NoteLassTheme.Typography.fourteen_600_pretendard,
                                 color = PrimaryBlack
                             )
-                        })
+                        }
+                    )
                 }
             }
         }
@@ -164,8 +179,9 @@ fun DropDownSearch(
                     //This value is used to assign to the DropDown the same width
                     textfieldSize = coordinates.size.toSize()
 
-                },
-                //.noRippleClickable { expanded = true },
+                }
+                .noRippleClickable { expanded = true },
+            enabled = expanded,
             placeholder = {
                 Text(
                     text = placeHolder,
@@ -176,11 +192,21 @@ fun DropDownSearch(
             },
             trailingIcon = {
                 Icon(painter = painterResource(id = icon), "contentDescription",
-                    Modifier.clickable { expanded = !expanded })
+                    Modifier.pointerInput(true) {
+                        detectTapGestures(
+                            onPress = {
+                                expanded = !expanded
+                            }
+                        )
+
+                    }
+                )
             },
             keyboardActions = KeyboardActions(onDone={
                 focusManager.clearFocus(true)
-            })
+            }
+            ),
+//            colors = TextFieldDefaults.colors()
         )
         Column(
             Modifier
@@ -193,6 +219,7 @@ fun DropDownSearch(
                 expanded = expanded,
                 onDismissRequest = {  },
                 properties = PopupProperties(focusable = false),
+
                 modifier = Modifier
                     .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
                     .height(150.dp)

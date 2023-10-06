@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.navigation.AuthScreen
 import com.app.note_lass.module.signup.data.SchoolName
+import com.app.note_lass.module.signup.data.SignUpApiState
 import com.app.note_lass.module.signup.data.SignUpRequest
 import com.app.note_lass.module.signup.domain.usecase.ValidateEmail
 import com.app.note_lass.module.signup.domain.usecase.ValidatePassWord
@@ -43,6 +44,9 @@ class AuthSharedViewModel @Inject constructor(
    // var signupState by mutableStateOf(SignupInfo())
     var signupState =
         mutableStateOf(SignupInfo())
+
+    private val _signUpApiState = mutableStateOf(SignUpApiState())
+    val signUpApiState = _signUpApiState
 
 
     private val _searchText = MutableStateFlow("")
@@ -150,7 +154,15 @@ class AuthSharedViewModel @Inject constructor(
                 is Resource.Success -> {
                     Log.e("signup Api SUCCESS ", result.message.toString())
                     Log.e("signup Api Success", result.code.toString())
-                    result.data?.let { Log.e("signup Api Success", it.toString()) }
+                    result.data?.let { Log.e("signup Api Success", it.string()) }
+
+                    if(result.code == 201){
+                        _signUpApiState.value  =SignUpApiState(
+                            isSuccess = true
+                        )
+
+                    }
+
 
                 }
 

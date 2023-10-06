@@ -55,6 +55,10 @@ fun NavGraphBuilder.AuthNavGraph(navController: NavController) {
             SignUpScreen(authSharedViewModel,
                 onBack = {
                     navController.popBackStack(AuthScreen.SchoolInfo.route,false)
+                },
+                GotoLogin ={
+                    navController.navigate(AuthScreen.Login.route)
+
                 }
             )
         }

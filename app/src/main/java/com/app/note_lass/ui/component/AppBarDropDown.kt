@@ -61,7 +61,8 @@ fun AppBarDropDown(
                     onPress = {
                         pressOffset = DpOffset(it.x.toDp(), it.y.toDp())
                         isContextMenuVisible = true
-                    })
+                    }
+                )
 
             }
             .onSizeChanged {

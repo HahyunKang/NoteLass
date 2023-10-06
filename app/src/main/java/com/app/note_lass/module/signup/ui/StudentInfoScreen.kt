@@ -109,7 +109,7 @@ fun StudentInfoScreen(
                     signupState.value = signupState.value.copy(
                         role = it
                     )
-                    if(it == "STUDENT") isStudent = true
+                    isStudent = it == "STUDENT"
                 }
             )
 

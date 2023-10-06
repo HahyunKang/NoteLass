@@ -46,10 +46,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.module.signup.domain.presentation.RegistrationFormEvent
+import com.app.note_lass.ui.component.DialogSignUp
 import com.app.note_lass.ui.component.RectangleButtonWithStatus
 import com.app.note_lass.ui.component.RectangleEnabledWithBorderButton
 import com.app.note_lass.ui.component.RectangleUnableButton
 import com.app.note_lass.ui.component.noRippleClickable
+import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
@@ -64,8 +66,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun SignUpScreen (
     signUpViewModel: AuthSharedViewModel,
-    onBack : () -> Unit
-){
+    onBack : () -> Unit,
+    GotoLogin : () -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
 
     val state = signUpViewModel.state
@@ -85,12 +88,14 @@ fun SignUpScreen (
     var repeatedPassword by remember {
         mutableStateOf("")
     }
-    var buttonFilled by remember{
+    var buttonFilled by remember {
         mutableStateOf(false)
     }
 
-
-    val scrollState= rememberScrollState()
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+    val scrollState = rememberScrollState()
 
     val bringIntoViewRequester = BringIntoViewRequester()
     val coroutineScope = rememberCoroutineScope()
@@ -98,12 +103,18 @@ fun SignUpScreen (
     val bringIntoViewRequester_2 = BringIntoViewRequester()
     val coroutineScope_2 = rememberCoroutineScope()
 
-    buttonFilled = emailValue!="" && state.emailError == null && password != "" && state.passwordError == null
-                   && repeatedPassword != "" && state.repeatedPasswordError == null
+    buttonFilled =
+        emailValue != "" && state.emailError == null && password != "" && state.passwordError == null
+                && repeatedPassword != "" && state.repeatedPasswordError == null
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White)) {
+
+
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -112,8 +123,7 @@ fun SignUpScreen (
                 .verticalScroll(scrollState)
                 .align(Alignment.Center)
                 .fillMaxWidth(0.45f)
-                .padding(top = 10.dp)
-            ,
+                .padding(top = 10.dp),
         ) {
             Text(
                 text = "회원가입",
@@ -131,9 +141,11 @@ fun SignUpScreen (
             )
 
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp)
+            ) {
                 BasicTextField(
                     value = emailValue,
                     onValueChange = { it ->
@@ -144,19 +156,23 @@ fun SignUpScreen (
                     modifier = Modifier
                         .weight(4f)
                         .height(60.dp)
-                        .padding(0.dp)
-                    ,
+                        .padding(0.dp),
                 ) {
                     TextFieldDefaults.TextFieldDecorationBox(
-                        value =emailValue,
+                        value = emailValue,
                         innerTextField = it,
                         singleLine = true,
                         enabled = true,
+                        isError = state.emailError != null,
                         visualTransformation = VisualTransformation.None,
                         interactionSource = interactionSource,
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.White,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            errorContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            disabledContainerColor = Color.White,
                             focusedIndicatorColor = Color.Black,
+                            unfocusedIndicatorColor = Gray50,
                         ),
 
                         placeholder = {
@@ -185,12 +201,14 @@ fun SignUpScreen (
                 )
 
             }
-            if(state.emailError!= null){
-            Text(text= state.emailError,
-                style = NoteLassTheme.Typography.twelve_600_pretendard,
-                color = PrimaryPink,
-                modifier = Modifier.align(Alignment.Start))
-        }
+            if (state.emailError != null) {
+                Text(
+                    text = state.emailError,
+                    style = NoteLassTheme.Typography.twelve_600_pretendard,
+                    color = PrimaryPink,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+            }
             Spacer(modifier = Modifier.height(25.dp))
 
             Text(
@@ -198,12 +216,12 @@ fun SignUpScreen (
                 style = NoteLassTheme.Typography.twenty_700_pretendard,
                 color = PrimaryBlack,
                 modifier = Modifier.align(Alignment.Start)
-           )
+            )
 
             BasicTextField(
                 value = emailValidationValue,
                 onValueChange = { it ->
-                    emailValidationValue= it
+                    emailValidationValue = it
                 },
                 textStyle = NoteLassTheme.Typography.twenty_600_pretendard,
                 modifier = Modifier
@@ -212,7 +230,7 @@ fun SignUpScreen (
                     .padding(0.dp),
             ) {
                 TextFieldDefaults.TextFieldDecorationBox(
-                    value =emailValidationValue,
+                    value = emailValidationValue,
                     innerTextField = it,
                     singleLine = true,
                     enabled = true,
@@ -221,6 +239,7 @@ fun SignUpScreen (
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color.White,
                         focusedIndicatorColor = Color.Black,
+                        unfocusedIndicatorColor = Gray50
                     ),
                     trailingIcon = {
                         Icon(
@@ -254,10 +273,11 @@ fun SignUpScreen (
             BasicTextField(
                 value = password,
                 onValueChange = { it ->
-                  password = it
+                    password = it
                     signUpViewModel.onEvent(RegistrationFormEvent.PassWordChanged(password))
-                   if(state.repeatedPasswordError==null) signUpViewModel.onEvent(
-                       RegistrationFormEvent.RepeatedPassWordChanged(repeatedPassword))
+                    if (state.repeatedPasswordError == null) signUpViewModel.onEvent(
+                        RegistrationFormEvent.RepeatedPassWordChanged(repeatedPassword)
+                    )
                 },
                 visualTransformation = if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
                 textStyle = NoteLassTheme.Typography.twenty_600_pretendard,
@@ -275,25 +295,30 @@ fun SignUpScreen (
 
                     },
 
-                keyboardActions = KeyboardActions(onDone = {focusManager.clearFocus()})
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
             ) {
                 TextFieldDefaults.TextFieldDecorationBox(
-                    value =password,
+                    value = password,
                     innerTextField = it,
                     singleLine = true,
                     enabled = true,
+                    isError = state.passwordError != null,
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
                     placeholder = {
                         Text(
                             "영문,숫자, 특수기호 포함 8자리 이상",
-                            style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                            style = NoteLassTheme.Typography.twenty_600_pretendard,
                             color = PrimaryGray
                         )
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.White,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        errorContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        disabledContainerColor = Color.White,
                         focusedIndicatorColor = Color.Black,
+                        unfocusedIndicatorColor = Gray50,
                     ),
                     trailingIcon = {
                         Icon(
@@ -311,7 +336,7 @@ fun SignUpScreen (
 
             }
 
-            if(state.passwordError!= null) {
+            if (state.passwordError != null) {
                 Text(
                     text = state.passwordError,
                     style = NoteLassTheme.Typography.twelve_600_pretendard,
@@ -336,7 +361,11 @@ fun SignUpScreen (
                 value = repeatedPassword,
                 onValueChange = { it ->
                     repeatedPassword = it
-                    signUpViewModel.onEvent(RegistrationFormEvent.RepeatedPassWordChanged(repeatedPassword))
+                    signUpViewModel.onEvent(
+                        RegistrationFormEvent.RepeatedPassWordChanged(
+                            repeatedPassword
+                        )
+                    )
 
                 },
                 visualTransformation = if (showRepeatedPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
@@ -353,8 +382,7 @@ fun SignUpScreen (
                             if (it.isFocused) bringIntoViewRequester_2.bringIntoView()
                         }
 
-                    }
-                ,
+                    },
             ) {
 
                 TextFieldDefaults.TextFieldDecorationBox(
@@ -363,11 +391,17 @@ fun SignUpScreen (
                     singleLine = true,
                     enabled = true,
                     visualTransformation = VisualTransformation.None,
+                    isError = state.repeatedPasswordError != null,
                     interactionSource = interactionSource,
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.White,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        errorContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        disabledContainerColor = Color.White,
                         focusedIndicatorColor = Color.Black,
-                    ),
+                        unfocusedIndicatorColor = Gray50,
+
+                        ),
                     placeholder = {
                         Text(
                             "비밀번호를 한 번 더 입력해 주세요",
@@ -390,7 +424,7 @@ fun SignUpScreen (
 
             }
 
-            if(state.repeatedPasswordError!= null) {
+            if (state.repeatedPasswordError != null) {
                 Text(
                     text = state.repeatedPasswordError,
                     style = NoteLassTheme.Typography.twelve_600_pretendard,
@@ -404,16 +438,16 @@ fun SignUpScreen (
 
             Spacer(modifier = Modifier.height(78.dp))
 
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
                 RectangleButtonWithStatus(
                     text = "회원가입",
                     onClick = {
-                              signUpViewModel.postSignUp(signupState)
-
-
-                              },
+                        showDialog = true
+                    },
                     isEnabled = buttonFilled
                 )
             }
@@ -421,11 +455,40 @@ fun SignUpScreen (
         }
     }
 
-    BackHandler(onBack =  {
-       onBack()
-      }
+    BackHandler(onBack = {
+        onBack()
+    }
     )
+
+    val schoolInfo = signupState.value.school
+    val grade = signupState.value.grade
+    val studentClass = signupState.value.studentClass
+    val id = signupState.value.studentId
+    val name = signupState.value.name
+
+
+    if (showDialog) {
+        DialogSignUp(
+            setShowDialog = {
+                showDialog = it
+            },
+            content = schoolInfo + " " + grade + "학년 " + studentClass + "반 " + id + "번 " + "\n" +
+                    name + "님이 맞습니까?",
+            onDecline = { showDialog = false },
+            onAccept = {
+                signUpViewModel.postSignUp(signupState)
+                showDialog = false
+            }
+        )
+
+
+    }
+    if (signUpViewModel.signUpApiState.value.isSuccess) GotoLogin()
+
+
 }
+
+
 
 @Preview
 @Composable
