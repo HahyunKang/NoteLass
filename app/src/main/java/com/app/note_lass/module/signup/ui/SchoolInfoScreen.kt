@@ -40,13 +40,10 @@ import com.app.note_lass.ui.theme.PrimaryBlack
 @Composable
 fun SchoolInfoScreen(
     viewModel : AuthSharedViewModel,
-    GotoSignUp : () -> Unit
+    GotoNext : () -> Unit
 ){
 
     var buttonFilled by remember{
-        mutableStateOf(false)
-    }
-    var isStudent by remember{
         mutableStateOf(false)
     }
     var schoolFilled by remember{
@@ -55,28 +52,16 @@ fun SchoolInfoScreen(
     var yearFilled by remember{
         mutableStateOf(false)
     }
-    var isChecked by remember{
-        mutableStateOf(false)
-    }
-    var gradeFilled by remember{
-        mutableStateOf(true)
-    }
-    var classFilled by remember{
-        mutableStateOf(true)
-    }
-    var idFilled by remember{
-        mutableStateOf(true)
-    }
 
     val signupState = viewModel.signupState
 
-    buttonFilled = if(!isStudent) schoolFilled && yearFilled && isChecked
-    else schoolFilled && yearFilled && isChecked && gradeFilled && classFilled && idFilled
+    buttonFilled =schoolFilled && yearFilled
 
 
     Box(modifier = Modifier
         .fillMaxSize()
-        .background(Color.White)) {
+        .background(Color.White)
+    ) {
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -149,145 +134,7 @@ fun SchoolInfoScreen(
             )
 
 
-            Spacer(modifier = Modifier.height(25.dp))
-            Text(
-                text = "신분 선택",
-                style = NoteLassTheme.Typography.twenty_700_pretendard,
-                color = PrimaryBlack,
-                modifier = Modifier.align(Alignment.Start)
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-
-            CheckBox(
-                isChecked = {
-                isChecked = it
-            },
-                onGetRole = {
-                    signupState.value = signupState.value.copy(
-                        role = it
-                    )
-                    if(it == "학생") isStudent = true
-                }
-            )
-
-            Spacer(modifier = Modifier.height(25.dp))
-
-
-
-            val gradeList = listOf("1","2","3")
-            val classList = listOf("1","2","3","4","5")
-            val idList = (1..31).map { it.toString() }
-            val dropDown = R.drawable.arrow_down
-
-
-            if(isStudent) {
-
-                Text(
-                    text = "반,번호 입력",
-                    style = NoteLassTheme.Typography.twenty_700_pretendard,
-                    color = PrimaryBlack,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-
-                Spacer(modifier = Modifier.height(15.dp))
-
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(2.dp)
-                    ) {
-                        Box(modifier = Modifier.weight(2f)) {
-                            DropDownMenu(
-                                menuList = gradeList,
-                                iconDown = dropDown,
-                                iconUp = dropDown,
-                                placeHolder = "1",
-                                isSelected = {
-                                    gradeFilled = it
-                                },
-                                onGetInfo = {
-                                    signupState.value = signupState.value.copy(
-                                        grade = it
-                                    )
-                                }
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(6.dp))
-
-                        Text(
-                            text = "학년",
-                            style = NoteLassTheme.Typography.twenty_700_pretendard,
-                            color = PrimaryBlack,
-                            modifier = Modifier
-                                .weight(1f)
-                                .align(Alignment.CenterVertically)
-                        )
-
-                    }
-
-                    Row(modifier = Modifier.weight(1f)) {
-                        Box(modifier = Modifier.weight(2f)) {
-                            DropDownMenu(
-                                menuList = classList,
-                                iconDown = dropDown,
-                                iconUp = dropDown,
-                                placeHolder = "1",
-                                isSelected = {
-                                    classFilled= it
-                                },
-                                onGetInfo = {
-                                    signupState.value.studentClass = it
-                                }
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(6.dp))
-
-                        Text(
-                            text = "반",
-                            style = NoteLassTheme.Typography.twenty_700_pretendard,
-                            color = PrimaryBlack,
-                            modifier = Modifier
-                                .weight(1f)
-                                .align(Alignment.CenterVertically)
-                        )
-
-                    }
-
-                    Row(modifier = Modifier.weight(1f)) {
-                        Box(modifier = Modifier.weight(2f)) {
-                            DropDownMenu(
-                                menuList = idList,
-                                iconDown = dropDown,
-                                iconUp = dropDown,
-                                placeHolder = "1",
-                                isSelected = {
-                                    idFilled = it
-                                },
-                                onGetInfo = {
-                                    signupState.value = signupState.value.copy(
-                                        studentId = it
-                                    )
-                                }
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(6.dp))
-
-                        Text(
-                            text = "번",
-                            style = NoteLassTheme.Typography.twenty_700_pretendard,
-                            color = PrimaryBlack,
-                            modifier = Modifier
-                                .weight(1f)
-                                .align(Alignment.CenterVertically)
-                        )
-
-                    }
-                }
-            }
-
-
-            Spacer(modifier = Modifier.height(125.dp))
+            Spacer(modifier = Modifier.height(271.dp))
 
             Box(modifier = Modifier
                 .fillMaxWidth()
@@ -296,7 +143,7 @@ fun SchoolInfoScreen(
                    text = "다음",
                    onClick =
                    {
-                       GotoSignUp()
+                       GotoNext()
                    },
                    isEnabled = buttonFilled
                )

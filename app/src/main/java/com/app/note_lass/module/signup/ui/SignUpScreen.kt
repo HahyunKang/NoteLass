@@ -414,14 +414,8 @@ fun SignUpScreen (
 
 
                               },
-                    isEnabled = buttonFilled)
-//
-//                RectangleUnableButton(text = "회원가입") {
-//                    signupState.value = signupState.value.copy(
-//                        email = emailValue,
-//                        password = password
-//                    )
-//                }
+                    isEnabled = buttonFilled
+                )
             }
 
         }

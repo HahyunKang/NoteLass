@@ -13,6 +13,7 @@ import com.app.note_lass.module.login.ui.LoginScreen
 import com.app.note_lass.module.signup.ui.AuthSharedViewModel
 import com.app.note_lass.module.signup.ui.SchoolInfoScreen
 import com.app.note_lass.module.signup.ui.SignUpScreen
+import com.app.note_lass.module.signup.ui.StudentInfoScreen
 
 fun NavGraphBuilder.AuthNavGraph(navController: NavController) {
 
@@ -32,8 +33,18 @@ fun NavGraphBuilder.AuthNavGraph(navController: NavController) {
             val authSharedViewModel = navBackStackEntry.authSharedViewModel<AuthSharedViewModel>(
                 navController = navController)
             SchoolInfoScreen(authSharedViewModel,
-                GotoSignUp = {
-                navController.navigate(AuthScreen.SignUp.route)
+                GotoNext = {
+                    navController.navigate(AuthScreen.StudentInfo.route)
+                }
+            )
+        }
+        composable(AuthScreen.StudentInfo.route){
+                navBackStackEntry ->
+            val authSharedViewModel = navBackStackEntry.authSharedViewModel<AuthSharedViewModel>(
+                navController = navController)
+            StudentInfoScreen(authSharedViewModel,
+                GotoNext = {
+                    navController.navigate(AuthScreen.SignUp.route)
                 }
             )
         }

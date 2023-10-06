@@ -133,21 +133,25 @@ class AuthSharedViewModel @Inject constructor(
 
         val signUpRequest : SignUpRequest = SignUpRequest(
             admissionYear = signUpState.value.admissionYear,
-            classNum = if(signUpState.value.role =="선생님")null else signUpState.value.studentClass.toInt(),
+            classNum = if(signUpState.value.role =="TEACHER")null else signUpState.value.studentClass.toInt(),
             email = signUpState.value.email,
             role  = signUpState.value.role,
-            grade =  if(signUpState.value.role =="선생님")null else signUpState.value.grade.toInt(),
+            grade =  if(signUpState.value.role =="TEACHER")null else signUpState.value.grade.toInt(),
             name = signUpState.value.name,
-            number =  if(signUpState.value.role =="선생님")null else signUpState.value.studentId.toInt(),
+            number =  if(signUpState.value.role =="TEACHER")null else signUpState.value.studentId.toInt(),
             password = signUpState.value.password,
             school = signUpState.value.school
         )
         postSignUp(signUpRequest).onEach {
             result ->
+
             when(result)
             {
                 is Resource.Success -> {
-                    Log.e("signup Api", result.data?.statuscode.toString())
+                    Log.e("signup Api SUCCESS ", result.message.toString())
+                    Log.e("signup Api Success", result.code.toString())
+                    result.data?.let { Log.e("signup Api Success", it.toString()) }
+
                 }
 
                 is Resource.Loading -> {

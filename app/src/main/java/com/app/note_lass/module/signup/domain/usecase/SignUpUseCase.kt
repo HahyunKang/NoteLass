@@ -1,7 +1,6 @@
 package com.app.note_lass.module.signup.domain.usecase
 
 import com.app.note_lass.common.Resource
-import com.app.note_lass.module.signup.data.SignUpDto
 import com.app.note_lass.module.signup.data.SignUpRequest
 import com.app.note_lass.module.signup.domain.presentation.SignUpRepository
 import kotlinx.coroutines.flow.Flow
@@ -15,15 +14,15 @@ class SignUpUseCase @Inject constructor(
     val repository: SignUpRepository
 ) {
 
-    operator fun invoke(signUpRequest: SignUpRequest) : Flow<Resource<SignUpDto>> = flow {
+    operator fun invoke(signUpRequest: SignUpRequest) : Flow<Resource<Unit>> = flow {
 
         try {
             emit(Resource.Loading())
             val signUpResponse = repository.postSignUp(signUpRequest)
             emit(Resource.Success(
-                data = null,
-                code = signUpResponse.statuscode,
-                message = null
+                data = signUpResponse.body(),
+                code = signUpResponse.code(),
+                message = signUpResponse.message()
             )
             )
         }

@@ -73,8 +73,8 @@ fun CheckBox(
                             checkboxes[index] = info.copy(
                                 isChecked = isChecked
                             )
-                            if(index==0) onGetRole("선생님")
-                            else { onGetRole("학생") }
+                            if(index==0) onGetRole("TEACHER")
+                            else { onGetRole("STUDENT") }
 
                             selectedOption.intValue = index
                             isChecked(true)
