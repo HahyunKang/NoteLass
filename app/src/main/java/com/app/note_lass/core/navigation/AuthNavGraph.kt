@@ -25,7 +25,16 @@ fun NavGraphBuilder.AuthNavGraph(navController: NavController) {
                 {
                     launchSingleTop = true
                 }
-              }
+              },
+                onGoTOHome = {
+                    navController.navigate(MAIN_ROUTE){
+                        popUpTo(AuthScreen.Login.route) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+
+                }
             )
         }
         composable(AuthScreen.SchoolInfo.route){
@@ -35,6 +44,9 @@ fun NavGraphBuilder.AuthNavGraph(navController: NavController) {
             SchoolInfoScreen(authSharedViewModel,
                 GotoNext = {
                     navController.navigate(AuthScreen.StudentInfo.route)
+                    {
+
+                    }
                 }
             )
         }

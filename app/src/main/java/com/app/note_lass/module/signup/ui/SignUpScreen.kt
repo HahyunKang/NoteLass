@@ -476,6 +476,11 @@ fun SignUpScreen (
                     name + "님이 맞습니까?",
             onDecline = { showDialog = false },
             onAccept = {
+                Log.e("signUp API",signupState.value.email)
+                signupState.value = signupState.value.copy(
+                    email = emailValue,
+                    password = password
+                )
                 signUpViewModel.postSignUp(signupState)
                 showDialog = false
             }

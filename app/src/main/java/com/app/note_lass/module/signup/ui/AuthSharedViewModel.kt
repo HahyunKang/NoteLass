@@ -134,7 +134,7 @@ class AuthSharedViewModel @Inject constructor(
 
 
     fun postSignUp(signUpState: MutableState<SignupInfo>){
-
+        Log.e("signup Api",signUpState.value.email)
         val signUpRequest : SignUpRequest = SignUpRequest(
             admissionYear = signUpState.value.admissionYear,
             classNum = if(signUpState.value.role =="TEACHER")null else signUpState.value.studentClass.toInt(),

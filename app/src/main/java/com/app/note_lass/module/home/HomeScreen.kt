@@ -63,7 +63,9 @@ import com.app.note_lass.ui.theme.arcYellow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(navController: NavController){
+fun HomeScreen(
+    navController: NavController
+){
 
     Row(
         modifier = Modifier.padding(horizontal = 40.dp,

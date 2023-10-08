@@ -1,5 +1,6 @@
 package com.app.note_lass.module.login.ui
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,20 +12,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,15 +32,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
+import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.ui.component.RectangleEnabledButton
+import com.app.note_lass.ui.theme.Gray50
+import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 
 @Composable
 fun LoginScreen(
-    onGoToSignUp : () -> Unit
+    onGoToSignUp : () -> Unit,
+    onGoTOHome : () -> Unit ,
+    loginViewModel: LoginViewModel =  hiltViewModel(),
+    tokenViewModel: ProtoViewModel = hiltViewModel()
 ){
+    val emailText = remember  {
+        mutableStateOf("")
+    }
 
+    val passwordText =  remember {
+        mutableStateOf("")
+    }
+
+    val loginState =  loginViewModel.loginState
+    //Log.e("passwordText",passwordText.value)
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -74,37 +85,26 @@ fun LoginScreen(
         )
 
         Spacer(modifier = Modifier.height(72.dp))
-        var emailText by remember {
-            mutableStateOf("")
-        }
+
 
         OutlinedTextField(
-            value = emailText,
+            value = emailText.value,
+            onValueChange = {
+                emailText.value = it
+            },
+            enabled= true ,
             modifier = Modifier
-                .border(1.dp, color = Color(0x80C9CDD2), shape = RoundedCornerShape(8.dp))
                 .size(width = 400.dp, height = 56.dp),
             textStyle =
-            TextStyle(
-                fontSize = 20.sp,
-                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                fontWeight = FontWeight(600),
-                color = Color(0xFF26282B),
-
-                ),
-
-            onValueChange = {
-                emailText = it
-            },
+            NoteLassTheme.Typography.sixteem_600_pretendard,
             placeholder = {
-                Text(
-                    text = "이메일을 입력해주세요",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                        fontWeight = FontWeight(600),
-                        color = Color(0xFFC9CDD2),
+
+                    Text(
+                        text = "이메일을 입력해주세요",
+                        style = NoteLassTheme.Typography.sixteem_600_pretendard,
+                        color = Gray50
                     )
-                )
+
             },
             leadingIcon = {
                 Icon(
@@ -122,7 +122,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(30.dp))
 
         OutlinedTextField(
-            value = emailText,
+            value = passwordText.value,
             modifier = Modifier
                 .border(1.dp, color = Color(0x80C9CDD2), shape = RoundedCornerShape(8.dp))
                 .size(width = 400.dp, height = 56.dp),
@@ -134,20 +134,15 @@ fun LoginScreen(
                 color = Color(0xFF26282B),
 
                 ),
-
             onValueChange = {
-                emailText = it
+               passwordText.value = it
             },
             placeholder = {
-                Text(
-                    text = "비밀번호를 입력해주세요",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                        fontWeight = FontWeight(600),
-                        color = Color(0xFFC9CDD2),
+                    Text(
+                        text = "비밀번호를 입력해주세요",
+                        style = NoteLassTheme.Typography.sixteem_600_pretendard,
+                        color = Gray50
                     )
-                )
             },
             leadingIcon = {
                 Icon(
@@ -227,9 +222,16 @@ fun LoginScreen(
                 .height(56.dp)
         ) {
             RectangleEnabledButton(text = "로그인 하기") {
-                { }
+
+               loginViewModel.login(emailText.value,passwordText.value,tokenViewModel)
             }
         }
+    }
+
+    if(loginState.value.isSuccess){
+        onGoTOHome()
+    }
+    else{
     }
 
 
