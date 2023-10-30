@@ -1,11 +1,11 @@
 package com.app.note_lass.module.signup.domain.usecase
 
+import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.signup.data.SignUpRequest
 import com.app.note_lass.module.signup.domain.presentation.SignUpRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okhttp3.ResponseBody
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -15,15 +15,15 @@ class SignUpUseCase @Inject constructor(
     val repository: SignUpRepository
 ) {
 
-    operator fun invoke(signUpRequest: SignUpRequest) : Flow<Resource<ResponseBody?>> = flow {
+    operator fun invoke(signUpRequest: SignUpRequest) : Flow<Resource<NoteResponseBody<Nothing>>> = flow {
 
         try {
             emit(Resource.Loading())
             val signUpResponse = repository.postSignUp(signUpRequest)
             emit(Resource.Success(
-                data = signUpResponse.body(),
-                code = signUpResponse.code(),
-                message = signUpResponse.message()
+                data = signUpResponse,
+                code = signUpResponse.code,
+                message = signUpResponse.message
             )
             )
         }

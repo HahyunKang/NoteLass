@@ -54,7 +54,9 @@ fun NavigationSideBar(
                     .padding(start = 40.dp),
                 selected = selectedItemIndex == index ,
                 onClick = { onNavigate(index) },
-                icon = { NavigationIcon(item = item, selected = selectedItemIndex == index)},
+                icon = {
+                    NavigationIcon(item = item, selected = selectedItemIndex == index)
+                       },
                 colors = NavigationRailItemDefaults.colors(indicatorColor = Color.White)
             )
         }

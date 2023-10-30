@@ -154,7 +154,7 @@ class AuthSharedViewModel @Inject constructor(
                 is Resource.Success -> {
                     Log.e("signup Api SUCCESS ", result.message.toString())
                     Log.e("signup Api Success", result.code.toString())
-                    result.data?.let { Log.e("signup Api Success", it.string()) }
+                    result.data?.let { Log.e("signup Api Success", it.message.toString()) }
 
                     if(result.code == 201){
                         _signUpApiState.value  =SignUpApiState(

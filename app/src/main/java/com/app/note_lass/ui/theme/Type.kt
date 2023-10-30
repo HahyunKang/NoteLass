@@ -68,5 +68,9 @@ data class NoteLassTypography (
         fontWeight = FontWeight(700),
         fontSize = 32.sp,
     ),
-
+    val fourtyeight_700_pretendard : TextStyle = defaultTextStyle.copy(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight(700),
+        fontSize = 48.sp,
+    ),
     )

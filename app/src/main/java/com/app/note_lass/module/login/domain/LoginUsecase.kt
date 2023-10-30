@@ -1,6 +1,7 @@
 package com.app.note_lass.module.login.domain
 
 import android.util.Log
+import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.login.data.LoginDto
 import com.app.note_lass.module.login.data.LoginDtoTemp
@@ -17,16 +18,19 @@ class LoginUseCase @Inject constructor(
     val loginRepository: LoginRepository
 ) {
 
-    operator fun invoke(loginRequest: LoginRequest) : Flow<Resource<LoginDtoTemp>> = flow{
+    operator fun invoke(loginRequest: LoginRequest) : Flow<Resource<LoginDto>> = flow{
         try {
             emit(Resource.Loading())
+            Log.e("loginRequest",loginRequest.email)
+            Log.e("loginRequest",loginRequest.password)
+
             val loginResponse = loginRepository.login(loginRequest)
-            Log.e("response",loginResponse.jwtToken)
+
             emit(
                 Resource.Success(
-                data = loginResponse,
-                    code = null,
-                    message = null
+                data = loginResponse.result!!,
+                    code = loginResponse.code,
+                    message = loginResponse.message
             )
 
             )

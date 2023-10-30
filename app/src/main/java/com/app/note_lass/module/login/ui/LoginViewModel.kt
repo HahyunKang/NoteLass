@@ -19,7 +19,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     val loginUseCase: LoginUseCase,
-    val dataStore: DataStore<Token>
     ) :ViewModel(){
 
     private var _loginState = mutableStateOf(LoginState())
@@ -33,9 +32,12 @@ class LoginViewModel @Inject constructor(
                         is Resource.Success -> {
                             _loginState.value = LoginState(
                                 isSuccess = true,
-                                isMessage = result.data!!.jwtToken
+                                isMessage = result.data?.token!!
                             )
-                            tokenViewModel.updateAccessToken(result.data.jwtToken)
+                            Log.e("role in Login",result.data.role)
+                            Log.e("token in Login",result.data.token)
+
+                            tokenViewModel.updateAccessToken(result.data.token)
 
                         }
                         is Resource.Error -> {

@@ -42,13 +42,14 @@ fun AppBar(
     title : String,
     badgeCount : Int,
     onArrowClick : () -> Unit,
-    isGroupButton : Boolean
+    isGroupButton : Boolean,
+    onGroupClick : () -> Unit  = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(start = 280.dp, end = 48.dp, top = 50.dp)
+            .padding(start = 30.dp , end = 48.dp, top = 50.dp)
             .background(color = Color.Transparent),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -64,8 +65,21 @@ fun AppBar(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.width(384.dp)
-
         ){
+          if(isGroupButton)
+          {
+              Box(modifier = Modifier
+                  .width(76.dp)
+                  .height(40.dp)
+              ){
+                  RectangleEnabledButton(text = "그룹 생성") {
+                      onGroupClick()
+                  }
+              }
+
+          }
+            Spacer(modifier = Modifier.width(20.dp))
+
             Box(modifier = Modifier
                 .width(224.dp)
                ){
@@ -116,5 +130,5 @@ fun AppBar(
 @Composable
 @Preview
 fun appBarPreview(){
-    AppBar(title = "홈", badgeCount = 12, onArrowClick = { /*TODO*/ }, isGroupButton = false)
+   // AppBar(title = "홈", badgeCount = 12, onArrowClick = { /*TODO*/ }, isGroupButton = false)
 }
