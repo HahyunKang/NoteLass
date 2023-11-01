@@ -2,6 +2,7 @@ package com.app.note_lass.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,7 @@ fun GroupHeader(
     title : String,
     teacherName : String,
     subject: String,
+    onClick : () -> Unit = {}
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -43,6 +45,7 @@ fun GroupHeader(
         )
             .fillMaxWidth()
             .wrapContentHeight()
+            .clickable { onClick() }
     ){
         CircleIcon(title = subject)
         Spacer(Modifier.width(10.dp))
@@ -96,5 +99,5 @@ fun CircleIcon(title : String){
 @Composable
 @Preview
 fun groupPreview(){
-    GroupHeader(title = "노트고등학교 3학년 1반 문학", teacherName = "김태연 선생님", subject ="영" )
+  //  GroupHeader(title = "노트고등학교 3학년 1반 문학", teacherName = "김태연 선생님", subject ="영" )
 }

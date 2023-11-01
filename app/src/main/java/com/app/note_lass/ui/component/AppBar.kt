@@ -1,5 +1,6 @@
 package com.app.note_lass.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.note_lass.R
+import com.app.note_lass.core.Proto.Role
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +43,7 @@ import com.app.note_lass.R
 fun AppBar(
     title : String,
     badgeCount : Int,
-    onArrowClick : () -> Unit,
+    role : Role,
     isGroupButton : Boolean,
     onGroupClick : () -> Unit  = {}
 ) {
@@ -66,13 +68,24 @@ fun AppBar(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.width(384.dp)
         ){
-          if(isGroupButton)
+            Log.e("role in Log",role.toString())
+          if(isGroupButton && role == Role.TEACHER)
           {
               Box(modifier = Modifier
                   .width(76.dp)
                   .height(40.dp)
               ){
                   RectangleEnabledButton(text = "그룹 생성") {
+                      onGroupClick()
+                  }
+              }
+
+          }else if(isGroupButton && role == Role.STUDENT){
+              Box(modifier = Modifier
+                  .width(76.dp)
+                  .height(40.dp)
+              ){
+                  RectangleEnabledButton(text = "그룹 입장") {
                       onGroupClick()
                   }
               }

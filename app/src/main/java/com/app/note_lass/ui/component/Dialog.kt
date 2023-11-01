@@ -1,6 +1,7 @@
 package com.app.note_lass.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextFieldDefaults
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -22,10 +26,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.app.note_lass.R
+import com.app.note_lass.module.group.data.applicationList.ApplicationStudent
+import com.app.note_lass.module.group.ui.component.ApplicationStudent
+import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
@@ -243,7 +256,8 @@ fun DialogGroupCode(
             modifier = Modifier
                 .size(width = 480.dp, height = 544.dp)
                 .padding(horizontal = 40.dp, vertical = 25.dp)
-                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp)),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.group_filedelete_small),
@@ -251,28 +265,26 @@ fun DialogGroupCode(
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.End)
-                    .padding(24.dp)
             )
 
                 Text(
                     text = "그룹 입장 코드",
                     style = NoteLassTheme.Typography.twenty_700_pretendard,
                     color = PrimaryBlack,
-                    modifier = Modifier.align(Alignment.Start)
                 )
-                Spacer(modifier = Modifier.height(160.dp))
+                Spacer(modifier = Modifier.height(100.dp))
                 Text(
                     text = code.toString(),
                     style = NoteLassTheme.Typography.fourtyeight_700_pretendard,
                     color = PrimarayBlue,
-                    modifier = Modifier.align(Alignment.Start)
                 )
 
+            Spacer(modifier = Modifier.height(100.dp))
 
             Box(
                 modifier = Modifier
                     .height(56.dp)
-                    .width(400.dp)
+                    .width(350.dp)
             ) {
                 RectangleEnabledButton(
                     text = "다음",
@@ -285,7 +297,176 @@ fun DialogGroupCode(
             }
         }
     }
+@Composable
+fun DialogEnterGroup(
+    setShowDialog : (Boolean)-> Unit,
+    getCode : (String) -> Unit,
+    onAccept : () -> Unit
+) {
+    val code = remember{
+        mutableStateOf("")
+    }
 
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .size(width = 480.dp, height = 288.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+                .padding(horizontal = 40.dp, vertical = 25.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.group_filedelete_small),
+                tint = Color(0xFF26282B),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.End)
+            )
+
+            Text(
+                text = "입장 코드 입력",
+                style = NoteLassTheme.Typography.twenty_700_pretendard,
+                color = PrimaryBlack,
+                textAlign = TextAlign.Start
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+
+           OutlinedTextField(
+               value = code.value.toString() ,
+               onValueChange = {
+                   code.value = it
+               },
+               enabled= true ,
+               modifier = Modifier
+                   .size(width = 400.dp, height = 60.dp)
+                   .padding(horizontal = 20.dp),
+               textStyle = NoteLassTheme.Typography.sixteem_600_pretendard,
+               placeholder = {
+                   Text(
+                       text = "입장 코드를 입력해주세요",
+                       style = NoteLassTheme.Typography.sixteem_600_pretendard,
+                       color= Color.LightGray
+                       )
+               },
+               shape = RoundedCornerShape(8.dp)
+
+           )
+            Spacer(modifier = Modifier.height(47.dp))
+
+            Box(
+                modifier = Modifier
+                    .height(56.dp)
+                    .width(350.dp)
+                    .padding(horizontal = 20.dp)
+            ) {
+                RectangleEnabledButton(
+                    text = "다음",
+                    onClick = {
+                        getCode(code.value)
+                        onAccept()
+                    },
+                )
+
+            }
+        }
+    }
+}
+
+@Composable
+fun DialogEnterGroupAccept(
+    setShowDialog : (Boolean)-> Unit,
+    groupInfo : String,
+    onAccept : () -> Unit
+) {
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .size(width = 480.dp, height = 288.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+                .padding(horizontal = 40.dp, vertical = 25.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.group_filedelete_small),
+                tint = Color(0xFF26282B),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.End)
+            )
+
+            Text(
+                text = "${groupInfo}에\n 입장하시겠습니까?",
+                style = NoteLassTheme.Typography.twenty_700_pretendard,
+                color = PrimaryBlack,
+                textAlign = TextAlign.Start
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Box(
+                modifier = Modifier
+                    .height(56.dp)
+                    .width(350.dp)
+                    .padding(horizontal = 20.dp)
+            ) {
+                RectangleEnabledButton(
+                    text = "입장",
+                    onClick = {
+                        onAccept()
+                    },
+                )
+
+            }
+        }
+    }
+}
+
+@Composable
+fun DialogGroupTeacherAccept(
+    setShowDialog : (Boolean)-> Unit,
+    list : List<ApplicationStudent>,
+
+    onAccept : () -> Unit
+) {
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .size(width = 480.dp, height = 288.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+                .padding(horizontal = 40.dp, vertical = 25.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.group_filedelete_small),
+                tint = Color(0xFF26282B),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.End)
+            )
+//            list.forEachIndexed { index, applicationStudent ->
+//                ApplicationStudent(
+//                    memberId = ,
+//                    id = index+1 ,
+//                    name = ,
+//                    onClickAccept = ,
+//                    onClickDecline =
+//                )
+//            }
+
+
+        }
+    }
+}
 @Preview
 @Composable
 fun DialogPreview(){
@@ -296,28 +477,40 @@ fun DialogPreview(){
 
     Column {
 
+//
+//        DialogSignUp(
+//            setShowDialog = {
+//                showDialog.value = it
+//            },
+//            content = "노트고등학교 3학년 1반 1번\n   김OO님이 맞습니까?",
+//            onDecline = { /*TODO*/ }
+//        ) {
+//            /*TODO*/
+//        }
+//
+//        CreateGroup(
+//            setShowDialog = {
+//                            showDialog.value = it
+//            },
+//        getInfo ={
+//            gradeInfo, classInfo , subjctInfo ->
+//
+//        }
+//
+//        ) {
+//
+//        }
+//        DialogGroupCode(
+//            setShowDialog = {
+//                            showDialog.value = it
+//            }, code = 123456) {
+//
+//        }
 
-        DialogSignUp(
-            setShowDialog = {
-                showDialog.value = it
-            },
-            content = "노트고등학교 3학년 1반 1번\n   김OO님이 맞습니까?",
-            onDecline = { /*TODO*/ }
-        ) {
-            /*TODO*/
-        }
+        DialogEnterGroup(setShowDialog = {
+                                         showDialog.value = it
+        }, getCode = {}) {
 
-        CreateGroup(
-            setShowDialog = {
-                            showDialog.value = it
-            },
-        getInfo ={
-            gradeInfo, classInfo , subjctInfo ->
-
-        }
-
-        ) {
-            
         }
 
     }

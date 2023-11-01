@@ -9,6 +9,7 @@ import com.app.note_lass.module.group.data.GroupCreateDto
 import com.app.note_lass.module.group.data.InfoForCreate
 import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.groupList.GroupListDto
+import com.app.note_lass.module.group.data.studentList.Student
 import com.app.note_lass.module.login.data.LoginDto
 import com.app.note_lass.module.login.data.LoginDtoTemp
 import com.app.note_lass.module.login.data.LoginRequest
@@ -22,24 +23,23 @@ import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
 
-class GetGroupUseCase @Inject constructor(
+class EnterGroupUseCase @Inject constructor(
     val groupRepository: GroupRepository,
     val dataStore : DataStore<Token>
 ) {
 
-    operator fun invoke() : Flow<Resource<List<Group>>> = flow{
+    operator fun invoke(code : Int) : Flow<Resource<String>> = flow{
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
             Log.e("token in GroupList",token)
 
             emit(Resource.Loading())
 
-            val groupResponse = groupRepository.getGroupList(token)
-            Log.e("response in GroupList",groupResponse.result!!.size.toString())
+            val groupResponse = groupRepository.enterGroup(token,code)
 
             emit(
                 Resource.Success(
-                    data = groupResponse.result,
+                    data = groupResponse.result!!,
                     code = groupResponse.code,
                     message = groupResponse.message
             )

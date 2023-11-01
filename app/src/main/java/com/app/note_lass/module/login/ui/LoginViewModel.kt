@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.ProtoViewModel
+import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.login.data.LoginRequest
 import com.app.note_lass.module.login.data.LoginState
@@ -38,6 +39,8 @@ class LoginViewModel @Inject constructor(
                             Log.e("token in Login",result.data.token)
 
                             tokenViewModel.updateAccessToken(result.data.token)
+                            if(result.data.role == "STUDENT") tokenViewModel.updateRole(Role.STUDENT)
+                            else tokenViewModel.updateRole(Role.TEACHER)
 
                         }
                         is Resource.Error -> {

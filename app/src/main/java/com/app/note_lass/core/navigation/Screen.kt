@@ -27,6 +27,12 @@ sealed class HomeScreen(val route : String){
 
 sealed class GroupScreen(val route : String){
     object Home : GroupScreen("group/home")
+    object GroupForTeacher : GroupScreen("group/teacher/{groupId}"){
+        fun passQuery(groupId : Int) : String {
+            return "group/teacher/${groupId}"
+        }
+    }
+
 }
 
 sealed class NoteScreen(val route : String){
