@@ -135,7 +135,7 @@ fun GroupScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                top = it.calculateTopPadding(),
+                top = it.calculateTopPadding() + 30.dp,
                 bottom = 20.dp,
                 start = 30.dp,
                 end = 30.dp

@@ -7,19 +7,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.app.note_lass.R
+import com.app.note_lass.core.Proto.ProtoViewModel
+import com.app.note_lass.core.Proto.Role
+import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.core.navigation.MainNavGraph
 import com.app.note_lass.module.navigation.ui.NavigationSideBar
 import com.app.note_lass.ui.component.AppBar
+import com.app.note_lass.ui.component.DialogStudentMemo
 
 data class NavigationItem(
     val title : String,
@@ -57,9 +65,15 @@ val items = listOf(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    protoViewModel : ProtoViewModel = hiltViewModel()
+
 ){
 
+    var role = protoViewModel.token.collectAsState(initial = Token("",Role.NONE)).value.role
+    var isDialogShow = remember{
+        mutableStateOf(false)
+    }
 
     var selectedItemIndex by rememberSaveable() {
         mutableStateOf(0)
@@ -82,10 +96,25 @@ fun MainScreen(
         )
 
 
-        NavigationSideBar(items = items, selectedItemIndex =selectedItemIndex) {
-            selectedItemIndex = it
-            navController.navigate(items[selectedItemIndex].route)
-        }
+        NavigationSideBar(
+            role = role,
+            items = items,
+            selectedItemIndex = selectedItemIndex,
+            onNavigate = {
+                selectedItemIndex = it
+                navController.navigate(items[selectedItemIndex].route)
+            },
+            onClick = {
+                isDialogShow.value = true
+            }
+        )
 
+
+    if(isDialogShow.value){
+      DialogStudentMemo(setShowDialog = {
+          isDialogShow.value = it
+      }
+      )
+    }
 
 }

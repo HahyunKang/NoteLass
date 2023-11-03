@@ -59,10 +59,11 @@ fun GroupTeacherScreen(
             val studentListState = viewModel.studentListState
             Row(
                 modifier = Modifier
-                    .padding
-                        (
-                        horizontal = it.calculateTopPadding(),
-                        vertical = 30.dp
+                    .padding(
+                        top = it.calculateTopPadding() + 30.dp,
+                        bottom = 20.dp,
+                        start = 30.dp,
+                        end = 30.dp
                     )
             )
             {

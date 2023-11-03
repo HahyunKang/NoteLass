@@ -106,6 +106,7 @@ class GroupViewModel @Inject constructor(
                 is Resource.Loading -> {
                     _groupListState.value = GroupListState(
                         isLoading = true,
+                        isSuccess = false
                     )
                 }
                 is Resource.Success  ->{

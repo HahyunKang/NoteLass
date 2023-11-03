@@ -1,13 +1,19 @@
 package com.app.note_lass.module.navigation.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
@@ -26,14 +32,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.note_lass.R
+import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.main.ui.NavigationItem
+import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
+import com.app.note_lass.ui.theme.PrimaryBlack
 
 @Composable
 fun NavigationSideBar(
     items: List<NavigationItem>,
     selectedItemIndex: Int,
     onNavigate: (Int) -> Unit,
+    role : Role,
+    onClick : () -> Unit
 ){
 
     NavigationRail(
@@ -48,9 +59,13 @@ fun NavigationSideBar(
         },
         modifier =  Modifier.width(240.dp)
     ) {
+        Column(
+            modifier = Modifier.align(Alignment.Start)
+                .weight(7f)
+        ){
         items.forEachIndexed{ index,item ->
             NavigationRailItem(
-                modifier = Modifier.align(Alignment.Start)
+                modifier = Modifier
                     .padding(start = 40.dp),
                 selected = selectedItemIndex == index ,
                 onClick = { onNavigate(index) },
@@ -60,6 +75,42 @@ fun NavigationSideBar(
                 colors = NavigationRailItemDefaults.colors(indicatorColor = Color.White)
             )
         }
+        }
+
+        if(role == Role.TEACHER) {
+            Box(
+                modifier = Modifier
+                    .width(167.dp)
+                    .weight(1f)
+                    .padding(bottom = 30.dp)
+                    .background(color = PrimarayBlue, shape = RoundedCornerShape(20.dp))
+                    .clickable { onClick() }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .fillMaxSize(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.nav_student_memo),
+                        tint = Color.White,
+                        contentDescription = "학생 수첩"
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = "학생 수첩",
+                        style = NoteLassTheme.Typography.sixteem_600_pretendard,
+                        color = Color.White
+                    )
+
+                }
+
+            }
+        }
+
 
     }
 
