@@ -175,12 +175,12 @@ fun GroupTeacherScreen(
                     ) {
 
                         if (studentListState.value.isSuccess) {
-                            studentListState.value.studentList.forEachIndexed() { index, studentName ->
+                            studentListState.value.studentList.forEachIndexed() { index, student->
                                 val id = index + 1
                                 IconAndText(
                                     icon = R.drawable.group_person_small,
                                     iconColor = PrimarayBlue,
-                                    text = "$id  $studentName"
+                                    text = "$id  ${student.name}"
                                 )
                                 Spacer(modifier = Modifier.height(20.dp))
 

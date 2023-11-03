@@ -24,23 +24,23 @@ import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
 
-class EnterGroupUseCase @Inject constructor(
+class JoinGroupUseCase @Inject constructor(
     val groupRepository: GroupRepository,
     val dataStore : DataStore<Token>
 ) {
 
-    operator fun invoke(code : Int) : Flow<Resource<JoinDto>> = flow{
+    operator fun invoke(groupId : Long) : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
             Log.e("token in GroupList",token)
 
             emit(Resource.Loading())
 
-            val groupResponse = groupRepository.enterGroup(token,code)
+            val groupResponse = groupRepository.joinGroup(token,groupId)
 
             emit(
                 Resource.Success(
-                    data = groupResponse.result!!,
+                    data = groupResponse,
                     code = groupResponse.code,
                     message = groupResponse.message
             )
