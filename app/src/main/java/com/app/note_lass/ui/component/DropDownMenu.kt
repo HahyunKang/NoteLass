@@ -142,6 +142,98 @@ fun DropDownMenu(
         }
     }
 }
+
+@Composable
+fun DropDownMenuForMemo(
+    menuList : HashMap<String,Int>,
+    iconDown : Int,
+    iconUp : Int,
+    placeHolder :  String,
+    isSelected: (Boolean) -> Unit,
+    onGetInfo : (String,Int) -> Unit,
+    isGroupSelected : Boolean = true
+){
+    var expanded by remember { mutableStateOf(false) }
+    var selectedText by remember { mutableStateOf("") }
+
+    var textfieldSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero)}
+
+    val icon = if (expanded) iconUp
+    else
+        iconDown
+
+    Box(
+        Modifier
+            .fillMaxWidth()) {
+        OutlinedTextField(
+            value = selectedText,
+            onValueChange = { selectedText = it },
+            enabled = false,
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    //This value is used to assign to the DropDown the same width
+                    textfieldSize = coordinates.size.toSize()
+                },
+            placeholder = {
+                Text(
+                    text = placeHolder,
+                    style = NoteLassTheme.Typography.sixteem_600_pretendard,
+                    color = PrimaryGray
+                )
+
+            },
+            trailingIcon = {
+                Icon(painter = painterResource(id = icon), "contentDescription",
+                    Modifier.clickable { expanded = !expanded })
+            },
+            colors = TextFieldDefaults.colors(
+                disabledTextColor =   PrimaryBlack,
+                disabledIndicatorColor = Gray50,
+                focusedIndicatorColor = PrimarayBlue,
+                disabledContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
+            )
+        )
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .align(Alignment.BottomStart)
+        ) {
+
+            DropdownMenu(
+                expanded = expanded && isGroupSelected,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
+                    .height(150.dp)
+                    .background(color = Color.White)
+                ,
+                offset = DpOffset(0.dp, (-1).dp)
+            ) {
+                menuList.forEach { label ->
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedText = label.key
+                            expanded = false
+                            isSelected(true)
+                            onGetInfo(selectedText,label.value)
+                        },
+                        text = {
+                            Text(
+                                text = label.key,
+                                style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                                color = PrimaryBlack
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun DropDownSearch(

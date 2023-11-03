@@ -2,11 +2,13 @@ package com.app.note_lass.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,9 +37,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.app.note_lass.R
 import com.app.note_lass.module.group.data.applicationList.ApplicationStudent
 import com.app.note_lass.module.group.ui.component.ApplicationStudent
+import com.app.note_lass.module.student.data.HandBookRequest
+import com.app.note_lass.module.student.ui.viewmodel.StudentMemoViewModel
 import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
@@ -431,7 +437,6 @@ fun DialogEnterGroupAccept(
 fun DialogGroupTeacherAccept(
     setShowDialog : (Boolean)-> Unit,
     list : List<ApplicationStudent>,
-
     onAccept : () -> Unit
 ) {
 
@@ -462,6 +467,204 @@ fun DialogGroupTeacherAccept(
 //                    onClickDecline =
 //                )
 //            }
+
+
+        }
+    }
+}
+
+@Composable
+fun DialogStudentMemo(
+    setShowDialog : (Boolean)-> Unit ={},
+    getGroupInfo : (String,Int) -> Unit = {string,int->},
+    getStudentInfo : (String,Int) -> Unit ={string,int->},
+    studentMemoViewModel: StudentMemoViewModel = hiltViewModel()
+
+) {
+    val isGroupSelected = remember{
+        mutableStateOf(false)
+    }
+    val isStudentSelected = remember{
+        mutableStateOf(false)
+    }
+    val memo = remember{
+        mutableStateOf("")
+    }
+    val groupId = remember{
+        mutableStateOf(0)
+    }
+    val studentId = remember{
+        mutableStateOf(0)
+    }
+    val attitudeScore = remember{
+        mutableStateOf(0)
+    }
+    val presentationScore = remember{
+        mutableStateOf(0)
+    }
+    val groupListState =studentMemoViewModel.groupHashState
+
+    val studentListState = studentMemoViewModel.studentHashState
+
+    val submitState = studentMemoViewModel.handBookSubmitState
+
+
+    var handBookRequest  = HandBookRequest(content = null,attitudeScore =0 , presentationNum = 0)
+
+    if(submitState.value.isSuccess)setShowDialog(false)
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .width(720.dp)
+                .height(580.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+                .padding(horizontal = 40.dp, vertical = 30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Icon(
+                painter = painterResource(id = R.drawable.group_filedelete_small),
+                tint = Color(0xFF26282B),
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.End)
+                    .clickable {
+                        setShowDialog(false)
+                    }
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    DropDownMenuForMemo(
+                        menuList = groupListState.value.groupHash,
+                        iconDown = R.drawable.arrow_down,
+                        iconUp = R.drawable.arrow_down,
+                        placeHolder = "그룹 선택",
+                        isSelected = {
+                            isGroupSelected.value = it
+                        },
+                        onGetInfo = { name, id ->
+                            getGroupInfo(name, id)
+                            groupId.value = id
+                            studentMemoViewModel.getStudentList(groupId.value)
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    DropDownMenuForMemo(
+                        menuList =studentListState.value.studentHash,
+                        iconDown = R.drawable.arrow_down,
+                        iconUp = R.drawable.arrow_down,
+                        placeHolder = "학생 선택",
+                        isSelected = {
+                            isStudentSelected.value = it
+                        },
+                        onGetInfo = { name, id ->
+                            getStudentInfo(name, id)
+                            studentId.value = id
+                        } ,
+                        isGroupSelected = studentListState.value.isSuccess
+                    )
+                }
+
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            OutlinedTextField(
+                value = memo.value,
+                onValueChange = {
+                    memo.value = it
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp)
+                ,
+                placeholder = {
+                    Text(
+                        text = "메모를 입력해주세요.",
+                        style = NoteLassTheme.Typography.sixteem_600_pretendard,
+                        color= Color.LightGray
+                    )
+                },
+                textStyle=  NoteLassTheme.Typography.sixteem_600_pretendard,
+                shape = RoundedCornerShape(8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+
+            Row(modifier = Modifier.fillMaxWidth()
+            , verticalAlignment = Alignment.CenterVertically){
+                Text(text= "발표 횟수",
+                    style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                    color = PrimaryBlack,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Box(modifier = Modifier
+                    .width(80.dp)
+                    .height(32.dp)){
+                NumUpAndDown(isNumChange = {
+                    presentationScore.value = it
+                })
+                }
+                Spacer(modifier = Modifier.width(24.dp))
+
+                Text(text= "태도 점수",
+                    style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                    color = PrimaryBlack,
+                    textAlign = TextAlign.Center
+
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Box(modifier = Modifier
+                    .width(80.dp)
+                    .height(32.dp)){
+                    NumUpAndDown(isNumChange = {
+                        attitudeScore.value = it
+                    })
+                }
+            }
+
+            Spacer(modifier = Modifier.height(35.dp))
+
+            Row(modifier = Modifier.align(Alignment.End)){
+
+                Box(modifier = Modifier.size(width = 49.dp, height = 40.dp)) {
+                    RectangleUnableButton(text = "취소") {
+                        setShowDialog(false)
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Box(modifier = Modifier.size(width = 73.dp, height = 40.dp)) {
+                    RectangleEnabledButton(text = "저장하기") {
+                        handBookRequest = HandBookRequest(memo.value,attitudeScore.value,presentationScore.value)
+                        studentMemoViewModel.postHandBook(groupId.value, studentId.value, handBookRequest)
+                    }
+                }
+
+            }
 
 
         }
@@ -507,11 +710,13 @@ fun DialogPreview(){
 //
 //        }
 
-        DialogEnterGroup(setShowDialog = {
-                                         showDialog.value = it
-        }, getCode = {}) {
+//        DialogEnterGroup(setShowDialog = {
+//                                         showDialog.value = it
+//        }, getCode = {}) {
+//
+//        }
 
-        }
+   //     DialogStudentMemo(groupList = hashMapOf(), studentList = hashMapOf() )
 
     }
 }
