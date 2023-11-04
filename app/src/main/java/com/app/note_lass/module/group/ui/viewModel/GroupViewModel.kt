@@ -146,7 +146,7 @@ class GroupViewModel @Inject constructor(
                                 isError = true
                             )
                         }
-                        Log.e("error in groupJoin",result.code.toString())
+                        Log.e("error in groupJoin",result.message.toString())
                     }
                 }
 

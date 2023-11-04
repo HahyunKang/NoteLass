@@ -17,3 +17,11 @@ data class JoinGroupState(
     val isMessage : String = ""
 )
 
+data class ApproveOrRejectGroupState(
+    val isLoading : Boolean = false,
+    val isSuccess : Boolean = false,
+    val isError : Boolean = false,
+    val isApprove : Boolean = false,
+    val isMessage : String = ""
+)
+

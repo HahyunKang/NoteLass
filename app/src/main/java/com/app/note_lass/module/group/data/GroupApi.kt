@@ -5,8 +5,11 @@ import com.app.note_lass.module.group.data.applicationList.ApplicationStudent
 import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.groupList.GroupListDto
 import com.app.note_lass.module.group.data.join.JoinDto
+import com.app.note_lass.module.group.data.join.JoinStudentInfo
+import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -31,10 +34,10 @@ interface GroupApi {
     ) : NoteResponseBody<List<Student>>
 
     @GET("api/group/applications/{groupId}")
-    suspend fun getStudentApplicationList(
+    suspend fun getStudentJoinList(
         @Header(value = "Authorization") accessToken : String,
-        @Path(value = "groupId") groupId : Int
-    ) : NoteResponseBody<List<ApplicationStudent>>
+        @Path(value = "groupId") groupId : Long
+    ) : NoteResponseBody<JoinStudentListDto>
 
     @GET("api/group/{code}")
     suspend fun enterGroup(
@@ -47,7 +50,18 @@ interface GroupApi {
         @Header(value = "Authorization") accessToken : String,
         @Path(value = "groupId") groupId: Long
     ) : NoteResponseBody<Nothing>
-
+    @POST("api/group/approve/{groupId}/{userId}")
+    suspend fun approveGroup(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId: Long,
+        @Path(value = "userId") userId: Long,
+    ) : NoteResponseBody<Nothing>
+    @DELETE("api/group/reject/{groupId}/{userId}")
+    suspend fun rejectGroup(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId: Long,
+        @Path(value = "userId") userId: Long,
+    ) : NoteResponseBody<Nothing>
 
 
 }

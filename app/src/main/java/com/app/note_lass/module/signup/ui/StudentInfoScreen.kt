@@ -31,7 +31,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
-import com.app.note_lass.core.FilePicker.getFileName
 import com.app.note_lass.ui.component.CheckBox
 import com.app.note_lass.ui.component.DropDownMenu
 import com.app.note_lass.ui.component.RectangleButtonWithStatus

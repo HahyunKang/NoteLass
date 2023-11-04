@@ -12,3 +12,9 @@ data class JoinStudentInfo(
     val classNum : Int,
     val name : String
 )
+
+data class JoinStudentListDto(
+    val applyDtos : List<JoinStudentInfo>,
+    val groupInfo : String,
+    val groupCode : Int
+)
