@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import com.app.note_lass.common.Constants.DATA_STORE_FILE_NAME
+import com.app.note_lass.common.Constants.DATA_STORE_GROUP_FILE_NAME
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import java.io.InputStream
@@ -41,5 +42,38 @@ object ProtoSerializer : Serializer<Token> {
     val Context.tokenDataStore: DataStore<Token> by dataStore(
         fileName = DATA_STORE_FILE_NAME,
         serializer = ProtoSerializer
+    )
+}
+object ProtoSerializer_Group : Serializer<GroupInfo> {
+    override val defaultValue: GroupInfo
+        get() =GroupInfo(
+            groupName = null,
+            teacherName = null
+        )
+
+    override suspend fun readFrom(input: InputStream): GroupInfo {
+        return try {
+            Json.decodeFromString(
+                deserializer = GroupInfo.serializer() ,
+                string = input.readBytes().decodeToString()
+            )
+        } catch (e: SerializationException) {
+            e.printStackTrace()
+            defaultValue
+        }
+    }
+
+    override suspend fun writeTo(t: GroupInfo, output: OutputStream) {
+        output.write(
+            Json.encodeToString(
+                serializer = GroupInfo.serializer(),
+                value = t
+            ).encodeToByteArray()
+        )
+    }
+
+    val Context.tokenDataStore: DataStore<GroupInfo> by dataStore(
+        fileName = DATA_STORE_GROUP_FILE_NAME,
+        serializer = ProtoSerializer_Group
     )
 }

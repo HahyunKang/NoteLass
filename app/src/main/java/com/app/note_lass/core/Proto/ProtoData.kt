@@ -12,3 +12,10 @@ data class Token(
 enum class Role {
     NONE,TEACHER, STUDENT
 }
+
+
+@Serializable
+data class GroupInfo(
+    val groupName : String?,
+    val teacherName : String?
+)

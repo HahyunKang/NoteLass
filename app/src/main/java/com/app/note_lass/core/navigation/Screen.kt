@@ -33,6 +33,9 @@ sealed class GroupScreen(val route : String){
         }
     }
 
+    object CreateNotice : GroupScreen("group/create")
+
+
 }
 
 sealed class NoteScreen(val route : String){

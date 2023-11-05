@@ -10,6 +10,8 @@ import com.app.note_lass.module.group.data.InfoForCreate
 import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.groupList.GroupListDto
 import com.app.note_lass.module.group.data.join.JoinDto
+import com.app.note_lass.module.group.data.join.JoinStudentInfo
+import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
 import com.app.note_lass.module.login.data.LoginDto
 import com.app.note_lass.module.login.data.LoginDtoTemp
@@ -24,19 +26,18 @@ import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
 
-class EnterGroupUseCase @Inject constructor(
+class GetJoinStudentListUseCase @Inject constructor(
     val groupRepository: GroupRepository,
     val dataStore : DataStore<Token>
 ) {
 
-    operator fun invoke(code : Int) : Flow<Resource<JoinDto>> = flow{
+    operator fun invoke(groupId : Long) : Flow<Resource<JoinStudentListDto>> = flow{
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
-            Log.e("token in GroupList",token)
 
             emit(Resource.Loading())
 
-            val groupResponse = groupRepository.enterGroup(token,code)
+            val groupResponse = groupRepository.getStudentJoinList(token,groupId)
 
             emit(
                 Resource.Success(

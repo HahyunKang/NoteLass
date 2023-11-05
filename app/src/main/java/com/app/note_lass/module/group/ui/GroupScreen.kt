@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
@@ -36,6 +37,7 @@ import com.app.note_lass.ui.component.DialogEnterGroupAccept
 import com.app.note_lass.ui.component.DialogGroupCode
 import com.app.note_lass.ui.component.GroupHeader
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.supervisorScope
 
 @Composable
 fun GroupScreen(
@@ -54,8 +56,14 @@ fun GroupScreen(
     val groupRequest = remember{
         mutableStateOf(InfoForCreate(1,1,""))
     }
+
+    val enterCode = remember{
+        mutableStateOf(0)
+    }
     val state = viewModel.groupListState
 
+    val enterCodeState = viewModel.enterGroupState
+    val joinGroupState = viewModel.joinGroupState
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -98,9 +106,11 @@ fun GroupScreen(
                         setShowDialog ={
                                        showFirstDialog.value = it
                         } , getCode = {
-                            it.toIntOrNull()?.let { it1 -> viewModel.enterGroup(it1) }
+                            code ->
+                            enterCode.value = code.toInt()
                         }
                     ) {
+                        viewModel.enterGroup(enterCode.value)
                         showSecondDialog.value = true
                         showFirstDialog.value = false
                     }
@@ -126,8 +136,9 @@ fun GroupScreen(
                                   showSecondDialog.value = it
                    } , groupInfo = viewModel.enterGroupState.value.groupInfo
                ) {
-                   viewModel.getGroupList()
+                   viewModel.joinGroup()
                    showSecondDialog.value = false
+                   viewModel.getGroupList()
                }
             }
 
@@ -155,6 +166,14 @@ fun GroupScreen(
                             teacherName = groupList[it].teacher,
                             subject = groupList[it].subject?.get(0).toString(),
                             onClick ={
+
+                                protoViewModel.updateGroupInfo(
+                                    GroupInfo(
+                                        "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}",
+                                        groupList[it].teacher
+                                    )
+                                )
+
                                 onClickGroup(groupList[it].id.toInt())
                             }
                         )

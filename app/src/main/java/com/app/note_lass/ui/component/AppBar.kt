@@ -137,6 +137,91 @@ fun AppBar(
 
 
 }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppBarForTeacherInGroup(
+    title : String,
+    badgeCount : Int,
+    onGroupClick : () -> Unit  = {}
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(start = 30.dp , end = 48.dp, top = 50.dp)
+            .background(color = Color.Transparent),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Text(
+            title, fontSize = 20.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+            fontWeight = FontWeight(700),
+            color = Color(0xFF26282B)
+        )
+
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.width(384.dp)
+        ){
+
+                Box(modifier = Modifier
+                    .width(76.dp)
+                    .height(40.dp)
+                ){
+                    RectangleEnabledButton(text = "그룹 정보") {
+                        onGroupClick()
+                    }
+                }
+
+
+            Spacer(modifier = Modifier.width(20.dp))
+
+            Box(modifier = Modifier
+                .width(224.dp)
+            ){
+                SearchBar(hintText = "노트, 학습자료")
+            }
+            Spacer(modifier = Modifier.width(20.dp))
+
+            Box(
+                modifier = Modifier.size(36.dp) // 아이콘과 뱃지의 크기를 조절합니다.
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.appbar_bell_small),
+                    contentDescription = null,
+                    tint = Color(0xFF26282B),
+                    modifier = Modifier
+                        .fillMaxSize() // 아이콘이 Box 내부를 가득 채우도록 합니다.
+                )
+
+                Badge(
+                    modifier = Modifier
+                        .offset(16.dp, -5.dp) // 뱃지의 위치를 조절하여 겹치도록 합니다.
+                ) {
+                    Text(
+                        text = badgeCount.toString(),
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                            fontWeight = FontWeight(600),
+                            color = Color(0xFFFFFFFF),
+                            textAlign = TextAlign.Center,
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(20.dp))
+            Icon(painter = painterResource(id = R.drawable.appbar_person_circle_small), contentDescription = null)
+            Spacer(modifier = Modifier.width(20.dp))
+            AppBarDropDown()
+        }
+    }
+
+
+}
 
 
 

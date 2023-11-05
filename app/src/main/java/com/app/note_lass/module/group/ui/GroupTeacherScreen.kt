@@ -1,5 +1,6 @@
 package com.app.note_lass.module.group.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,16 +18,21 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.core.Proto.Role
+import com.app.note_lass.module.group.ui.component.JoinDialog
 import com.app.note_lass.module.group.ui.viewModel.GroupForTeacherViewModel
 import com.app.note_lass.ui.component.AppBar
+import com.app.note_lass.ui.component.AppBarForTeacherInGroup
 import com.app.note_lass.ui.component.IconAndText
 import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.theme.PrimarayBlue
@@ -34,18 +40,49 @@ import com.app.note_lass.ui.theme.PrimaryPurple
 
 @Composable
 fun GroupTeacherScreen(
+    onTouchCreateNotice : () -> Unit,
     viewModel : GroupForTeacherViewModel = hiltViewModel()
 ){
+    val isShowDialog = remember{
+        mutableStateOf(false)
+    }
+    val context=  LocalContext.current
+
+    val joinStudentListState = viewModel.joinStudentListState
+
+    if(isShowDialog.value && joinStudentListState.value.isSuccess){
+        JoinDialog(
+            setShowDialog = {
+                isShowDialog.value = it
+            },
+            groupInfo = joinStudentListState.value.groupInfo,
+            groupCode = joinStudentListState.value.groupCode,
+            joinStudentList = joinStudentListState.value.joinStudentList,
+            onClickDecline = {
+                  viewModel.rejectGroup(it.toLong())
+            },
+            onClickAccept = {
+                viewModel.approveGroup(
+                    userId = it.toLong(),
+                    isToast = {
+                        Toast.makeText(context,"승인이 완료되었습니다",Toast.LENGTH_SHORT).show()
+                    }
+                )
+
+            }
+        )
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            AppBar(
-                title = "그룹",
+            AppBarForTeacherInGroup(
+                title = "그룹 정보",
                 badgeCount = 12,
-                role = Role.STUDENT,
-                isGroupButton = false,
                 onGroupClick ={
+                    isShowDialog.value = true
+                    viewModel.getJoinStudentList()
                 }
             )
 
@@ -57,6 +94,8 @@ fun GroupTeacherScreen(
         content = {
 
             val studentListState = viewModel.studentListState
+
+
             Row(
                 modifier = Modifier
                     .padding(
@@ -85,7 +124,7 @@ fun GroupTeacherScreen(
                             .padding(horizontal = 24.dp)
                     ) {
 
-                        SectionHeader(title = "공지/과제")
+                        SectionHeader(title = "공지/과제", onTouchIcon = onTouchCreateNotice )
 
 
                     }
@@ -175,12 +214,12 @@ fun GroupTeacherScreen(
                     ) {
 
                         if (studentListState.value.isSuccess) {
-                            studentListState.value.studentList.forEachIndexed() { index, studentName ->
+                            studentListState.value.studentList.forEachIndexed() { index, student->
                                 val id = index + 1
                                 IconAndText(
                                     icon = R.drawable.group_person_small,
                                     iconColor = PrimarayBlue,
-                                    text = "$id  $studentName"
+                                    text = "$id  ${student.name}"
                                 )
                                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -201,5 +240,5 @@ fun GroupTeacherScreen(
 @Composable
 @Preview
 fun GroupTeacherPreview(){
-    GroupTeacherScreen()
+  //  GroupTeacherScreen()
 }

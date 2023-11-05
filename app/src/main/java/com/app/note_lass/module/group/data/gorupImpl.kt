@@ -3,6 +3,9 @@ package com.app.note_lass.module.group.data
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.groupList.GroupListDto
+import com.app.note_lass.module.group.data.join.JoinDto
+import com.app.note_lass.module.group.data.join.JoinStudentInfo
+import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
 import com.app.note_lass.module.group.domain.repository.GroupRepository
 import com.app.note_lass.module.login.domain.repository.LoginRepository
@@ -26,8 +29,35 @@ class GroupImpl @Inject constructor(
         return groupApi.getStudentList(accessToken,id)
     }
 
-    override suspend fun enterGroup(accessToken: String, code: Int): NoteResponseBody<String> {
+    override suspend fun enterGroup(accessToken: String, code: Int): NoteResponseBody<JoinDto> {
         return groupApi.enterGroup(accessToken,code)
+    }
+
+    override suspend fun joinGroup(accessToken: String, groupId: Long): NoteResponseBody<Nothing> {
+        return groupApi.joinGroup(accessToken, groupId)
+    }
+
+    override suspend fun approveGroup(
+        accessToken: String,
+        groupId: Long,
+        userId: Long
+    ): NoteResponseBody<Nothing> {
+        return groupApi.approveGroup(accessToken,groupId,userId)
+    }
+
+    override suspend fun rejectGroup(
+        accessToken: String,
+        groupId: Long,
+        userId: Long
+    ): NoteResponseBody<Nothing> {
+        return groupApi.rejectGroup(accessToken,groupId,userId)
+    }
+
+    override suspend fun getStudentJoinList(
+        accessToken: String,
+        groupId: Long
+    ): NoteResponseBody<JoinStudentListDto> {
+        return  groupApi.getStudentJoinList(accessToken,groupId)
     }
 
 }
