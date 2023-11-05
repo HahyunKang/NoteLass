@@ -40,16 +40,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
+import com.app.note_lass.module.group.ui.viewModel.UploadViewModel
 import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.theme.PrimaryBlack
 
 @Composable
 fun AssignmentUploadScreen(
-    protoViewModel : ProtoViewModel = hiltViewModel()
+    protoViewModel : ProtoViewModel = hiltViewModel(),
+    uploadViewModel: UploadViewModel = hiltViewModel()
 ){
 
 
-    val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("",""))
+    val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",0))
 
     val titleList = listOf("공지","과제","강의자료")
 
@@ -95,7 +97,11 @@ fun AssignmentUploadScreen(
                 Box(modifier = Modifier.weight(5f)) {
                     when (selectedTabIndex) {
                         0 -> {
-                            CreateNoticeScreen()
+                            CreateNoticeScreen(
+                                createNotice = {
+                                    uploadViewModel.createNotice(groupInfo.value.groupId!!,it)
+                                }
+                            )
                         }
 
                         1 -> {

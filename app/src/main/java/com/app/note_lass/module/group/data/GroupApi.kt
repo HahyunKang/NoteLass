@@ -8,6 +8,7 @@ import com.app.note_lass.module.group.data.join.JoinDto
 import com.app.note_lass.module.group.data.join.JoinStudentInfo
 import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
+import com.app.note_lass.module.group.data.upload.NoticeContents
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -63,5 +64,12 @@ interface GroupApi {
         @Path(value = "userId") userId: Long,
     ) : NoteResponseBody<Nothing>
 
+
+    @POST("api/notice/{groupId}")
+    suspend fun createNotice(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId: Long,
+        @Body noticeContents: NoticeContents
+    ) : NoteResponseBody<Nothing>
 
 }

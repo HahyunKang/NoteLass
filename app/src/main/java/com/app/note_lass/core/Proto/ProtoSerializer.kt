@@ -48,7 +48,8 @@ object ProtoSerializer_Group : Serializer<GroupInfo> {
     override val defaultValue: GroupInfo
         get() =GroupInfo(
             groupName = null,
-            teacherName = null
+            teacherName = null,
+            groupId = null
         )
 
     override suspend fun readFrom(input: InputStream): GroupInfo {

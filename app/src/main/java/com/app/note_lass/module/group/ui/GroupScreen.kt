@@ -170,7 +170,8 @@ fun GroupScreen(
                                 protoViewModel.updateGroupInfo(
                                     GroupInfo(
                                         "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}",
-                                        groupList[it].teacher
+                                        groupList[it].teacher,
+                                        groupList[it].id
                                     )
                                 )
 

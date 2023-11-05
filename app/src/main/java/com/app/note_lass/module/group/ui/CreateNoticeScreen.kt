@@ -35,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.core.FilePicker.FileManager
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
+import com.app.note_lass.module.group.data.upload.NoticeContents
 import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.ui.component.FileUpload
 import com.app.note_lass.ui.component.RectangleEnabledButton
@@ -48,9 +49,8 @@ import com.app.note_lass.ui.theme.PrimaryGray
 
 @Composable
 fun CreateNoticeScreen(
+    createNotice : (NoticeContents) -> Unit
 ){
-
-
 
     val noticeTitle = remember{
         mutableStateOf("")
@@ -291,7 +291,12 @@ fun CreateNoticeScreen(
 
             Box(modifier = Modifier.size(73.dp,40.dp)){
                 RectangleEnabledButton(text = "생성하기",
-                    onClick = { TODO() })
+                    onClick = {
+                        if(noticeTitle.value.isNotEmpty() && noticeContent.value.isNotEmpty()){
+                            createNotice(NoticeContents(noticeTitle.value,noticeContent.value))
+                        }
+
+                    })
             }
         }
 

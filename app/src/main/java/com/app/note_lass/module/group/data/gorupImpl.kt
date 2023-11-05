@@ -7,6 +7,7 @@ import com.app.note_lass.module.group.data.join.JoinDto
 import com.app.note_lass.module.group.data.join.JoinStudentInfo
 import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
+import com.app.note_lass.module.group.data.upload.NoticeContents
 import com.app.note_lass.module.group.domain.repository.GroupRepository
 import com.app.note_lass.module.login.domain.repository.LoginRepository
 import javax.inject.Inject
@@ -58,6 +59,14 @@ class GroupImpl @Inject constructor(
         groupId: Long
     ): NoteResponseBody<JoinStudentListDto> {
         return  groupApi.getStudentJoinList(accessToken,groupId)
+    }
+
+    override suspend fun createNotice(
+        accessToken: String,
+        groupId: Long,
+        noticeContents: NoticeContents
+    ): NoteResponseBody<Nothing> {
+        return  groupApi.createNotice(accessToken, groupId,noticeContents)
     }
 
 }

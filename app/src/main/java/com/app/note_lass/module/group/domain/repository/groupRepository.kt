@@ -9,6 +9,7 @@ import com.app.note_lass.module.group.data.join.JoinDto
 import com.app.note_lass.module.group.data.join.JoinStudentInfo
 import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
+import com.app.note_lass.module.group.data.upload.NoticeContents
 import com.app.note_lass.module.login.data.LoginDto
 import com.app.note_lass.module.login.data.LoginDtoTemp
 import com.app.note_lass.module.login.data.LoginRequest
@@ -26,4 +27,6 @@ interface GroupRepository {
     suspend fun approveGroup(accessToken: String, groupId: Long,userId :Long): NoteResponseBody<Nothing>
     suspend fun rejectGroup(accessToken: String, groupId: Long,userId :Long): NoteResponseBody<Nothing>
     suspend fun getStudentJoinList(accessToken: String, groupId: Long) : NoteResponseBody<JoinStudentListDto>
+    suspend fun createNotice(accessToken: String, groupId: Long,noticeContents: NoticeContents): NoteResponseBody<Nothing>
+
 }
