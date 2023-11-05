@@ -89,7 +89,7 @@ fun TabViewForTeacher(
                     indicator = {},
                     divider = {},
                     modifier = Modifier
-                        .width(150.dp)
+                        .width(210.dp)
 
                 ) {
                     titleList.forEachIndexed { index, item ->

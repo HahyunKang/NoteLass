@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,8 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.core.FilePicker.FileManager
+import com.app.note_lass.core.Proto.GroupInfo
+import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.ui.component.FileUpload
 import com.app.note_lass.ui.component.RectangleEnabledButton
@@ -37,10 +42,15 @@ import com.app.note_lass.ui.component.RectangleEnabledWithBorderButton
 import com.app.note_lass.ui.component.RectangleUnableButton
 import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
+import com.app.note_lass.ui.theme.PrimarayBlue
+import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
 
 @Composable
-fun CreateNoticeScreen(){
+fun CreateNoticeScreen(
+){
+
+
 
     val noticeTitle = remember{
         mutableStateOf("")
@@ -109,7 +119,9 @@ fun CreateNoticeScreen(){
     Column(modifier= Modifier.fillMaxSize()) {
 
       Row(
-          modifier = Modifier.fillMaxWidth(),
+          modifier = Modifier
+              .fillMaxWidth()
+              .weight(1f),
           verticalAlignment = Alignment.CenterVertically
       ) {
           Text(text = "공지 제목")
@@ -141,7 +153,9 @@ fun CreateNoticeScreen(){
       Spacer(modifier = Modifier.height(15.dp))
 
       Column(
-          modifier = Modifier.fillMaxWidth(),
+          modifier = Modifier
+              .fillMaxWidth()
+              .weight(3f),
           verticalArrangement = Arrangement.Center
       ) {
           Text(text = "공지 설명")
@@ -174,7 +188,9 @@ fun CreateNoticeScreen(){
       Spacer(modifier = Modifier.height(18.dp))
 
       Row(
-          modifier = Modifier.fillMaxWidth(),
+          modifier = Modifier
+              .fillMaxWidth()
+              .weight(1f),
           verticalAlignment = Alignment.CenterVertically
       ) {
           Text(text = "파일 첨부")
@@ -211,7 +227,7 @@ fun CreateNoticeScreen(){
           Box(
               modifier = Modifier
                   .fillMaxWidth()
-                  .height(36.dp)
+                  .weight(1f)
           ) {
 
               FileUpload(
@@ -241,7 +257,7 @@ fun CreateNoticeScreen(){
           Box(
               modifier = Modifier
                   .fillMaxWidth()
-                  .height(36.dp)
+                  .weight(1f)
           ) {
 
               FileUpload(
@@ -265,7 +281,8 @@ fun CreateNoticeScreen(){
 
         Row(modifier = Modifier
             .align(Alignment.End)
-            .padding(24.dp)){
+            .weight(2f)
+        ){
             Box(modifier = Modifier.size(49.dp,40.dp)){
                 RectangleUnableButton(text = "취소",
                     onClick = { TODO() })
@@ -281,5 +298,66 @@ fun CreateNoticeScreen(){
     }
   }
 
+
+@Composable
+fun NoticeInfo(
+    groupInfo: GroupInfo
+){
+
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        Text(text = "작성자",
+            style =NoteLassTheme.Typography.sixteem_600_pretendard,
+            color = PrimaryBlack,
+        )
+
+        groupInfo.teacherName?.let {
+            Text(text = it + "선생님",
+                style =NoteLassTheme.Typography.sixteem_600_pretendard,
+                color = PrimarayBlue,
+                textDecoration = TextDecoration.Underline
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(text = "게시일",
+            style =NoteLassTheme.Typography.sixteem_600_pretendard,
+            color = PrimaryBlack
+        )
+
+        Text(text =  "2023년 11월 5일",
+            style =NoteLassTheme.Typography.sixteem_600_pretendard,
+            color = PrimarayBlue,
+            textDecoration = TextDecoration.Underline
+
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(text = "할당된 그룹",
+            style =NoteLassTheme.Typography.sixteem_600_pretendard,
+            color = PrimaryBlack
+        )
+
+        groupInfo.groupName?.let {
+            Text(text = it,
+                style =NoteLassTheme.Typography.sixteem_600_pretendard,
+                color = PrimarayBlue,
+                textDecoration = TextDecoration.Underline
+
+            )
+        }
+
+
+
+    }
+
+
+
+}
 
 

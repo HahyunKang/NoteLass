@@ -40,6 +40,7 @@ import com.app.note_lass.ui.theme.PrimaryPurple
 
 @Composable
 fun GroupTeacherScreen(
+    onTouchCreateNotice : () -> Unit,
     viewModel : GroupForTeacherViewModel = hiltViewModel()
 ){
     val isShowDialog = remember{
@@ -123,7 +124,7 @@ fun GroupTeacherScreen(
                             .padding(horizontal = 24.dp)
                     ) {
 
-                        SectionHeader(title = "공지/과제")
+                        SectionHeader(title = "공지/과제", onTouchIcon = onTouchCreateNotice )
 
 
                     }
@@ -239,5 +240,5 @@ fun GroupTeacherScreen(
 @Composable
 @Preview
 fun GroupTeacherPreview(){
-    GroupTeacherScreen()
+  //  GroupTeacherScreen()
 }

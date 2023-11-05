@@ -14,6 +14,8 @@ class ProtoViewModel @Inject constructor(
 
     val token = protoRepository.tokens
 
+    val groupInfo = protoRepository.groupInfo
+
     fun updateAccessToken(accessToken : String) {
         viewModelScope.launch {
             protoRepository.updateAccessToken(accessToken)
@@ -31,6 +33,20 @@ class ProtoViewModel @Inject constructor(
     fun resetToken(){
         viewModelScope.launch {
             protoRepository.resetToken()
+
+        }
+    }
+
+    fun updateGroupInfo(groupInfo: GroupInfo){
+        viewModelScope.launch {
+            protoRepository.updateGroupInfo(groupInfo)
+            groupInfo.groupName?.let { Log.e("GroupInfo", it) }
+        }
+    }
+
+    fun resetGroupInfo(){
+        viewModelScope.launch {
+            protoRepository.resetGroupInfo()
 
         }
     }

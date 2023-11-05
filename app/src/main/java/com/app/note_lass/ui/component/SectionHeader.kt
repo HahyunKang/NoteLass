@@ -1,5 +1,6 @@
 package com.app.note_lass.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +24,8 @@ import com.app.note_lass.ui.theme.PrimaryBlack
 
 @Composable
 fun SectionHeader(
-    title : String
+    title : String,
+    onTouchIcon : ()-> Unit = {}
 )
 {
     Row(
@@ -41,7 +43,10 @@ fun SectionHeader(
         )
 
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable {
+                onTouchIcon()
+            }
         ){
             Text("전체보기",
                 style = TextStyle(

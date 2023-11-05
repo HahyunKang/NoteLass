@@ -21,11 +21,17 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController) {
          })
         }
 
+        composable(GroupScreen.CreateNotice.route) {
+            AssignmentUploadScreen()
+        }
+
         composable(
             route = GroupScreen.GroupForTeacher.route,
             arguments = listOf(navArgument(name = "groupId") { type = NavType.IntType }
             ) ) {
-            GroupTeacherScreen()
+            GroupTeacherScreen(onTouchCreateNotice = {
+                navController.navigate(GroupScreen.CreateNotice.route)
+            } )
         }
     }
 }

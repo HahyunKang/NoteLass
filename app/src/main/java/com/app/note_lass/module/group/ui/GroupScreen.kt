@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
@@ -165,6 +166,14 @@ fun GroupScreen(
                             teacherName = groupList[it].teacher,
                             subject = groupList[it].subject?.get(0).toString(),
                             onClick ={
+
+                                protoViewModel.updateGroupInfo(
+                                    GroupInfo(
+                                        "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}",
+                                        groupList[it].teacher
+                                    )
+                                )
+
                                 onClickGroup(groupList[it].id.toInt())
                             }
                         )

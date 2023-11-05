@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,11 +30,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.note_lass.R
+import com.app.note_lass.core.Proto.GroupInfo
+import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.ui.component.SectionHeader
+import com.app.note_lass.ui.theme.PrimaryBlack
 
 @Composable
-fun AssignmentUploadScreen(){
+fun AssignmentUploadScreen(
+    protoViewModel : ProtoViewModel = hiltViewModel()
+){
+
+
+    val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("",""))
 
     val titleList = listOf("공지","과제","강의자료")
 
@@ -92,6 +109,9 @@ fun AssignmentUploadScreen(){
                 }
             }
         }
+
+        Spacer(modifier = Modifier.width(20.dp))
+
         Column(
             Modifier
                 .weight(1f)
@@ -105,9 +125,22 @@ fun AssignmentUploadScreen(){
                     color = Color(0xFFFFFFFF)
                 )
                 .fillMaxHeight()
-                .padding(horizontal = 24.dp)) {
+                .padding(horizontal = 24.dp, vertical = 15.dp)) {
 
-            SectionHeader(title = "과제 설정")
+            Text("공지/과제/강의 자료 정보",
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                    fontWeight = FontWeight(700),
+                    color = PrimaryBlack,
+                )
+            )
+
+            when(selectedTabIndex) {
+                0 -> {
+                    NoticeInfo(groupInfo.value)
+                }
+        }
 
 
 
