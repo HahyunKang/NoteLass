@@ -41,7 +41,8 @@ import kotlinx.coroutines.supervisorScope
 
 @Composable
 fun GroupScreen(
-     onClickGroup : (Int) -> Unit,
+     onClickTeacherGroup : (Int) -> Unit,
+     onClickStudentGroup : (Int) -> Unit,
      viewModel: GroupViewModel = hiltViewModel(),
      protoViewModel : ProtoViewModel = hiltViewModel()
 ){
@@ -175,7 +176,8 @@ fun GroupScreen(
                                     )
                                 )
 
-                                onClickGroup(groupList[it].id.toInt())
+                                if(role.value.role == Role.TEACHER) onClickTeacherGroup(groupList[it].id.toInt())
+                                else onClickStudentGroup(groupList[it].id.toInt())
                             }
                         )
                     Log.e("groupList",groupList[it].id.toString())

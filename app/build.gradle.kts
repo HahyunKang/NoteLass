@@ -112,4 +112,7 @@ dependencies {
     // if lists should be saved in proto datastore
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+
+    implementation("com.squareup.okhttp3:logging-interceptor:4.5.0")
+
 }

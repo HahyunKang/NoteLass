@@ -1,5 +1,6 @@
 package com.app.note_lass.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,15 +20,21 @@ import com.app.note_lass.ui.theme.NoteLassTheme
 fun IconAndText(
     icon : Int,
     iconColor : Color,
-    text : String
+    text : String,
+    textColor : Color = Color.Black,
+    onClick : () -> Unit = {}
 ){
 
-    Row(modifier = Modifier.wrapContentWidth(),
+    Row(modifier = Modifier.wrapContentWidth()
+        .clickable {
+            onClick()
+        },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start) {
         Icon(painter = painterResource(id = icon),tint= iconColor, contentDescription = null)
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = text,
-            style = NoteLassTheme.Typography.fourteen_600_pretendard)
+            style = NoteLassTheme.Typography.fourteen_600_pretendard,
+            color = textColor)
     }
 }

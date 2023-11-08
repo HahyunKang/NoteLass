@@ -9,6 +9,7 @@ import androidx.navigation.navigation
 import com.app.note_lass.module.group.ui.AssignmentGradeForAllScreen
 import com.app.note_lass.module.group.ui.AssignmentUploadScreen
 import com.app.note_lass.module.group.ui.GroupScreen
+import com.app.note_lass.module.group.ui.GroupStudentScreen
 import com.app.note_lass.module.group.ui.GroupTeacherScreen
 
 fun NavGraphBuilder.GroupNavGraph(navController: NavController) {
@@ -16,8 +17,12 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController) {
 
     navigation(startDestination = GroupScreen.Home.route, route = GROUP_ROUTE) {
         composable(GroupScreen.Home.route) {
-         GroupScreen(onClickGroup = {
+         GroupScreen(
+             onClickTeacherGroup = {
              navController.navigate(GroupScreen.GroupForTeacher.passQuery(it))
+         },
+             onClickStudentGroup = {
+             navController.navigate(GroupScreen.GroupForStudent.passQuery(it))
          })
         }
 
@@ -32,6 +37,13 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController) {
             GroupTeacherScreen(onTouchCreateNotice = {
                 navController.navigate(GroupScreen.CreateNotice.route)
             } )
+        }
+
+        composable(
+            route = GroupScreen.GroupForStudent.route,
+            arguments = listOf(navArgument(name = "groupId") { type = NavType.IntType }
+            ) ) {
+            GroupStudentScreen()
         }
     }
 }

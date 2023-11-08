@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.Resource
-import com.app.note_lass.module.group.data.upload.NoticeContents
+import com.app.note_lass.module.group.data.upload.notice.NoticeContents
 import com.app.note_lass.module.group.data.upload.UploadState
 import com.app.note_lass.module.group.domain.repository.CreateNoticeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

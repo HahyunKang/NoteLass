@@ -2,6 +2,7 @@ package com.app.note_lass.ui.component
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -51,7 +52,7 @@ fun AppBar(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(start = 30.dp , end = 48.dp, top = 50.dp)
+            .padding(start = 30.dp, end = 48.dp, top = 50.dp)
             .background(color = Color.Transparent),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -148,7 +149,7 @@ fun AppBarForTeacherInGroup(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(start = 30.dp , end = 48.dp, top = 50.dp)
+            .padding(start = 30.dp, end = 48.dp, top = 50.dp)
             .background(color = Color.Transparent),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -222,6 +223,43 @@ fun AppBarForTeacherInGroup(
 
 
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppBarForNotice(
+    title : String,
+    onClickBack : () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(start = 30.dp, top = 50.dp)
+            .background(color = Color.Transparent),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Icon(
+            painter = painterResource(id = R.drawable.back_icon_small),
+            tint = Color.Black,
+            contentDescription = "back_icon",
+            modifier = Modifier.clickable {
+                onClickBack()
+            }
+        )
+
+        Text(
+            title,
+            fontSize = 20.sp,
+            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+            fontWeight = FontWeight(700),
+            color = Color(0xFF26282B)
+        )
+
+
+        }
+    }
+
+
 
 
 

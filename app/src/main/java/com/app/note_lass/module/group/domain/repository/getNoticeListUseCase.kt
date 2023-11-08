@@ -5,6 +5,9 @@ import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.group.data.upload.notice.NoticeContents
+import com.app.note_lass.module.group.data.upload.notice.NoticeListDto
+import com.app.note_lass.module.group.data.upload.notice.NoticePreview
+import com.app.note_lass.module.group.data.upload.notice.toPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -12,22 +15,25 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class CreateNoticeUseCase @Inject constructor(
+class GetNoticeListUseCase @Inject constructor(
     val groupRepository: GroupRepository,
     val dataStore : DataStore<Token>
 ) {
 
-    operator fun invoke(groupId : Long,noticeContents: NoticeContents) : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
+    operator fun invoke(groupId : Long) : Flow<Resource<List<NoticePreview>>> = flow{
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
 
             emit(Resource.Loading())
 
-            val groupResponse = groupRepository.createNotice(token,groupId,noticeContents)
-
+            val groupResponse = groupRepository.getNoticeList(token,groupId)
+            val noticeList = groupResponse.result!!.noticeList
+            val noticePreviewList = noticeList.map { notice ->
+                notice.toPreview()
+            }
             emit(
                 Resource.Success(
-                    data = groupResponse,
+                    data = noticePreviewList,
                     code = groupResponse.code,
                     message = groupResponse.message
             )
