@@ -8,7 +8,8 @@ import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
 import com.app.note_lass.module.group.data.upload.notice.Notice
 import com.app.note_lass.module.group.data.upload.notice.NoticeContents
-import com.app.note_lass.module.group.data.upload.notice.NoticeListDto
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 interface GroupRepository {
     suspend fun createGroup(
@@ -23,8 +24,11 @@ interface GroupRepository {
     suspend fun approveGroup(accessToken: String, groupId: Long,userId :Long): NoteResponseBody<Nothing>
     suspend fun rejectGroup(accessToken: String, groupId: Long,userId :Long): NoteResponseBody<Nothing>
     suspend fun getStudentJoinList(accessToken: String, groupId: Long) : NoteResponseBody<JoinStudentListDto>
-    suspend fun createNotice(accessToken: String, groupId: Long,noticeContents: NoticeContents): NoteResponseBody<Nothing>
-    suspend fun getNoticeList(accessToken: String, groupId: Long) : NoteResponseBody<NoticeListDto>
+    suspend fun createNotice(
+        accessToken: String, groupId: Long,
+        noticeContents: RequestBody,
+        fileList: MultipartBody.Part?): NoteResponseBody<Nothing>
+    suspend fun getNoticeList(accessToken: String, groupId: Long) : NoteResponseBody<List<Notice>>
     suspend fun getNoticeDetail(accessToken: String, noticeId: Long) : NoteResponseBody<Notice>
 
 }

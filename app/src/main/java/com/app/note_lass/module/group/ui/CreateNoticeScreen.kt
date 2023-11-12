@@ -1,7 +1,10 @@
 package com.app.note_lass.module.group.ui
 
+import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
+import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,10 +46,19 @@ import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okio.BufferedSink
+import okio.source
+import retrofit2.http.Multipart
+import java.io.File
 
 @Composable
 fun CreateNoticeScreen(
-    createNotice : (NoticeContents) -> Unit
+    createNotice : (String,String,MultipartBody.Part?) -> Unit
 ){
 
     val noticeTitle = remember{
@@ -62,10 +75,43 @@ fun CreateNoticeScreen(
         mutableStateOf<Uri?>(null)
     }
 
+    val requestFileList  = remember {
+        mutableStateOf<MultipartBody.Part?>(null)
+    }
+
+    @SuppressLint("Range")
+    fun Uri.asMultipart(name: String, contentResolver: ContentResolver): MultipartBody.Part? {
+        return contentResolver.query(this, null, null, null, null)?.let {
+            if (it.moveToNext()) {
+                val displayName = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                val requestBody = object : RequestBody() {
+                    override fun contentType(): MediaType? {
+                        return contentResolver.getType(this@asMultipart)?.toMediaType()
+                    }
+
+                    override fun writeTo(sink: BufferedSink) {
+                        sink.writeAll(contentResolver.openInputStream(this@asMultipart)?.source()!!)
+                    }
+                }
+                it.close()
+                MultipartBody.Part.createFormData(name, displayName, requestBody)
+            } else {
+                it.close()
+                null
+            }
+        }
+    }
+    val context= LocalContext.current
+
     val pdfLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri :Uri? ->
             pdfUri = uri
+            val file = pdfUri?.asMultipart("file",context.contentResolver)
+         //   Log.e("file",pdfUri)
+
+            requestFileList.value= file
+
         }
     )
 
@@ -107,7 +153,7 @@ fun CreateNoticeScreen(
 //            0L
 //        }
 //    }
-    val context = LocalContext.current
+  //  val context = LocalContext.current
     var fileName by remember { mutableStateOf<String?>(null) }
     var fileSize by remember { mutableStateOf<Long?>(null) }
     val fileManager  = FileManager()
@@ -289,7 +335,7 @@ fun CreateNoticeScreen(
                 RectangleEnabledButton(text = "생성하기",
                     onClick = {
                         if(noticeTitle.value.isNotEmpty() && noticeContent.value.isNotEmpty()){
-                            createNotice(NoticeContents(noticeTitle.value,noticeContent.value))
+                            createNotice(noticeTitle.value,noticeContent.value,requestFileList.value)
                         }
 
                     })

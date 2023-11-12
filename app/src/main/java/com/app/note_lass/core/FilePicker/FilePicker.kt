@@ -9,9 +9,6 @@ import java.io.IOException
 class FileManager() {
 
 
-
-
-
     @SuppressLint("Range")
     fun getFileName(context: Context, uri: Uri): String? {
         val cursor = context.contentResolver.query(uri, null, null, null, null)

@@ -37,7 +37,7 @@ sealed class GroupScreen(val route : String){
             return "group/student/${groupId}"
         }
     }
-    object CreateNotice : GroupScreen("group/create")
+
 
 
 }
@@ -48,4 +48,13 @@ sealed class NoteScreen(val route : String){
 
 sealed class SettingScreen(val route : String){
     object Home : SettingScreen("setting/home")
+}
+
+sealed class UploadScreen(val route:String){
+    object CreateNotice : GroupScreen("upload/create")
+    object NoticeDetail : UploadScreen("upload/detail/notice"){
+        fun passQuery(groupId : Int) : String {
+            return "upload/detail/notice/${groupId}"
+        }
+    }
 }

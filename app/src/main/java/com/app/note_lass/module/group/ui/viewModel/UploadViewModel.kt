@@ -5,12 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.Resource
-import com.app.note_lass.module.group.data.upload.notice.NoticeContents
 import com.app.note_lass.module.group.data.upload.UploadState
 import com.app.note_lass.module.group.domain.repository.CreateNoticeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,9 +21,9 @@ class UploadViewModel @Inject constructor(
     private  val _uploadState = mutableStateOf(UploadState())
     val uploadState = _uploadState
 
-    fun createNotice(groupId : Long,noticeContents: NoticeContents){
+    fun createNotice(groupId: Long, title:String, content:String, fileList: MultipartBody.Part?){
 
-        createNoticeUseCase(groupId,noticeContents).onEach {
+        createNoticeUseCase(groupId,title,content,fileList).onEach {
         result ->
             when(result) {
 

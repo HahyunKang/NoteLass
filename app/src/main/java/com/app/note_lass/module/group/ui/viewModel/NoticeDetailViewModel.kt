@@ -1,6 +1,7 @@
 package com.app.note_lass.module.group.ui.viewModel
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.Resource
@@ -13,11 +14,21 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NoticeDetailViewModel @Inject constructor(
-   val noticeDetailUseCase: GetNoticeDetailUseCase
+   val noticeDetailUseCase: GetNoticeDetailUseCase,
+   savedStateHandle: SavedStateHandle
 ) : ViewModel(){
 
     private var _noticeDetailState = mutableStateOf(NoticeDetailState())
     val noticeDetailState = _noticeDetailState
+
+    init {
+        val noticeId= savedStateHandle.get<Long>("noticeId")
+        noticeId?.let {
+            getNoticeDetail(noticeId)
+        }
+    }
+
+
     fun getNoticeDetail(noticeId : Long){
         noticeDetailUseCase(noticeId).onEach {
 
@@ -41,7 +52,6 @@ class NoticeDetailViewModel @Inject constructor(
                    isError = true
                 )
             }
-
 
             }
 

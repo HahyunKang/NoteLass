@@ -7,8 +7,9 @@ import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
 import com.app.note_lass.module.group.data.upload.notice.Notice
 import com.app.note_lass.module.group.data.upload.notice.NoticeContents
-import com.app.note_lass.module.group.data.upload.notice.NoticeListDto
 import com.app.note_lass.module.group.domain.repository.GroupRepository
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class GroupImpl @Inject constructor(
@@ -63,15 +64,15 @@ class GroupImpl @Inject constructor(
     override suspend fun createNotice(
         accessToken: String,
         groupId: Long,
-        noticeContents: NoticeContents
+        noticeContents: RequestBody,
+        fileList: MultipartBody.Part?
     ): NoteResponseBody<Nothing> {
-        return  groupApi.createNotice(accessToken, groupId,noticeContents)
+        return groupApi.createNotice(accessToken,groupId,noticeContents,fileList)
     }
-
     override suspend fun getNoticeList(
         accessToken: String,
         groupId: Long
-    ): NoteResponseBody<NoticeListDto> {
+    ): NoteResponseBody<List<Notice>> {
         return groupApi.getNoticeList(accessToken, groupId)
     }
 

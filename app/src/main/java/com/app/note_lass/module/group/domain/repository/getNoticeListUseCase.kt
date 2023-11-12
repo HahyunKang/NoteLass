@@ -27,7 +27,7 @@ class GetNoticeListUseCase @Inject constructor(
             emit(Resource.Loading())
 
             val groupResponse = groupRepository.getNoticeList(token,groupId)
-            val noticeList = groupResponse.result!!.noticeList
+            val noticeList = groupResponse.result!!
             val noticePreviewList = noticeList.map { notice ->
                 notice.toPreview()
             }

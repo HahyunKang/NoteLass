@@ -10,10 +10,13 @@ import com.app.note_lass.module.group.data.studentList.StudentListState
 import com.app.note_lass.module.group.data.upload.notice.NoticeListDto
 import com.app.note_lass.module.group.data.upload.notice.NoticeListState
 import com.app.note_lass.module.group.domain.repository.GetNoticeListUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
+
+@HiltViewModel
 class GroupForStudentViewModel @Inject constructor(
    val getNoticeListUseCase: GetNoticeListUseCase,
     savedStateHandle: SavedStateHandle
