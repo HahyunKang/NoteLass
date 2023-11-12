@@ -2,13 +2,14 @@ package com.app.note_lass.module.group.data
 
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.module.group.data.groupList.Group
-import com.app.note_lass.module.group.data.groupList.GroupListDto
 import com.app.note_lass.module.group.data.join.JoinDto
-import com.app.note_lass.module.group.data.join.JoinStudentInfo
 import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
+import com.app.note_lass.module.group.data.upload.notice.Notice
+import com.app.note_lass.module.group.data.upload.notice.NoticeContents
 import com.app.note_lass.module.group.domain.repository.GroupRepository
-import com.app.note_lass.module.login.domain.repository.LoginRepository
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class GroupImpl @Inject constructor(
@@ -58,6 +59,28 @@ class GroupImpl @Inject constructor(
         groupId: Long
     ): NoteResponseBody<JoinStudentListDto> {
         return  groupApi.getStudentJoinList(accessToken,groupId)
+    }
+
+    override suspend fun createNotice(
+        accessToken: String,
+        groupId: Long,
+        noticeContents: RequestBody,
+        fileList: MultipartBody.Part?
+    ): NoteResponseBody<Nothing> {
+        return groupApi.createNotice(accessToken,groupId,noticeContents,fileList)
+    }
+    override suspend fun getNoticeList(
+        accessToken: String,
+        groupId: Long
+    ): NoteResponseBody<List<Notice>> {
+        return groupApi.getNoticeList(accessToken, groupId)
+    }
+
+    override suspend fun getNoticeDetail(
+        accessToken: String,
+        noticeId: Long
+    ): NoteResponseBody<Notice> {
+        return groupApi.getNoticeDetail(accessToken, noticeId)
     }
 
 }

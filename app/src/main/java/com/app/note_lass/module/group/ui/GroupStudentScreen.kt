@@ -15,15 +15,23 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.module.group.ui.component.AssignmentDoneStatus
 import com.app.note_lass.module.group.ui.component.AssignmentNotSubmit
+import com.app.note_lass.module.group.ui.viewModel.GroupForStudentViewModel
+import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryBlack
+import okhttp3.internal.notifyAll
 
 
 @Composable
-fun GroupStudentScreen(){
+fun GroupStudentScreen(
+    onTouchNoticeClick : (Long) -> Unit,
+    studentViewModel: GroupForStudentViewModel = hiltViewModel()
+){
 
+    val noticeState= studentViewModel.studentNoticeState
     Row(
         modifier = Modifier
             .padding
@@ -52,6 +60,11 @@ fun GroupStudentScreen(){
                     )
                     .padding(horizontal = 24.dp)
                 ){
+                    SectionHeader(title = "공지")
+                    NoticePreviewScreenForStudent(
+                        noticeList =noticeState.value.noticeList,
+                        onClick=onTouchNoticeClick
+                    )
 
                 }
                 Spacer(modifier = Modifier.height(24.dp))
@@ -148,5 +161,5 @@ fun GroupStudentScreen(){
 @Preview
 @Composable
 fun PreviewGroupStudentScreen(){
-    GroupStudentScreen()
+   // GroupStudentScreen()
 }

@@ -41,7 +41,8 @@ import kotlinx.coroutines.supervisorScope
 
 @Composable
 fun GroupScreen(
-     onClickGroup : (Int) -> Unit,
+     onClickTeacherGroup : (Int) -> Unit,
+     onClickStudentGroup : (Int) -> Unit,
      viewModel: GroupViewModel = hiltViewModel(),
      protoViewModel : ProtoViewModel = hiltViewModel()
 ){
@@ -170,11 +171,13 @@ fun GroupScreen(
                                 protoViewModel.updateGroupInfo(
                                     GroupInfo(
                                         "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}",
-                                        groupList[it].teacher
+                                        groupList[it].teacher,
+                                        groupList[it].id
                                     )
                                 )
 
-                                onClickGroup(groupList[it].id.toInt())
+                                if(role.value.role == Role.TEACHER) onClickTeacherGroup(groupList[it].id.toInt())
+                                else onClickStudentGroup(groupList[it].id.toInt())
                             }
                         )
                     Log.e("groupList",groupList[it].id.toString())

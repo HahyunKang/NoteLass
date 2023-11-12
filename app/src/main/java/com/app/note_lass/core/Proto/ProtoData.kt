@@ -17,5 +17,6 @@ enum class Role {
 @Serializable
 data class GroupInfo(
     val groupName : String?,
-    val teacherName : String?
+    val teacherName : String?,
+    val groupId : Long?
 )

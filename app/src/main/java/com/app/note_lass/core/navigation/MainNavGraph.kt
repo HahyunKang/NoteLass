@@ -20,6 +20,7 @@ fun MainNavGraph(navController: NavHostController){
 
         SettingNavGraph(navController = navController)
 
+        UploadNavGraph(navController = navController)
 
 
     }

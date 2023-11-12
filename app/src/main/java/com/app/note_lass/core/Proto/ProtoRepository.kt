@@ -42,7 +42,8 @@ class ProtoRepository @Inject constructor(
             // preferences.toBuilder().setShowCompleted(completed).build()
             info.copy(
                 groupName = groupInfo.groupName,
-                teacherName = groupInfo.teacherName
+                teacherName = groupInfo.teacherName,
+                groupId = groupInfo.groupId
             )
         }
     }
@@ -51,7 +52,8 @@ class ProtoRepository @Inject constructor(
         protoGroupDataStore.updateData { groupInfo->
             groupInfo.copy(
                groupName = null,
-                teacherName = null
+                teacherName = null,
+                groupId = null
             )
         }
     }

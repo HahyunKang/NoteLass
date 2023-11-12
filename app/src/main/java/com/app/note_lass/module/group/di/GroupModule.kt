@@ -1,6 +1,7 @@
 package com.app.note_lass.module.group.di
 
 import com.app.note_lass.common.Constants
+import com.app.note_lass.common.OkhttpClient
 import com.app.note_lass.module.group.data.GroupApi
 import com.app.note_lass.module.group.data.GroupImpl
 import com.app.note_lass.module.group.domain.repository.GroupRepository
@@ -18,12 +19,17 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object GroupModule {
+
+
     @Provides
     @Singleton
     fun groupApi() : GroupApi {
+        val client = OkhttpClient().httpClient
+
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
             .build()
             .create(GroupApi::class.java)
     }
