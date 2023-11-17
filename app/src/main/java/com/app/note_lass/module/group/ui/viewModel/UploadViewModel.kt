@@ -23,7 +23,7 @@ class UploadViewModel @Inject constructor(
 
     fun createNotice(groupId: Long, title:String, content:String, fileList: MultipartBody.Part?){
 
-        createNoticeUseCase(groupId,title,content,fileList).onEach {
+        createNoticeUseCase(groupId,title,content,fileList!!).onEach {
         result ->
             when(result) {
 

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,31 +32,47 @@ import com.app.note_lass.R
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.group.ui.viewModel.UploadViewModel
+import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
+import com.app.note_lass.ui.component.AppBarForRecord
+import com.app.note_lass.ui.component.AppBarForTeacherInGroup
 import com.app.note_lass.ui.theme.PrimaryBlack
 
 @Composable
 fun StudentRecordUploadScreen(
+    studentId : Long,
+    studentName : String,
     protoViewModel : ProtoViewModel = hiltViewModel(),
-    uploadViewModel: UploadViewModel = hiltViewModel()
 ){
 
 
     val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",0))
 
-    val titleList = listOf("공지","과제","강의자료")
 
     var selectedTabIndex by remember{
         mutableStateOf(0)
     }
-
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+         AppBarForRecord(
+             title = "${groupInfo.value.groupName} $studentId $studentName",
+             badgeCount = 12
+         )
+        },
+        containerColor =  Color(0xFFF5F5FC),
+        contentColor = Color.Black,
+        bottomBar = {
+        },
+        content = {
 
     Row(
         modifier = Modifier
-        .padding
-            (
-            horizontal = 40.dp,
-            vertical = 30.dp
-        )
+            .padding(
+                top = it.calculateTopPadding() + 30.dp,
+                bottom = 20.dp,
+                start = 30.dp,
+                end = 30.dp
+            )
     ){
         Box(
             Modifier
@@ -75,8 +92,7 @@ fun StudentRecordUploadScreen(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-
-
+                StudentRecordScreen(groupId = groupInfo.value.groupId!!)
             }
         }
 
@@ -112,5 +128,7 @@ fun StudentRecordUploadScreen(
             }
         }
 
-    }
+    })
+
+}
 

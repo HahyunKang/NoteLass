@@ -17,17 +17,18 @@ import com.app.note_lass.module.home.NoticeScreen
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.UploadNavGraph(navController: NavController) {
 
+    navigation(startDestination = UploadScreen.NoticeDetail.route, route = UPLOAD_ROUTE) {
 
-    composable(UploadScreen.CreateNotice.route) {
-        AssignmentUploadScreen()
+        composable(UploadScreen.CreateNotice.route) {
+            AssignmentUploadScreen()
+        }
+        composable(route = UploadScreen.NoticeDetail.route,
+            arguments = listOf(navArgument(name = "noticeId") { type = NavType.LongType }
+            )
+        ) {
+            NoticeDetailScreen()
+        }
     }
-    composable(route = UploadScreen.NoticeDetail.route,
-        arguments = listOf(navArgument(name = "noticeId") { type = NavType.IntType }
-        )
-    ) {
-        NoticeDetailScreen()
-    }
-
 
 
 

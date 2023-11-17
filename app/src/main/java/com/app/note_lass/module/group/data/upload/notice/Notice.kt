@@ -16,6 +16,16 @@ data class NoticePreview(
     val title : String,
     val unread: Boolean,
 )
+
+data class NoticeDetail(
+    val title : String,
+    val content : String,
+    val fileUrl : String?
+)
 fun Notice.toPreview(): NoticePreview {
     return NoticePreview(id, title, unread)
+}
+
+fun Notice.toDetail() : NoticeDetail {
+    return NoticeDetail(title,content, fileUrl)
 }

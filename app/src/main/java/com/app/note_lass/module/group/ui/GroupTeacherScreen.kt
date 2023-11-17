@@ -41,6 +41,7 @@ import com.app.note_lass.ui.theme.PrimaryPurple
 @Composable
 fun GroupTeacherScreen(
     onTouchCreateNotice : () -> Unit,
+    onClickStudentRecord : (Long,Long,String) -> Unit,
     viewModel : GroupForTeacherViewModel = hiltViewModel()
 ){
     val isShowDialog = remember{
@@ -219,7 +220,10 @@ fun GroupTeacherScreen(
                                 IconAndText(
                                     icon = R.drawable.group_person_small,
                                     iconColor = PrimarayBlue,
-                                    text = "$id  ${student.name}"
+                                    text = "$id  ${student.name}",
+                                    onClick = {
+                                        onClickStudentRecord(student.id.toLong(),id.toLong(),student.name)
+                                    }
                                 )
                                 Spacer(modifier = Modifier.height(20.dp))
 
