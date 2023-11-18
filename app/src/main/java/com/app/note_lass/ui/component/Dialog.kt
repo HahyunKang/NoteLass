@@ -434,6 +434,60 @@ fun DialogEnterGroupAccept(
 }
 
 @Composable
+fun DialogInRecord(
+    setShowDialog : (Boolean)-> Unit,
+    content : String,
+    buttonText : String,
+    onAccept : () -> Unit
+) {
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .size(width = 480.dp, height = 288.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+                .padding(horizontal = 40.dp, vertical = 25.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.group_filedelete_small),
+                tint = Color(0xFF26282B),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.End)
+            )
+
+            Text(
+                text = content,
+                style = NoteLassTheme.Typography.twenty_700_pretendard,
+                color = PrimaryBlack,
+                textAlign = TextAlign.Start
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Box(
+                modifier = Modifier
+                    .height(56.dp)
+                    .width(350.dp)
+                    .padding(horizontal = 20.dp)
+            ) {
+                RectangleEnabledButton(
+                    text = buttonText,
+                    onClick = {
+                        onAccept()
+                    },
+                )
+
+            }
+        }
+    }
+}
+
+
+@Composable
 fun DialogGroupTeacherAccept(
     setShowDialog : (Boolean)-> Unit,
     list : List<ApplicationStudent>,

@@ -1,12 +1,15 @@
 package com.app.note_lass.module.record.ui
 
 import android.provider.ContactsContract.CommonDataKinds.Note
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -28,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -61,10 +66,16 @@ fun StudentRecordScreen(
     val content = remember {
         mutableStateOf("")
     }
+    val interactionSource = remember { MutableInteractionSource() }
 
     val guideLine = remember {
         mutableStateOf("")
     }
+
+    val keyword = remember {
+        mutableStateOf("")
+    }
+
     val getRecordState= recordViewModel.getRecordState
     if(getRecordState.value.isSuccess){
         content.value = getRecordState.value.content
@@ -73,12 +84,48 @@ fun StudentRecordScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            text = "총 활동 기록",
-            style = NoteLassTheme.Typography.twenty_700_pretendard,
-            color = PrimaryBlack,
-            modifier = Modifier.padding(vertical = 24.dp)
-        )
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "활동기록 총 정리",
+                    style = NoteLassTheme.Typography.twenty_700_pretendard,
+                    color = PrimaryBlack,
+                    modifier = Modifier.padding(vertical = 10.dp)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Row(
+                    modifier = Modifier
+                        .size(width = 169.dp, height = 32.dp)
+                        .border(1.dp, PrimarayBlue, RoundedCornerShape(12.dp)),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "과제 데이터 불러오기",
+                        style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                        color = PrimaryBlack
+                    )
+                    Icon(
+                        painter = painterResource(id = R.drawable.record_arrow_small),
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
+
+                }
+            }
+
+            Box(modifier = Modifier.size(width = 74.dp, height = 40.dp)) {
+                RectangleEnabledButton(text = "저장하기") {
+                    val recordBody = RecordBody(content = content.value)
+                    recordViewModel.postStudentRecord(groupId,recordBody)
+                }
+            }
+
+        }
 
         Text(
             text = "태도 점수: 10점 발표횟수: 5회",
@@ -91,12 +138,12 @@ fun StudentRecordScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(R.string.record_summary),
+                text = stringResource(R.string.percentage_criteria),
                 style = NoteLassTheme.Typography.fourteen_600_pretendard,
                 color = PrimaryBlack,
                 modifier = Modifier.padding(vertical = 10.dp)
             )
-            val interactionSource = remember { MutableInteractionSource() }
+            Spacer(modifier = Modifier.width(8.dp))
 
             BasicTextField(
                 value = percentCriteria.value,
@@ -130,9 +177,21 @@ fun StudentRecordScreen(
 
             }
 
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = ":",
+                style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                color = PrimaryBlack,
+                modifier = Modifier.padding(vertical = 10.dp)
+            )
+
         }
 
-        Box(modifier = Modifier.size(width = 542.dp, height = 210.dp)) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .height(210.dp)
+        ) {
             OutlinedTextField(
                 value = content.value,
                 onValueChange = {
@@ -143,7 +202,9 @@ fun StudentRecordScreen(
                 shape = RoundedCornerShape(10.dp),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.LightGray,
+                    unfocusedIndicatorColor = Color.LightGray
                 )
             )
             Column(
@@ -180,8 +241,56 @@ fun StudentRecordScreen(
             text = "가이드라인 문장",
             style = NoteLassTheme.Typography.twenty_700_pretendard,
             color = PrimaryBlack,
-            modifier = Modifier.padding(vertical = 24.dp)
+            modifier = Modifier.padding(vertical = 10.dp)
         )
+
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically){
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "키워드 입력 : ",
+                    style = NoteLassTheme.Typography.sixteem_600_pretendard,
+                    color = PrimaryBlack,
+                    modifier = Modifier.padding(vertical = 5.dp)
+                )
+
+                BasicTextField(
+                    value = keyword.value,
+                    onValueChange = { it ->
+                        keyword.value = it
+                    },
+                    textStyle = NoteLassTheme.Typography.sixteem_600_pretendard,
+                    modifier = Modifier
+                        .height(25.dp)
+                        .width(95.dp)
+
+                ) {
+                    TextFieldDefaults.TextFieldDecorationBox(
+                        value = percentCriteria.value,
+                        innerTextField = it,
+                        singleLine = true,
+                        enabled = true,
+                        visualTransformation = VisualTransformation.None,
+                        interactionSource = interactionSource,
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = PrimarayBlue,
+                            unfocusedTextColor = PrimarayBlue,
+                            focusedContainerColor = BackgroundBlue,
+                            unfocusedContainerColor = BackgroundBlue,
+                            focusedIndicatorColor = BackgroundBlue,
+                            unfocusedIndicatorColor = BackgroundBlue
+                        ),
+                        contentPadding = PaddingValues(3.dp)
+                    )
+
+                }
+            }
+
+            Icon(painter = painterResource(id = R.drawable.record_keyword_small), contentDescription = null,tint= PrimarayBlue)
+
+        }
 
         OutlinedTextField(
             value = guideLine.value,
@@ -195,17 +304,11 @@ fun StudentRecordScreen(
             shape = RoundedCornerShape(10.dp),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent
+                unfocusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.LightGray,
+                unfocusedIndicatorColor = Color.LightGray
             )
         )
-
-        Box(modifier = Modifier.align(Alignment.End)) {
-            RectangleEnabledButton(text = "저장하기") {
-                val recordBody = RecordBody(content = content.value)
-                recordViewModel.postStudentRecord(groupId,recordBody)
-            }
-        }
-
 
     }
 }

@@ -91,7 +91,8 @@ fun SearchBar(
             unfocusedContainerColor = Color.White,
             focusedTrailingIconColor =  Color(0xFF26282B),
             unfocusedTrailingIconColor =  Color(0xFF9EA4AA),
-            cursorColor =  Color(0xFF26282B)
+            cursorColor =  Color(0xFF26282B),
+            unfocusedBorderColor = Color.White
         )
 
     )

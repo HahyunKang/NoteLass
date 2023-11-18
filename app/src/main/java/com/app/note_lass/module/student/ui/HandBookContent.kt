@@ -18,6 +18,7 @@ import com.app.note_lass.ui.theme.NoteLassTheme
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
 fun HandBookContent(
     date : LocalDateTime,

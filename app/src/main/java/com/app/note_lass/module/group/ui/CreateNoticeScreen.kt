@@ -240,7 +240,11 @@ fun CreateNoticeScreen(
           Box(modifier = Modifier.size(200.dp, 30.dp)) {
               RectangleEnabledWithBorderButton(
                   text = "라이브러리에서 파일 탐색",
-                  onClick = { pdfLauncher.launch("application/pdf") },
+                  onClick = {
+                      pdfLauncher.launch("application/pdf")
+                      //cell 확장자
+                      //pdfLauncher.launch("application/octet-stream")
+                            },
                   containerColor = Color.White,
                   textColor = PrimaryGray,
                   borderColor = Gray50
