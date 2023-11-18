@@ -5,7 +5,7 @@ data class GetRecordContentState(
     var isError : Boolean = false,
     var isLoading : Boolean = false,
     var content : String = ""
-    )
+)
 
 data class PostRecordContentState(
     var isSuccess : Boolean = false,

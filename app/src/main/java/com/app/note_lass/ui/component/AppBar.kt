@@ -271,25 +271,29 @@ fun AppBarForRecord(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(start = 30.dp, end = 48.dp, top = 50.dp)
+            .padding(start = 30.dp, end = 48.dp, top = 40.dp)
             .background(color = Color.Transparent),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
-        Text(
-            title, fontSize = 20.sp,
-            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-            fontWeight = FontWeight(700),
-            color = Color(0xFF26282B)
-        )
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(painter = painterResource(id = R.drawable.arrow_left_small), contentDescription = null)
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                title, fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                fontWeight = FontWeight(700),
+                color = Color(0xFF26282B)
+            )
+        }
 
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.width(384.dp)
         ){
             Box(modifier = Modifier
-                .width(76.dp)
+                .width(109.dp)
                 .height(40.dp)
             ) {
                 RectangleEnabledButton(text = "한셀로 출력") {

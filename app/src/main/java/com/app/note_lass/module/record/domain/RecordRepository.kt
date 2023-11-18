@@ -2,9 +2,13 @@ package com.app.note_lass.module.record.domain
 
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.module.record.data.RecordBody
+import okhttp3.MultipartBody
+import java.io.File
 
 interface RecordRepository {
     suspend fun getRecord(token : String,groupId : Long, userId : Long) : NoteResponseBody<String>
     suspend fun postRecord(token: String, groupId : Long, userId : Long,recordBody: RecordBody) : NoteResponseBody<Nothing>
+    suspend fun postExcel(token : String,groupId : Long, excelFile : MultipartBody.Part) : NoteResponseBody<Nothing>
+    suspend fun getExcel(token : String,groupId : Long) : NoteResponseBody<File>
 
 }

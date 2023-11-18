@@ -2,11 +2,15 @@ package com.app.note_lass.module.record.data
 
 import com.app.note_lass.common.NoteResponseBody
 import kotlinx.serialization.Polymorphic
+import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
+import java.io.File
 
 interface RecordApi {
 
@@ -25,4 +29,18 @@ interface RecordApi {
         @Path(value = "groupId") groupId : Long,
         @Path(value = "userId")userId : Long,
     ): NoteResponseBody<String>
+
+    @Multipart
+    @POST("api/record/excel/{groupId}")
+    suspend fun postExcel(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId : Long,
+        @Part excelFile : MultipartBody.Part
+    ) : NoteResponseBody<Nothing>
+
+    @GET("api/record/excel/{groupId}")
+    suspend fun getExcel(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId : Long
+    ) : NoteResponseBody<File>
 }

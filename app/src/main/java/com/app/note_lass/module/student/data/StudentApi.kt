@@ -21,5 +21,12 @@ interface StudentApi {
       @Body handBookRequest: HandBookRequest
       ) : NoteResponseBody<Nothing>
 
+  @GET("api/handbook/{groupId}/{userId}")
+  suspend fun getHandBookList(
+      @Header(value = "Authorization") accessToken : String,
+      @Path(value = "groupId") groupId : Int,
+      @Path(value = "userId") userId : Int,
+  ) : NoteResponseBody<List<HandBook>>
+
 
 }
