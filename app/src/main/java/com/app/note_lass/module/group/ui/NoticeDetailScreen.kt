@@ -103,13 +103,10 @@ fun NoticeDetailScreen(
                         .fillMaxHeight()
                         .padding(horizontal = 24.dp, vertical = 15.dp)
                 ) {
-                    NoticeInfo(groupInfo = groupInfo.value)
+                    NoticeInfo(groupInfo = groupInfo.value,detailState.value.noticeDetail.createdDate!!)
 
                 }
 
-
             }
-
-
         })
 }
