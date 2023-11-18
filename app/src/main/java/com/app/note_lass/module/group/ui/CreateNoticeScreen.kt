@@ -108,7 +108,6 @@ fun CreateNoticeScreen(
         onResult = { uri :Uri? ->
             pdfUri = uri
             val file = pdfUri?.asMultipart("file",context.contentResolver)
-         //   Log.e("file",pdfUri)
 
             requestFileList.value= file
 
@@ -335,6 +334,9 @@ fun CreateNoticeScreen(
                 RectangleEnabledButton(text = "생성하기",
                     onClick = {
                         if(noticeTitle.value.isNotEmpty() && noticeContent.value.isNotEmpty()){
+                            if(requestFileList.value == null ){
+                                requestFileList.value = MultipartBody.Part.createFormData("file","empty")
+                            }
                             createNotice(noticeTitle.value,noticeContent.value,requestFileList.value)
                         }
 

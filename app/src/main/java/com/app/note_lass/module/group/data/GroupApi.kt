@@ -75,7 +75,7 @@ interface GroupApi {
         @Header(value = "Authorization") accessToken: String,
         @Path("groupId") groupId: Long,
         @Part("noticeCreateDto") noticeContents: RequestBody,
-        @Part fileList: MultipartBody.Part?
+        @Part fileList: MultipartBody.Part
     ) : NoteResponseBody<Nothing>
 
     @GET("api/notice/{groupId}")

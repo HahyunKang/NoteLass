@@ -25,6 +25,7 @@ val PrimaryBlack = Color(0xFF26282B)
 val PrimaryGray = Color(0xFF9EA4AA)
 val Gray50 = Color(0X80C9CDD2)
 val BackgroundGray = Color(0xFFE6E8EE)
+val BackgroundBlue = Color(0xFFEDEDFF)
 
 
 //100%	FF

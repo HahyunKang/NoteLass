@@ -22,6 +22,8 @@ fun MainNavGraph(navController: NavHostController){
 
         UploadNavGraph(navController = navController)
 
+        RecordNavGraph(navController = navController)
+
 
     }
 

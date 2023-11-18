@@ -8,6 +8,8 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import com.app.note_lass.R
 
@@ -72,5 +74,12 @@ data class NoteLassTypography (
         fontFamily = Pretendard,
         fontWeight = FontWeight(700),
         fontSize = 48.sp,
+    ),
+    val twelve_600_underline_pretendard : TextStyle = defaultTextStyle.copy(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight(700),
+        textAlign = TextAlign.Center,
+        fontSize = 12.sp,
+        textDecoration = TextDecoration.Underline
     ),
     )

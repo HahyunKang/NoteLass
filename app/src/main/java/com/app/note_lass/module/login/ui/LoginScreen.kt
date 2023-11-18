@@ -132,7 +132,6 @@ fun LoginScreen(
                 fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                 fontWeight = FontWeight(600),
                 color = Color(0xFF26282B),
-
                 ),
             onValueChange = {
                passwordText.value = it

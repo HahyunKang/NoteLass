@@ -81,7 +81,8 @@ fun NoticeDetailScreen(
                     NoticeDetailInfo(
                         title =detailState.value.noticeDetail.title,
                         content = detailState.value.noticeDetail.content ,
-                        fileUrl = null )
+                        fileUrl = detailState.value.noticeDetail.fileUrl
+                    )
 
                 }
 

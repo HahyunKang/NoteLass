@@ -47,7 +47,7 @@ fun GroupStudentScreen(
         ){
             Column(modifier =  Modifier.weight(2f)) {
 
-                Box(modifier = Modifier
+                Column(modifier = Modifier
                     .weight(1f)
                     .shadow(
                         elevation = 7.dp,

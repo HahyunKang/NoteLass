@@ -32,7 +32,12 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController) {
             ) ) {
             GroupTeacherScreen(onTouchCreateNotice = {
                 navController.navigate(UploadScreen.CreateNotice.route)
-            } )
+            },
+                onClickStudentRecord = {
+                    userId, studentId, name ->
+                    navController.navigate(RecordScreen.RecordDetail.passQuery(userId,studentId,name))
+                }
+            )
         }
 
         composable(
@@ -42,7 +47,7 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController) {
         ) {
             GroupStudentScreen(
                 onTouchNoticeClick = {
-                    navController.navigate(UploadScreen.NoticeDetail.route)
+                    navController.navigate(UploadScreen.NoticeDetail.passQuery(it))
                 }
             )
         }

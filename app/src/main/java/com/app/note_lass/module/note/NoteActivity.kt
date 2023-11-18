@@ -1,7 +1,7 @@
 package com.app.note_lass.module.note
 
+import RetrievePDFfromUrl
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -13,16 +13,12 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.Text
-import androidx.viewpager2.widget.ViewPager2
+import androidx.core.net.toUri
 import com.app.note_lass.databinding.ActivityNoteBinding
 import com.github.barteksc.pdfviewer.PDFView
 import com.github.barteksc.pdfviewer.util.FitPolicy
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.net.URI
+
 
 class NoteActivity: AppCompatActivity() {
 
@@ -33,6 +29,8 @@ class NoteActivity: AppCompatActivity() {
 
     private var pdfUri: Uri? = null
     private var photoUri: Uri? = null
+    private var pdfString: String? = null
+
     private lateinit var pdfView: PDFView
     private lateinit var photoView : ImageView
     private lateinit var titleView: View
@@ -41,28 +39,10 @@ class NoteActivity: AppCompatActivity() {
 
 
     private fun getPdfUri() {
-         pdfUri= intent.getParcelableExtra("pdfUri")
-         photoUri = intent.getParcelableExtra("photoUri")
+        pdfUri= intent.getParcelableExtra("pdfUri")
+        photoUri = intent.getParcelableExtra("photoUri")
+        pdfString = intent.getStringExtra("pdfString")
     }
-
-
-    private var is_Spen : Boolean = false
-
-
-
-    private fun getSeekableFileDescriptor(): ParcelFileDescriptor? {
-        pdfUri?.let {
-            return contentResolver.openFileDescriptor(it, "r")
-        }
-        return null
-    }
-
-
-    companion object {
-        const val PICK_PDF_FILE = 1
-    }
-
-    private var mScaleFactor = 2f
 
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,9 +50,9 @@ class NoteActivity: AppCompatActivity() {
         _binding = ActivityNoteBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
-  //      mScaleDetector = ScaleGestureDetector(this, scaleListener)
+        //      mScaleDetector = ScaleGestureDetector(this, scaleListener)
 
-        var bitmap: Bitmap ?= null
+        var bitmap: Bitmap? = null
         nextButton = binding.nextButton
         titleView = binding.backgroundTitle
         titleText = binding.pdfTitle
@@ -81,41 +61,49 @@ class NoteActivity: AppCompatActivity() {
 
         getPdfUri()
 //
-        val titleText =  "Photo"
+        val titleText = "Photo"
 //        titleText.text = pdfUri?.lastPathSegment!!
 //        pdfUri?.lastPathSegment!!
 
 
-       if(pdfUri!=null) {
+        photoView.visibility = View.GONE
+        if (pdfString != null) {
+            Log.e("pdfString", pdfString!!)
+            val retrievePDFfromUrl = RetrievePDFfromUrl(doAfter = {
+                pdfView.fromStream(it)
+                    .swipeHorizontal(false)
+                    .pageSnap(true)
+                    .autoSpacing(true)
+                    .pageFling(true)
+                    .pageFitPolicy(FitPolicy.BOTH)
+                    .load()
+            }).execute(pdfString!!)
 
-          photoView.visibility = View.GONE
 
-           pdfView.fromUri(pdfUri)
-               .swipeHorizontal(false)
-               .pageSnap(true)
-               .autoSpacing(true)
-               .pageFling(true)
-               .pageFitPolicy(FitPolicy.BOTH)
-               .load()
-       }
-        else{
+        } else if(pdfUri != null ) {
+            pdfView.fromUri(pdfUri)
+                .swipeHorizontal(false)
+                .pageSnap(true)
+                .autoSpacing(true)
+                .pageFling(true)
+                .pageFitPolicy(FitPolicy.BOTH)
+                .load()
+        }else {
 
             photoUri?.let {
                 if (Build.VERSION.SDK_INT < 28) {
-                    bitmap= MediaStore.Images
-                        .Media.getBitmap(contentResolver,it)
+                    bitmap = MediaStore.Images
+                        .Media.getBitmap(contentResolver, it)
 
                 } else {
                     val source = ImageDecoder
-                        .createSource(contentResolver,it)
-                    bitmap= ImageDecoder.decodeBitmap(source)
+                        .createSource(contentResolver, it)
+                    bitmap = ImageDecoder.decodeBitmap(source)
                 }
             }
-           photoView.setImageBitmap(bitmap)
+            photoView.setImageBitmap(bitmap)
 
-
-
-       }
+        }
 
        }
 
