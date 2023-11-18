@@ -55,6 +55,7 @@ import okio.BufferedSink
 import okio.source
 import retrofit2.http.Multipart
 import java.io.File
+import java.time.LocalDateTime
 
 @Composable
 fun CreateNoticeScreen(
@@ -350,7 +351,8 @@ fun CreateNoticeScreen(
 
 @Composable
 fun NoticeInfo(
-    groupInfo: GroupInfo
+    groupInfo: GroupInfo,
+    createdTime: LocalDateTime
 ){
 
 

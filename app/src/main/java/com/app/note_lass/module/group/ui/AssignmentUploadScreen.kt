@@ -134,7 +134,7 @@ fun AssignmentUploadScreen(
 
             when(selectedTabIndex) {
                 0 -> {
-                    NoticeInfo(groupInfo.value)
+                //    NoticeInfo(groupInfo.value,)
                 }
         }
 
