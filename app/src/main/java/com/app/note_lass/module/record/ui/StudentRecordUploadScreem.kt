@@ -113,11 +113,11 @@ fun StudentRecordUploadScreen(
         DialogInRecord(
             setShowDialog = {
                 isFirstDialogShow.value= it
-                isSecondDialogShow.value = true
             },
             content = "한셀로 출력하시겠습니까?" ,
             buttonText = "출력하기") {
             recordViewModel.postExcel(groupInfo.value.groupId!!,excelFile.value!!)
+            isSecondDialogShow.value = true
         }
     }
     if(isSecondDialogShow.value){
@@ -129,6 +129,7 @@ fun StudentRecordUploadScreen(
             content = "성공적으로 출력되었습니다." ,
             buttonText = "확인") {
             recordViewModel.getExcel(groupInfo.value.groupId!!)
+            isSecondDialogShow.value = false
         }
     }
 
@@ -139,7 +140,7 @@ fun StudentRecordUploadScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
          AppBarForRecord(
-             title = "${groupInfo.value.groupName} $studentId $studentName",
+             title = "${groupInfo.value.groupName} ${studentId}번 $studentName",
              badgeCount = 12,
              onClick = {
                  excelLauncher.launch("application/octet-stream")
@@ -203,7 +204,7 @@ fun StudentRecordUploadScreen(
             ) {
 
                 Text(
-                    "공지/과제/강의 자료 정보",
+                    "학생수첩",
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontFamily = FontFamily(Font(R.font.pretendard_regular)),

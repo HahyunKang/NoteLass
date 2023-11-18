@@ -12,4 +12,12 @@ class StudentImpl @Inject constructor(
         return studentApi.postHandBook(accessToken,groupId,userId,handBookRequest)
     }
 
+    override suspend fun getHanBookList(
+        accessToken: String,
+        groupId: Int,
+        userId: Int
+    ): NoteResponseBody<List<HandBook>> {
+        return studentApi.getHandBookList(accessToken, groupId, userId)
+    }
+
 }
