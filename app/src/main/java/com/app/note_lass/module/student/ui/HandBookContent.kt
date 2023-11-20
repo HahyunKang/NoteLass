@@ -36,7 +36,7 @@ fun HandBookContent(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(text = formatDate,
-            style = NoteLassTheme.Typography.twenty_700_pretendard,
+            style = NoteLassTheme.Typography.twelve_600_pretendard,
             color = Color.Gray
         )
         Spacer(modifier = Modifier.height(8.dp))

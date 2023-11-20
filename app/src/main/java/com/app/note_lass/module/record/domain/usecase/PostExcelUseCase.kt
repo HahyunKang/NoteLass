@@ -3,6 +3,7 @@ package com.app.note_lass.module.record.domain.usecase
 import androidx.datastore.core.DataStore
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
+import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.record.data.RecordBody
 import com.app.note_lass.module.record.domain.RecordRepository
@@ -16,16 +17,18 @@ import javax.inject.Inject
 
 class PostExcelUseCase @Inject constructor(
     private val recordRepository: RecordRepository,
-    val dataStore : DataStore<Token>
+    val dataStore : DataStore<Token>,
+    private val dataGroupStore : DataStore<GroupInfo>
 ) {
 
-    operator fun invoke(groupId : Long,excelFile : MultipartBody.Part) : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
+    operator fun invoke(excelFile : MultipartBody.Part) : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
+            val groupId= dataGroupStore.data.first().groupId
 
             emit(Resource.Loading())
 
-            val recordResponse = recordRepository.postExcel(token,groupId,excelFile)
+            val recordResponse = recordRepository.postExcel(token,groupId!!,excelFile)
 
             emit(
                 Resource.Success(

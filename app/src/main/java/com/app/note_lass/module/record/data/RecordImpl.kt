@@ -26,8 +26,12 @@ class RecordImpl @Inject constructor(
         return recordApi.postExcel(token,groupId, excelFile)
     }
 
-    override suspend fun getExcel(token: String, groupId: Long): NoteResponseBody<File> {
+    override suspend fun getExcel(token: String, groupId: Long): NoteResponseBody<com.app.note_lass.module.record.data.File> {
         return recordApi.getExcel(token,groupId)
+    }
+
+    override suspend fun deleteExcel(token: String, groupId: Long): NoteResponseBody<Nothing> {
+        return recordApi.deleteExcel(token,groupId)
     }
 
 

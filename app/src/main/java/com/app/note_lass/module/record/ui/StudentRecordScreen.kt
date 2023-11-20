@@ -1,6 +1,12 @@
 package com.app.note_lass.module.record.ui
 
+import android.annotation.SuppressLint
+import android.content.ContentResolver
+import android.net.Uri
 import android.provider.ContactsContract.CommonDataKinds.Note
+import android.provider.OpenableColumns
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -32,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
@@ -51,12 +58,17 @@ import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
 import com.app.note_lass.ui.theme.PrimaryPurple
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okio.BufferedSink
+import okio.source
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentRecordScreen(
-    groupId : Long,
     recordViewModel: RecordViewModel = hiltViewModel()
 ) {
 
@@ -75,11 +87,46 @@ fun StudentRecordScreen(
     val keyword = remember {
         mutableStateOf("")
     }
-
+    val excelFile = remember {
+        mutableStateOf<MultipartBody.Part?>(null)
+    }
     val getRecordState= recordViewModel.getRecordState
-    if(getRecordState.value.isSuccess){
+    if(getRecordState.value.isSuccess) {
         content.value = getRecordState.value.content
     }
+    val context = LocalContext.current
+    @SuppressLint("Range")
+    fun Uri.asMultipart(name: String, contentResolver: ContentResolver): MultipartBody.Part? {
+        return contentResolver.query(this, null, null, null, null)?.let {
+            if (it.moveToNext()) {
+                val displayName = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                val requestBody = object : RequestBody() {
+                    override fun contentType(): MediaType? {
+                        return contentResolver.getType(this@asMultipart)?.toMediaType()
+                    }
+
+                    override fun writeTo(sink: BufferedSink) {
+                        sink.writeAll(contentResolver.openInputStream(this@asMultipart)?.source()!!)
+                    }
+                }
+                it.close()
+                MultipartBody.Part.createFormData(name, displayName, requestBody)
+            } else {
+                it.close()
+                null
+            }
+        }
+    }
+    val excelLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri : Uri? ->
+            val file = uri?.asMultipart("file",context.contentResolver)
+
+            excelFile.value = file
+            excelFile.value?.let { recordViewModel.postExcel(it) }
+        }
+    )
+
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -121,7 +168,7 @@ fun StudentRecordScreen(
             Box(modifier = Modifier.size(width = 74.dp, height = 40.dp)) {
                 RectangleEnabledButton(text = "저장하기") {
                     val recordBody = RecordBody(content = content.value)
-                    recordViewModel.postStudentRecord(groupId,recordBody)
+                    recordViewModel.postStudentRecord(recordBody)
                 }
             }
 
@@ -222,7 +269,7 @@ fun StudentRecordScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BackgroundBlue),
                     contentPadding = PaddingValues(3.dp),
                     onClick = {
-                        recordViewModel.getStudentRecord(groupId)
+                        excelLauncher.launch("application/octet-stream")
                     }
                 ) {
                     Text(

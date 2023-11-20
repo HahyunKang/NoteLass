@@ -351,7 +351,7 @@ fun CreateNoticeScreen(
 @Composable
 fun NoticeInfo(
     groupInfo: GroupInfo,
-    createdTime: LocalDateTime
+   // createdTime: LocalDateTime
 ){
 
 

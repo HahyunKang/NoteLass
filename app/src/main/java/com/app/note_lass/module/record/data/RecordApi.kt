@@ -4,6 +4,7 @@ import com.app.note_lass.common.NoteResponseBody
 import kotlinx.serialization.Polymorphic
 import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -42,5 +43,12 @@ interface RecordApi {
     suspend fun getExcel(
         @Header(value = "Authorization") accessToken : String,
         @Path(value = "groupId") groupId : Long
-    ) : NoteResponseBody<File>
+    ) : NoteResponseBody<com.app.note_lass.module.record.data.File>
+
+    @DELETE("api/record/excel/{groupId}")
+    suspend fun deleteExcel(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId : Long
+    ) : NoteResponseBody<Nothing>
+
 }
