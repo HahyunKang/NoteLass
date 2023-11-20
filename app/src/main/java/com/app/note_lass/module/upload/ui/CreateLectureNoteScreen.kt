@@ -1,4 +1,4 @@
-package com.app.note_lass.module.group.ui
+package com.app.note_lass.module.upload.ui
 
 import android.content.Intent
 import android.net.Uri

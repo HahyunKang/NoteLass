@@ -5,8 +5,7 @@ import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.join.JoinDto
 import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
-import com.app.note_lass.module.group.data.upload.notice.Notice
-import com.app.note_lass.module.group.data.upload.notice.NoticeContents
+import com.app.note_lass.module.upload.data.notice.Notice
 import com.app.note_lass.module.group.domain.repository.GroupRepository
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

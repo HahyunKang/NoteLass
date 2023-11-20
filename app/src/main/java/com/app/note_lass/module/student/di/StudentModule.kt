@@ -1,6 +1,7 @@
 package com.app.note_lass.module.student.di
 
 import com.app.note_lass.common.Constants
+import com.app.note_lass.common.OkhttpClient
 import com.app.note_lass.module.login.data.LoginApi
 import com.app.note_lass.module.login.data.LoginImpl
 import com.app.note_lass.module.login.domain.repository.LoginRepository
@@ -21,12 +22,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object StudentModule {
+    val client = OkhttpClient().httpClient
     @Provides
     @Singleton
     fun studentApi() : StudentApi{
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
             .build()
             .create(StudentApi :: class.java)
     }

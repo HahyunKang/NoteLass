@@ -3,9 +3,11 @@ package com.app.note_lass.module.record.ui
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.net.Uri
+import android.os.Build
 import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,22 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.app.note_lass.R
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
-import com.app.note_lass.module.group.ui.viewModel.UploadViewModel
 import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
+import com.app.note_lass.module.student.ui.HandBookListScreen
 import com.app.note_lass.ui.component.AppBarForRecord
-import com.app.note_lass.ui.component.AppBarForTeacherInGroup
 import com.app.note_lass.ui.component.DialogInRecord
-import com.app.note_lass.ui.theme.PrimaryBlack
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -51,6 +44,7 @@ import okhttp3.RequestBody
 import okio.BufferedSink
 import okio.source
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StudentRecordUploadScreen(
     studentId : Long,
@@ -107,7 +101,7 @@ fun StudentRecordUploadScreen(
 
         }
     )
-
+    val handBookListState = recordViewModel.getHandBookState
 
     if(isFirstDialogShow.value){
         DialogInRecord(
@@ -132,9 +126,6 @@ fun StudentRecordUploadScreen(
             isSecondDialogShow.value = false
         }
     }
-
-
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -202,16 +193,7 @@ fun StudentRecordUploadScreen(
                     .fillMaxHeight()
                     .padding(horizontal = 24.dp, vertical = 15.dp)
             ) {
-
-                Text(
-                    "학생수첩",
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                        fontWeight = FontWeight(700),
-                        color = PrimaryBlack,
-                    )
-                )
+                HandBookListScreen(handBookList = handBookListState.value.handBookList)
 
 
             }

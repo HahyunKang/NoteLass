@@ -1,10 +1,7 @@
-package com.app.note_lass.module.group.ui
+package com.app.note_lass.module.upload.ui
 
-import android.annotation.SuppressLint
-import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
-import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.OutlinedTextField
@@ -23,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,11 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.app.note_lass.core.FilePicker.FileManager
-import com.app.note_lass.core.Proto.GroupInfo
-import com.app.note_lass.module.group.data.upload.notice.NoticeContents
 import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.ui.component.FileUpload
 import com.app.note_lass.ui.component.RectangleEnabledButton
@@ -43,24 +37,10 @@ import com.app.note_lass.ui.component.RectangleEnabledWithBorderButton
 import com.app.note_lass.ui.component.RectangleUnableButton
 import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
-import com.app.note_lass.ui.theme.PrimarayBlue
-import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okio.BufferedSink
-import okio.source
-import retrofit2.http.Multipart
-import java.io.File
-import java.time.LocalDateTime
 
 @Composable
-fun CreateNoticeScreen(
-    createNotice : (String,String,MultipartBody.Part?) -> Unit
-){
+fun CreateAssignmentScreen(){
 
     val noticeTitle = remember{
         mutableStateOf("")
@@ -76,42 +56,10 @@ fun CreateNoticeScreen(
         mutableStateOf<Uri?>(null)
     }
 
-    val requestFileList  = remember {
-        mutableStateOf<MultipartBody.Part?>(null)
-    }
-
-    @SuppressLint("Range")
-    fun Uri.asMultipart(name: String, contentResolver: ContentResolver): MultipartBody.Part? {
-        return contentResolver.query(this, null, null, null, null)?.let {
-            if (it.moveToNext()) {
-                val displayName = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                val requestBody = object : RequestBody() {
-                    override fun contentType(): MediaType? {
-                        return contentResolver.getType(this@asMultipart)?.toMediaType()
-                    }
-
-                    override fun writeTo(sink: BufferedSink) {
-                        sink.writeAll(contentResolver.openInputStream(this@asMultipart)?.source()!!)
-                    }
-                }
-                it.close()
-                MultipartBody.Part.createFormData(name, displayName, requestBody)
-            } else {
-                it.close()
-                null
-            }
-        }
-    }
-    val context= LocalContext.current
-
     val pdfLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri :Uri? ->
             pdfUri = uri
-            val file = pdfUri?.asMultipart("file",context.contentResolver)
-
-            requestFileList.value= file
-
         }
     )
 
@@ -153,7 +101,7 @@ fun CreateNoticeScreen(
 //            0L
 //        }
 //    }
-  //  val context = LocalContext.current
+    val context = LocalContext.current
     var fileName by remember { mutableStateOf<String?>(null) }
     var fileSize by remember { mutableStateOf<Long?>(null) }
     val fileManager  = FileManager()
@@ -161,12 +109,10 @@ fun CreateNoticeScreen(
     Column(modifier= Modifier.fillMaxSize()) {
 
       Row(
-          modifier = Modifier
-              .fillMaxWidth()
-              .weight(1f),
+          modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically
       ) {
-          Text(text = "공지 제목")
+          Text(text = "과제 제목")
           Spacer(modifier = Modifier.width(26.dp))
           OutlinedTextField(
               value = noticeTitle.value,
@@ -176,7 +122,7 @@ fun CreateNoticeScreen(
               textStyle = NoteLassTheme.Typography.fourteen_600_pretendard,
               placeholder = {
                   Text(
-                      "공지 제목을 입력하세요",
+                      "과제 제목을 입력하세요",
                       style = NoteLassTheme.Typography.fourteen_600_pretendard,
                       color = PrimaryGray
                   )
@@ -195,12 +141,10 @@ fun CreateNoticeScreen(
       Spacer(modifier = Modifier.height(15.dp))
 
       Column(
-          modifier = Modifier
-              .fillMaxWidth()
-              .weight(3f),
+          modifier = Modifier.fillMaxWidth(),
           verticalArrangement = Arrangement.Center
       ) {
-          Text(text = "공지 설명")
+          Text(text = "과제 설명")
           Spacer(modifier = Modifier.height(18.dp))
           OutlinedTextField(
               value = noticeContent.value,
@@ -210,7 +154,7 @@ fun CreateNoticeScreen(
               textStyle = NoteLassTheme.Typography.fourteen_600_pretendard,
               placeholder = {
                   Text(
-                      "공지 설명을 입력하세요",
+                      "과제 설명을 입력하세요",
                       style = NoteLassTheme.Typography.fourteen_600_pretendard,
                       color = PrimaryGray
                   )
@@ -230,9 +174,7 @@ fun CreateNoticeScreen(
       Spacer(modifier = Modifier.height(18.dp))
 
       Row(
-          modifier = Modifier
-              .fillMaxWidth()
-              .weight(1f),
+          modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically
       ) {
           Text(text = "파일 첨부")
@@ -240,11 +182,7 @@ fun CreateNoticeScreen(
           Box(modifier = Modifier.size(200.dp, 30.dp)) {
               RectangleEnabledWithBorderButton(
                   text = "라이브러리에서 파일 탐색",
-                  onClick = {
-                      pdfLauncher.launch("application/pdf")
-                      //cell 확장자
-                      //pdfLauncher.launch("application/octet-stream")
-                            },
+                  onClick = { pdfLauncher.launch("application/pdf") },
                   containerColor = Color.White,
                   textColor = PrimaryGray,
                   borderColor = Gray50
@@ -273,7 +211,7 @@ fun CreateNoticeScreen(
           Box(
               modifier = Modifier
                   .fillMaxWidth()
-                  .weight(1f)
+                  .height(36.dp)
           ) {
 
               FileUpload(
@@ -303,7 +241,7 @@ fun CreateNoticeScreen(
           Box(
               modifier = Modifier
                   .fillMaxWidth()
-                  .weight(1f)
+                  .height(36.dp)
           ) {
 
               FileUpload(
@@ -327,8 +265,7 @@ fun CreateNoticeScreen(
 
         Row(modifier = Modifier
             .align(Alignment.End)
-            .weight(2f)
-        ){
+            .padding(24.dp)){
             Box(modifier = Modifier.size(49.dp,40.dp)){
                 RectangleUnableButton(text = "취소",
                     onClick = { TODO() })
@@ -337,82 +274,12 @@ fun CreateNoticeScreen(
 
             Box(modifier = Modifier.size(73.dp,40.dp)){
                 RectangleEnabledButton(text = "생성하기",
-                    onClick = {
-                        if(noticeTitle.value.isNotEmpty() && noticeContent.value.isNotEmpty()){
-                            if(requestFileList.value == null ){
-                                requestFileList.value = MultipartBody.Part.createFormData("file","empty")
-                            }
-                            createNotice(noticeTitle.value,noticeContent.value,requestFileList.value)
-                        }
-
-                    })
+                    onClick = { TODO() })
             }
         }
 
     }
   }
 
-
-@Composable
-fun NoticeInfo(
-    groupInfo: GroupInfo,
-    createdTime: LocalDateTime
-){
-
-
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        Text(text = "작성자",
-            style =NoteLassTheme.Typography.sixteem_600_pretendard,
-            color = PrimaryBlack,
-        )
-
-        groupInfo.teacherName?.let {
-            Text(text = it + "선생님",
-                style =NoteLassTheme.Typography.sixteem_600_pretendard,
-                color = PrimarayBlue,
-                textDecoration = TextDecoration.Underline
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(text = "게시일",
-            style =NoteLassTheme.Typography.sixteem_600_pretendard,
-            color = PrimaryBlack
-        )
-
-        Text(text =  "2023년 11월 5일",
-            style =NoteLassTheme.Typography.sixteem_600_pretendard,
-            color = PrimarayBlue,
-            textDecoration = TextDecoration.Underline
-
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(text = "할당된 그룹",
-            style =NoteLassTheme.Typography.sixteem_600_pretendard,
-            color = PrimaryBlack
-        )
-
-        groupInfo.groupName?.let {
-            Text(text = it,
-                style =NoteLassTheme.Typography.sixteem_600_pretendard,
-                color = PrimarayBlue,
-                textDecoration = TextDecoration.Underline
-
-            )
-        }
-
-
-
-    }
-
-
-
-}
 
 

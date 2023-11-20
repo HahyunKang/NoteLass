@@ -6,8 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.app.note_lass.module.group.ui.AssignmentGradeForAllScreen
-import com.app.note_lass.module.group.ui.AssignmentUploadScreen
 import com.app.note_lass.module.group.ui.GroupScreen
 import com.app.note_lass.module.group.ui.GroupStudentScreen
 import com.app.note_lass.module.group.ui.GroupTeacherScreen

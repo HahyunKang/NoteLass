@@ -4,5 +4,5 @@ import java.time.LocalDateTime
 
 data class HandBook(
     val content : String,
-    val createdDate : LocalDateTime
+    val createdDate : String
 )

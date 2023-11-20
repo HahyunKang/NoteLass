@@ -3,6 +3,7 @@ package com.app.note_lass.module.record.ui.viewModel
 import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +18,10 @@ import com.app.note_lass.module.record.domain.usecase.GetExcelFileUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordUseCase
 import com.app.note_lass.module.record.domain.usecase.PostExcelUseCase
 import com.app.note_lass.module.record.domain.usecase.PostRecordUseCase
+import com.app.note_lass.module.student.data.HandBookListState
+import com.app.note_lass.module.student.domain.usecase.getHandBookListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import okhttp3.MultipartBody
@@ -30,6 +34,7 @@ class RecordViewModel @Inject constructor(
     val postRecordUseCase: PostRecordUseCase,
     val postExcelUseCase: PostExcelUseCase,
     val getExcelFileUseCase: GetExcelFileUseCase,
+    val getHandBookListUseCase: getHandBookListUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(){
 
@@ -39,12 +44,16 @@ class RecordViewModel @Inject constructor(
     private val _getRecordState = mutableStateOf(GetRecordContentState())
     val getRecordState = _getRecordState
 
+    private val _handBookListState = mutableStateOf(HandBookListState())
+    val getHandBookState = _handBookListState
+
     private val _postRecordState = mutableStateOf(PostRecordContentState())
     val postRecordState = _postRecordState
 
     init {
        userId = savedStateHandle.get<Long>("userId")!!
         Log.e("userId",userId.toString())
+        getStudentHandBookList()
     }
 
     fun getStudentRecord(groupId : Long){
@@ -99,6 +108,36 @@ class RecordViewModel @Inject constructor(
                 is Resource.Error -> {
                     _postRecordState.value = PostRecordContentState(
                         isError = true,
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getStudentHandBookList(){
+       getHandBookListUseCase(userId.toInt()).onEach {
+                result ->
+
+            when (result) {
+
+                is Resource.Loading -> {
+                    _handBookListState.value = HandBookListState(
+                        isLoading = true,
+                    )
+                }
+
+                is Resource.Success -> {
+                    _handBookListState.value = HandBookListState(
+                        isSuccess = true,
+                        handBookList = result.data!!,
+                        isLoading = false
+                    )
+                }
+
+                is Resource.Error -> {
+                    _handBookListState.value = HandBookListState(
+                       isError = true
                     )
                 }
             }

@@ -1,15 +1,12 @@
-package com.app.note_lass.module.group.ui.viewModel
+package com.app.note_lass.module.upload.data.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.Resource
-import com.app.note_lass.module.group.data.upload.notice.Notice
-import com.app.note_lass.module.group.data.upload.notice.NoticeDetail
-import com.app.note_lass.module.group.data.upload.notice.NoticeDetailState
-import com.app.note_lass.module.group.data.upload.notice.toDetail
+import com.app.note_lass.module.upload.data.notice.NoticeDetailState
+import com.app.note_lass.module.upload.data.notice.toDetail
 import com.app.note_lass.module.group.domain.repository.GetNoticeDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn

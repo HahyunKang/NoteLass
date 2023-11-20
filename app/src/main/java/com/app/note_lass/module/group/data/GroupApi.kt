@@ -5,8 +5,7 @@ import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.join.JoinDto
 import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
-import com.app.note_lass.module.group.data.upload.notice.Notice
-import com.app.note_lass.module.group.data.upload.notice.NoticeContents
+import com.app.note_lass.module.upload.data.notice.Notice
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -16,7 +15,6 @@ import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
-import retrofit2.http.PartMap
 import retrofit2.http.Path
 import retrofit2.http.Query
 

@@ -115,7 +115,7 @@ class StudentMemoViewModel @Inject constructor(
 
     }
 
-    fun postHandBook(groupId : Int, userId: Int, handBookRequest: HandBookRequest){
+    fun postHandBook(groupId : Int, userId: Int, handBookRequest: HandBookRequest, onSuccess : () -> Unit){
         postHandBookUseCase(groupId,userId,handBookRequest).onEach {
                 result ->
             when(result) {
@@ -129,6 +129,7 @@ class StudentMemoViewModel @Inject constructor(
                     _handBookSubmitState.value = HandBookSubmitState(
                         isSuccess = true,
                     )
+                    onSuccess()
                     Log.e("success in handBook",result.code.toString())
                 }
                 is Resource.Error -> {

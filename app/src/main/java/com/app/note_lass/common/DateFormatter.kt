@@ -18,12 +18,25 @@ class DateFormatter(val localDateTime: LocalDateTime) {
     val formattedDateTime = localDateTime.format(formatter)
 
     @RequiresApi(Build.VERSION_CODES.O)
+    val formatterNoTime = DateTimeFormatter.ofPattern("yyyy.MM.dd", Locale.KOREA)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formattedDate = localDateTime.format(formatterNoTime)
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun printDate(){
         Log.e("printDate",formattedDateTime)
     }
 
 }
+class StringToDate(val localString : String) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+    val localStrings =localString.take(19)
+    @RequiresApi(Build.VERSION_CODES.O)
+    val localDateTime = LocalDateTime.parse(localStrings, formatter)
 
+}
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
