@@ -1,4 +1,4 @@
-package com.app.note_lass.module.group.data.upload.notice
+package com.app.note_lass.module.upload.data.notice
 
 data class NoticeContents(
     val title : String,

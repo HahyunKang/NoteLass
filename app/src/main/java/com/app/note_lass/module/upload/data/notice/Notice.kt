@@ -1,4 +1,4 @@
-package com.app.note_lass.module.group.data.upload.notice
+package com.app.note_lass.module.upload.data.notice
 
 import java.time.LocalDateTime
 

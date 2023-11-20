@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
+import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.login.data.LoginDto
 import com.app.note_lass.module.login.data.LoginRequest
@@ -20,13 +21,15 @@ import javax.inject.Inject
 
 class getHandBookListUseCase @Inject constructor(
     private val studentRepository: StudentRepository,
-    val dataStore: DataStore<Token>
+    val dataStore: DataStore<Token>,
+    val dataGroupStore: DataStore<GroupInfo>
 ) {
 
-    operator fun invoke(groupId : Int, userId : Int) : Flow<Resource<List<HandBook>>> = flow{
+    operator fun invoke(userId : Int) : Flow<Resource<List<HandBook>>> = flow{
         try {
             emit(Resource.Loading())
             val token = "Bearer ${dataStore.data.first().accessToken}"
+            val groupId = dataGroupStore.data.first().groupId!!.toInt()
             val handBookResponse = studentRepository.getHanBookList(accessToken = token, groupId = groupId,userId = userId)
 
             emit(

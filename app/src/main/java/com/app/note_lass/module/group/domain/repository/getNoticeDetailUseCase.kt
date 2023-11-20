@@ -1,14 +1,9 @@
 package com.app.note_lass.module.group.domain.repository
 
 import androidx.datastore.core.DataStore
-import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.Token
-import com.app.note_lass.module.group.data.upload.notice.Notice
-import com.app.note_lass.module.group.data.upload.notice.NoticeContents
-import com.app.note_lass.module.group.data.upload.notice.NoticeListDto
-import com.app.note_lass.module.group.data.upload.notice.NoticePreview
-import com.app.note_lass.module.group.data.upload.notice.toPreview
+import com.app.note_lass.module.upload.data.notice.Notice
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow

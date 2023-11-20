@@ -4,8 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.app.note_lass.module.group.ui.AssignmentUploadScreen
-import com.app.note_lass.module.note.ui.NoteScreen
+import com.app.note_lass.module.upload.ui.AssignmentUploadScreen
 
 fun NavGraphBuilder.NoteNavGraph(navController: NavController) {
 

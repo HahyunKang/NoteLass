@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.app.note_lass.R
-import com.app.note_lass.module.group.data.upload.notice.NoticePreview
+import com.app.note_lass.module.upload.data.notice.NoticePreview
 import com.app.note_lass.ui.component.IconAndText
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryGray

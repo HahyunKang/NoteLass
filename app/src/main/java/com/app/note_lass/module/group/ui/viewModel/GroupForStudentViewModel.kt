@@ -6,9 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.Resource
-import com.app.note_lass.module.group.data.studentList.StudentListState
-import com.app.note_lass.module.group.data.upload.notice.NoticeListDto
-import com.app.note_lass.module.group.data.upload.notice.NoticeListState
+import com.app.note_lass.module.upload.data.notice.NoticeListState
 import com.app.note_lass.module.group.domain.repository.GetNoticeListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn

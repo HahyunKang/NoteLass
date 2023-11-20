@@ -565,7 +565,6 @@ fun DialogStudentMemo(
 
     var handBookRequest  = HandBookRequest(content = null,attitudeScore =0 , presentationNum = 0)
 
-    if(submitState.value.isSuccess)setShowDialog(false)
 
     Dialog(
         onDismissRequest = { setShowDialog(false) }
@@ -714,7 +713,9 @@ fun DialogStudentMemo(
                 Box(modifier = Modifier.size(width = 73.dp, height = 40.dp)) {
                     RectangleEnabledButton(text = "저장하기") {
                         handBookRequest = HandBookRequest(memo.value,attitudeScore.value,presentationScore.value)
-                        studentMemoViewModel.postHandBook(groupId.value, studentId.value, handBookRequest)
+                        studentMemoViewModel.postHandBook(groupId.value, studentId.value, handBookRequest, onSuccess = {
+                            setShowDialog(false)
+                        })
                     }
                 }
 

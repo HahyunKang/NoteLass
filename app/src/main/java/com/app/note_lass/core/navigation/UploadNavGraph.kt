@@ -8,11 +8,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.app.note_lass.module.group.ui.AssignmentUploadScreen
-import com.app.note_lass.module.group.ui.GroupTeacherScreen
-import com.app.note_lass.module.group.ui.NoticeDetailScreen
-import com.app.note_lass.module.home.HomeScreen
-import com.app.note_lass.module.home.NoticeScreen
+import com.app.note_lass.module.upload.ui.AssignmentUploadScreen
+import com.app.note_lass.module.upload.ui.NoticeDetailScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.UploadNavGraph(navController: NavController) {

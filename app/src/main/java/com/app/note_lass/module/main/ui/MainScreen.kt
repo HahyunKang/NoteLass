@@ -111,9 +111,10 @@ fun MainScreen(
 
 
     if(isDialogShow.value){
-      DialogStudentMemo(setShowDialog = {
+      DialogStudentMemo(
+          setShowDialog = {
           isDialogShow.value = it
-      }
+          }
       )
     }
 

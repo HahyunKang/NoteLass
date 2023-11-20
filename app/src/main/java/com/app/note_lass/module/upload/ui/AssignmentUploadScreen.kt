@@ -1,4 +1,4 @@
-package com.app.note_lass.module.group.ui
+package com.app.note_lass.module.upload.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,7 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
-import com.app.note_lass.module.group.ui.viewModel.UploadViewModel
+import com.app.note_lass.module.group.ui.TabViewForTeacher
+import com.app.note_lass.module.upload.data.viewmodel.UploadViewModel
 import com.app.note_lass.ui.theme.PrimaryBlack
 
 @Composable
