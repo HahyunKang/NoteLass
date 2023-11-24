@@ -9,7 +9,6 @@ import androidx.core.net.toUri
 
 class AndroidDownLoader(
     private val context : Context,
-    private val token : String
 ) : Downloader{
     private val downloadManager = context.getSystemService(DownloadManager :: class.java)
 

@@ -11,10 +11,15 @@ import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.group.data.CreateGroupState
+import com.app.note_lass.module.record.data.DeleteExcelState
+import com.app.note_lass.module.record.data.GetExcelState
 import com.app.note_lass.module.record.data.GetRecordContentState
+import com.app.note_lass.module.record.data.GetScoreState
 import com.app.note_lass.module.record.data.PostRecordContentState
 import com.app.note_lass.module.record.data.RecordBody
+import com.app.note_lass.module.record.domain.usecase.DeleteExcelFileUseCase
 import com.app.note_lass.module.record.domain.usecase.GetExcelFileUseCase
+import com.app.note_lass.module.record.domain.usecase.GetRecordScoreUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordUseCase
 import com.app.note_lass.module.record.domain.usecase.PostExcelUseCase
 import com.app.note_lass.module.record.domain.usecase.PostRecordUseCase
@@ -35,6 +40,8 @@ class RecordViewModel @Inject constructor(
     val postExcelUseCase: PostExcelUseCase,
     val getExcelFileUseCase: GetExcelFileUseCase,
     val getHandBookListUseCase: getHandBookListUseCase,
+    val deleteExcelUseCase : DeleteExcelFileUseCase,
+    val getRecordScoreUseCase: GetRecordScoreUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(){
 
@@ -50,14 +57,22 @@ class RecordViewModel @Inject constructor(
     private val _postRecordState = mutableStateOf(PostRecordContentState())
     val postRecordState = _postRecordState
 
+    private val _getExcelState = mutableStateOf(GetExcelState())
+    val getExcelState= _getExcelState
+
+    private val _deleteExcelState = mutableStateOf(DeleteExcelState())
+    val deleteExcelState = _deleteExcelState
+    private val _getScoreState = mutableStateOf(GetScoreState())
+    val getScoreState=  _getScoreState
+
     init {
        userId = savedStateHandle.get<Long>("userId")!!
         Log.e("userId",userId.toString())
         getStudentHandBookList()
     }
 
-    fun getStudentRecord(groupId : Long){
-        getRecordUseCase(groupId, userId).onEach {
+    fun getStudentRecord(){
+        getRecordUseCase(userId).onEach {
             result ->
 
                 when (result) {
@@ -86,8 +101,8 @@ class RecordViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun postStudentRecord(groupId : Long ,recordBody: RecordBody){
-        postRecordUseCase(groupId, userId,recordBody).onEach {
+    fun postStudentRecord(recordBody: RecordBody){
+        postRecordUseCase(userId,recordBody).onEach {
                 result ->
 
             when (result) {
@@ -103,6 +118,7 @@ class RecordViewModel @Inject constructor(
                         isLoading = false,
                         isSuccess = true,
                     )
+
                 }
 
                 is Resource.Error -> {
@@ -145,8 +161,8 @@ class RecordViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun postExcel(groupId : Long,file : MultipartBody.Part) {
-        postExcelUseCase(groupId, file).onEach {
+    fun postExcel(file : MultipartBody.Part) {
+        postExcelUseCase(file).onEach {
                 result ->
 
             when (result) {
@@ -163,6 +179,7 @@ class RecordViewModel @Inject constructor(
                         isLoading = false,
                         isSuccess = true,
                     )
+                    getStudentRecord()
                 }
 
                 is Resource.Error -> {
@@ -176,27 +193,88 @@ class RecordViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getExcel(groupId : Long){
-        getExcelFileUseCase(groupId).onEach {
+    fun getExcel(downLoadExcel : () -> Unit){
+        getExcelFileUseCase().onEach {
                 result ->
 
             when (result) {
 
                 is Resource.Loading -> {
-                    _getRecordState.value = GetRecordContentState(
+                    _getExcelState.value = GetExcelState(
                         isLoading = true,
                     )
                 }
 
                 is Resource.Success -> {
-                    _getRecordState.value = GetRecordContentState(
+                    _getExcelState.value = GetExcelState(
                         isLoading = false,
                         isSuccess = true,
+                        excelUrl = result.data!!.fileUrl
+                    )
+                    deleteExcel()
+                    downLoadExcel()
+                }
+
+                is Resource.Error -> {
+                    _getExcelState.value = GetExcelState(
+                        isError = true
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+    fun deleteExcel(){
+        deleteExcelUseCase().onEach {
+                result ->
+
+            when (result) {
+
+                is Resource.Loading -> {
+                    _deleteExcelState.value = DeleteExcelState(
+                        isLoading = true,
+                    )
+                }
+
+                is Resource.Success -> {
+                    _deleteExcelState.value = DeleteExcelState(
+                       isSuccess = true,
+                        isLoading = false
                     )
                 }
 
                 is Resource.Error -> {
-                    _getRecordState.value = GetRecordContentState(
+                    _deleteExcelState.value = DeleteExcelState(
+                        isError = true
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+   fun getStudentScore(percentage:Int){
+        getRecordScoreUseCase(userId,percentage).onEach {
+                result ->
+
+            when (result) {
+
+                is Resource.Loading -> {
+                    _getScoreState.value = GetScoreState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+
+                is Resource.Success -> {
+                    _getScoreState.value = GetScoreState(
+                        isLoading = false,
+                        isSuccess = true,
+                        score = result.data!!
+                    )
+                }
+
+                is Resource.Error -> {
+                    _getScoreState.value = GetScoreState(
                         isError = true,
                     )
                 }
@@ -204,5 +282,4 @@ class RecordViewModel @Inject constructor(
 
         }.launchIn(viewModelScope)
     }
-
 }

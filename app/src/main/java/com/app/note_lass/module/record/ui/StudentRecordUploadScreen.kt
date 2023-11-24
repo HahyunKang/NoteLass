@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.note_lass.common.AndroidDownLoader
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
@@ -51,10 +52,11 @@ fun StudentRecordUploadScreen(
     studentName : String,
     protoViewModel : ProtoViewModel = hiltViewModel(),
     recordViewModel: RecordViewModel = hiltViewModel()
-){
+) {
 
 
-    val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",0))
+    val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("", "", 0))
+    val excelState = recordViewModel.getExcelState
 
     @SuppressLint("Range")
     fun Uri.asMultipart(name: String, contentResolver: ContentResolver): MultipartBody.Part? {
@@ -78,11 +80,8 @@ fun StudentRecordUploadScreen(
             }
         }
     }
-    var selectedTabIndex by remember{
-        mutableStateOf(0)
-    }
 
-    val isFirstDialogShow=  remember {
+    val isFirstDialogShow = remember {
         mutableStateOf(false)
     }
     val isSecondDialogShow = remember {
@@ -92,114 +91,111 @@ fun StudentRecordUploadScreen(
         mutableStateOf<MultipartBody.Part?>(null)
     }
     val context = LocalContext.current
-    val excelLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri : Uri? ->
-            val file = uri?.asMultipart("file",context.contentResolver)
 
-            excelFile.value = file
-
-        }
-    )
     val handBookListState = recordViewModel.getHandBookState
 
-    if(isFirstDialogShow.value){
+    if (isFirstDialogShow.value) {
         DialogInRecord(
             setShowDialog = {
-                isFirstDialogShow.value= it
+                isFirstDialogShow.value = it
             },
-            content = "한셀로 출력하시겠습니까?" ,
-            buttonText = "출력하기") {
-            recordViewModel.postExcel(groupInfo.value.groupId!!,excelFile.value!!)
-            isSecondDialogShow.value = true
-        }
-    }
-    if(isSecondDialogShow.value){
-        DialogInRecord(
-            setShowDialog = {
-                isSecondDialogShow.value= it
-
-            },
-            content = "성공적으로 출력되었습니다." ,
-            buttonText = "확인") {
-            recordViewModel.getExcel(groupInfo.value.groupId!!)
-            isSecondDialogShow.value = false
-        }
-    }
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-         AppBarForRecord(
-             title = "${groupInfo.value.groupName} ${studentId}번 $studentName",
-             badgeCount = 12,
-             onClick = {
-                 excelLauncher.launch("application/octet-stream")
-                 isFirstDialogShow.value= true
-             }
-         )
-        },
-        containerColor =  Color(0xFFF5F5FC),
-        contentColor = Color.Black,
-        bottomBar = {
-        },
-        content = {
-
-    Row(
-        modifier = Modifier
-            .padding(
-                top = it.calculateTopPadding() + 30.dp,
-                bottom = 20.dp,
-                start = 30.dp,
-                end = 30.dp
-            )
-    ){
-        Box(
-            Modifier
-                .weight(2f)
-                .shadow(
-                    elevation = 7.dp,
-                    shape = RoundedCornerShape(size = 8.dp),
-                    ambientColor = Color(0x0A26282B),
-                    spotColor = Color(0x3D26282B)
-                )
-                .background(
-                    color = Color(0xFFFFFFFF)
-                )
-                .fillMaxHeight()
-                .padding(horizontal = 24.dp)
+            content = "한셀로 출력하시겠습니까?",
+            buttonText = "출력하기"
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
+            val downloader = AndroidDownLoader(context)
+            recordViewModel.getExcel(downLoadExcel = {
+                downloader.downloadFile(excelState.value.excelUrl)
+                isSecondDialogShow.value = true
+            }
+            )
+
+        }
+        if (isSecondDialogShow.value) {
+            DialogInRecord(
+                setShowDialog = {
+                    isSecondDialogShow.value = it
+
+                },
+                content = "성공적으로 출력되었습니다.",
+                buttonText = "확인"
             ) {
-                StudentRecordScreen(groupId = groupInfo.value.groupId!!)
+                isSecondDialogShow.value = false
             }
         }
+    }
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                AppBarForRecord(
+                    title = "${groupInfo.value.groupName} ${studentId}번 $studentName",
+                    badgeCount = 12,
+                    onClick = {
+                        isFirstDialogShow.value = true
+                    }
+                )
+            },
+            containerColor = Color(0xFFF5F5FC),
+            contentColor = Color.Black,
+            bottomBar = {
+            },
+            content = {
 
-            Spacer(modifier = Modifier.width(20.dp))
+                Row(
+                    modifier = Modifier
+                        .padding(
+                            top = it.calculateTopPadding() + 30.dp,
+                            bottom = 20.dp,
+                            start = 30.dp,
+                            end = 30.dp
+                        )
+                ) {
+                    Box(
+                        Modifier
+                            .weight(2f)
+                            .shadow(
+                                elevation = 7.dp,
+                                shape = RoundedCornerShape(size = 8.dp),
+                                ambientColor = Color(0x0A26282B),
+                                spotColor = Color(0x3D26282B)
+                            )
+                            .background(
+                                color = Color(0xFFFFFFFF)
+                            )
+                            .fillMaxHeight()
+                            .padding(horizontal = 24.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            StudentRecordScreen()
+                        }
+                    }
 
-            Column(
-                Modifier
-                    .weight(1f)
-                    .shadow(
-                        elevation = 7.dp,
-                        shape = RoundedCornerShape(size = 8.dp),
-                        ambientColor = Color(0x0A26282B),
-                        spotColor = Color(0x3D26282B)
-                    )
-                    .background(
-                        color = Color(0xFFFFFFFF)
-                    )
-                    .fillMaxHeight()
-                    .padding(horizontal = 24.dp, vertical = 15.dp)
-            ) {
-                HandBookListScreen(handBookList = handBookListState.value.handBookList)
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    Column(
+                        Modifier
+                            .weight(1f)
+                            .shadow(
+                                elevation = 7.dp,
+                                shape = RoundedCornerShape(size = 8.dp),
+                                ambientColor = Color(0x0A26282B),
+                                spotColor = Color(0x3D26282B)
+                            )
+                            .background(
+                                color = Color(0xFFFFFFFF)
+                            )
+                            .fillMaxHeight()
+                            .padding(horizontal = 24.dp, vertical = 15.dp)
+                    ) {
+                        HandBookListScreen(handBookList = handBookListState.value.handBookList)
 
 
-            }
-        }
+                    }
+                }
 
-    })
+            })
 
-}
+    }
+
 

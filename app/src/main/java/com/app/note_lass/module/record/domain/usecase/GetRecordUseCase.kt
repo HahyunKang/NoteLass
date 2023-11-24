@@ -2,6 +2,7 @@ package com.app.note_lass.module.record.domain.usecase
 
 import androidx.datastore.core.DataStore
 import com.app.note_lass.common.Resource
+import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.record.domain.RecordRepository
 import kotlinx.coroutines.flow.Flow
@@ -13,16 +14,18 @@ import javax.inject.Inject
 
 class GetRecordUseCase @Inject constructor(
     private val recordRepository: RecordRepository,
-    val dataStore : DataStore<Token>
+    val dataStore : DataStore<Token>,
+    private val dataGroupStore : DataStore<GroupInfo>
 ) {
 
-    operator fun invoke(groupId : Long, userId :Long) : Flow<Resource<String>> = flow{
+    operator fun invoke(userId :Long) : Flow<Resource<String>> = flow{
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
+            val groupId= dataGroupStore.data.first().groupId
 
             emit(Resource.Loading())
 
-            val recordResponse = recordRepository.getRecord(token,groupId, userId)
+            val recordResponse = recordRepository.getRecord(token,groupId!!, userId)
 
             emit(
                 Resource.Success(

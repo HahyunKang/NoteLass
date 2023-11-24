@@ -1,10 +1,12 @@
 package com.app.note_lass.module.record.domain.usecase
 
 import androidx.datastore.core.DataStore
+import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.Token
-import com.app.note_lass.module.record.data.File
+import com.app.note_lass.module.record.data.RecordBody
+import com.app.note_lass.module.record.data.RecordScore
 import com.app.note_lass.module.record.domain.RecordRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -13,20 +15,20 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class GetExcelFileUseCase @Inject constructor(
+class GetRecordScoreUseCase @Inject constructor(
     private val recordRepository: RecordRepository,
     val dataStore : DataStore<Token>,
-    private val dataGroupStore : DataStore<GroupInfo>
+    val dataGroupStore : DataStore<GroupInfo>
 ) {
 
-    operator fun invoke() : Flow<Resource<File>> = flow{
+    operator fun invoke(userId :Long,percentage : Int ) : Flow<Resource<RecordScore>> = flow{
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
             val groupId= dataGroupStore.data.first().groupId
 
             emit(Resource.Loading())
 
-            val recordResponse = recordRepository.getExcel(token,groupId!!)
+            val recordResponse = recordRepository.getRecordScore(token,groupId!!.toLong(),userId, percentage)
 
             emit(
                 Resource.Success(
@@ -34,7 +36,6 @@ class GetExcelFileUseCase @Inject constructor(
                     code = recordResponse.code,
                     message = recordResponse.message
             )
-
             )
         }
         catch (e: HttpException) {

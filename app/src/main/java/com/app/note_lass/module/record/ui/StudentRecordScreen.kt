@@ -1,6 +1,12 @@
 package com.app.note_lass.module.record.ui
 
+import android.annotation.SuppressLint
+import android.content.ContentResolver
+import android.net.Uri
 import android.provider.ContactsContract.CommonDataKinds.Note
+import android.provider.OpenableColumns
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -18,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -32,8 +39,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +53,7 @@ import com.app.note_lass.module.record.data.RecordBody
 import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
 import com.app.note_lass.module.signup.domain.presentation.RegistrationFormEvent
 import com.app.note_lass.ui.component.RectangleEnabledButton
+import com.app.note_lass.ui.component.noRippleClickable
 import com.app.note_lass.ui.theme.BackgroundBlue
 import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
@@ -51,12 +61,17 @@ import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
 import com.app.note_lass.ui.theme.PrimaryPurple
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okio.BufferedSink
+import okio.source
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentRecordScreen(
-    groupId : Long,
     recordViewModel: RecordViewModel = hiltViewModel()
 ) {
 
@@ -75,11 +90,47 @@ fun StudentRecordScreen(
     val keyword = remember {
         mutableStateOf("")
     }
-
+    val excelFile = remember {
+        mutableStateOf<MultipartBody.Part?>(null)
+    }
     val getRecordState= recordViewModel.getRecordState
-    if(getRecordState.value.isSuccess){
+    val getScoreState = recordViewModel.getScoreState
+    if(getRecordState.value.isSuccess) {
         content.value = getRecordState.value.content
     }
+    val context = LocalContext.current
+    @SuppressLint("Range")
+    fun Uri.asMultipart(name: String, contentResolver: ContentResolver): MultipartBody.Part? {
+        return contentResolver.query(this, null, null, null, null)?.let {
+            if (it.moveToNext()) {
+                val displayName = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                val requestBody = object : RequestBody() {
+                    override fun contentType(): MediaType? {
+                        return contentResolver.getType(this@asMultipart)?.toMediaType()
+                    }
+
+                    override fun writeTo(sink: BufferedSink) {
+                        sink.writeAll(contentResolver.openInputStream(this@asMultipart)?.source()!!)
+                    }
+                }
+                it.close()
+                MultipartBody.Part.createFormData(name, displayName, requestBody)
+            } else {
+                it.close()
+                null
+            }
+        }
+    }
+    val excelLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri : Uri? ->
+            val file = uri?.asMultipart("file",context.contentResolver)
+
+            excelFile.value = file
+            excelFile.value?.let { recordViewModel.postExcel(it) }
+        }
+    )
+
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -100,7 +151,13 @@ fun StudentRecordScreen(
                 Row(
                     modifier = Modifier
                         .size(width = 169.dp, height = 32.dp)
-                        .border(1.dp, PrimarayBlue, RoundedCornerShape(12.dp)),
+                        .border(1.dp, PrimarayBlue, RoundedCornerShape(12.dp))
+                        .clickable {
+                            val percentage = percentCriteria.value.dropLast(1).toIntOrNull()
+                            if (percentage != null) {
+                                recordViewModel.getStudentScore(percentage)
+                            }
+                        },
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -121,14 +178,14 @@ fun StudentRecordScreen(
             Box(modifier = Modifier.size(width = 74.dp, height = 40.dp)) {
                 RectangleEnabledButton(text = "저장하기") {
                     val recordBody = RecordBody(content = content.value)
-                    recordViewModel.postStudentRecord(groupId,recordBody)
+                    recordViewModel.postStudentRecord(recordBody)
                 }
             }
 
         }
 
         Text(
-            text = "태도 점수: 10점 발표횟수: 5회",
+            text = "태도 점수: ${getScoreState.value.score.attitudeScore}점 발표횟수: ${getScoreState.value.score.presentationNum}회",
             style = NoteLassTheme.Typography.fourteen_600_pretendard,
             color = PrimaryBlack,
             modifier = Modifier.padding(vertical = 10.dp)
@@ -154,7 +211,8 @@ fun StudentRecordScreen(
                 textStyle = NoteLassTheme.Typography.twelve_600_underline_pretendard,
                 modifier = Modifier
                     .height(22.dp)
-                    .width(47.dp)
+                    .width(47.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
 
             ) {
                 TextFieldDefaults.TextFieldDecorationBox(
@@ -185,6 +243,16 @@ fun StudentRecordScreen(
                 color = PrimaryBlack,
                 modifier = Modifier.padding(vertical = 10.dp)
             )
+
+            getScoreState.value.score.highScoreAssignmentList.forEach {
+                Text(
+                    text = it.toString(),
+                    style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                    color = PrimaryBlack,
+                    modifier = Modifier.padding(vertical = 10.dp)
+                )
+
+            }
 
         }
 
@@ -222,7 +290,7 @@ fun StudentRecordScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BackgroundBlue),
                     contentPadding = PaddingValues(3.dp),
                     onClick = {
-                        recordViewModel.getStudentRecord(groupId)
+                        excelLauncher.launch("application/octet-stream")
                     }
                 ) {
                     Text(
