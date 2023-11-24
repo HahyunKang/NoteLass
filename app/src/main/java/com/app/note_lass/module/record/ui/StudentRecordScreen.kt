@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +53,7 @@ import com.app.note_lass.module.record.data.RecordBody
 import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
 import com.app.note_lass.module.signup.domain.presentation.RegistrationFormEvent
 import com.app.note_lass.ui.component.RectangleEnabledButton
+import com.app.note_lass.ui.component.noRippleClickable
 import com.app.note_lass.ui.theme.BackgroundBlue
 import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
@@ -91,6 +94,7 @@ fun StudentRecordScreen(
         mutableStateOf<MultipartBody.Part?>(null)
     }
     val getRecordState= recordViewModel.getRecordState
+    val getScoreState = recordViewModel.getScoreState
     if(getRecordState.value.isSuccess) {
         content.value = getRecordState.value.content
     }
@@ -147,7 +151,13 @@ fun StudentRecordScreen(
                 Row(
                     modifier = Modifier
                         .size(width = 169.dp, height = 32.dp)
-                        .border(1.dp, PrimarayBlue, RoundedCornerShape(12.dp)),
+                        .border(1.dp, PrimarayBlue, RoundedCornerShape(12.dp))
+                        .clickable {
+                            val percentage = percentCriteria.value.dropLast(1).toIntOrNull()
+                            if (percentage != null) {
+                                recordViewModel.getStudentScore(percentage)
+                            }
+                        },
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -175,7 +185,7 @@ fun StudentRecordScreen(
         }
 
         Text(
-            text = "태도 점수: 10점 발표횟수: 5회",
+            text = "태도 점수: ${getScoreState.value.score.attitudeScore}점 발표횟수: ${getScoreState.value.score.presentationNum}회",
             style = NoteLassTheme.Typography.fourteen_600_pretendard,
             color = PrimaryBlack,
             modifier = Modifier.padding(vertical = 10.dp)
@@ -201,7 +211,8 @@ fun StudentRecordScreen(
                 textStyle = NoteLassTheme.Typography.twelve_600_underline_pretendard,
                 modifier = Modifier
                     .height(22.dp)
-                    .width(47.dp)
+                    .width(47.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
 
             ) {
                 TextFieldDefaults.TextFieldDecorationBox(
@@ -232,6 +243,16 @@ fun StudentRecordScreen(
                 color = PrimaryBlack,
                 modifier = Modifier.padding(vertical = 10.dp)
             )
+
+            getScoreState.value.score.highScoreAssignmentList.forEach {
+                Text(
+                    text = it.toString(),
+                    style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                    color = PrimaryBlack,
+                    modifier = Modifier.padding(vertical = 10.dp)
+                )
+
+            }
 
         }
 

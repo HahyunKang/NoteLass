@@ -11,6 +11,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 import java.io.File
 
 interface RecordApi {
@@ -50,5 +51,13 @@ interface RecordApi {
         @Header(value = "Authorization") accessToken : String,
         @Path(value = "groupId") groupId : Long
     ) : NoteResponseBody<Nothing>
+    @GET("api/record/detail/{groupId}/{userId}")
+    suspend fun getScore(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId : Long,
+        @Path(value = "userId") userId : Long,
+        @Query(value = "percentage") percentage: Int
+    ) : NoteResponseBody<RecordScore>
+
 
 }

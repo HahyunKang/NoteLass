@@ -34,5 +34,14 @@ class RecordImpl @Inject constructor(
         return recordApi.deleteExcel(token,groupId)
     }
 
+    override suspend fun getRecordScore(
+        token: String,
+        groupId: Long,
+        userId: Long,
+        percentage: Int
+    ): NoteResponseBody<RecordScore> {
+        return recordApi.getScore(token,groupId, userId, percentage)
+    }
+
 
 }

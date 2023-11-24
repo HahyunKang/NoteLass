@@ -25,4 +25,10 @@ data class DeleteExcelState(
     var isError : Boolean = false,
     var isLoading : Boolean = false,
 )
+data class GetScoreState(
+    var isSuccess : Boolean = false,
+    var isError : Boolean = false,
+    var isLoading : Boolean = false,
+    var score  :RecordScore = RecordScore(0, emptyList(),0)
+)
 

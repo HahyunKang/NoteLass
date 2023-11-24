@@ -14,10 +14,12 @@ import com.app.note_lass.module.group.data.CreateGroupState
 import com.app.note_lass.module.record.data.DeleteExcelState
 import com.app.note_lass.module.record.data.GetExcelState
 import com.app.note_lass.module.record.data.GetRecordContentState
+import com.app.note_lass.module.record.data.GetScoreState
 import com.app.note_lass.module.record.data.PostRecordContentState
 import com.app.note_lass.module.record.data.RecordBody
 import com.app.note_lass.module.record.domain.usecase.DeleteExcelFileUseCase
 import com.app.note_lass.module.record.domain.usecase.GetExcelFileUseCase
+import com.app.note_lass.module.record.domain.usecase.GetRecordScoreUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordUseCase
 import com.app.note_lass.module.record.domain.usecase.PostExcelUseCase
 import com.app.note_lass.module.record.domain.usecase.PostRecordUseCase
@@ -39,6 +41,7 @@ class RecordViewModel @Inject constructor(
     val getExcelFileUseCase: GetExcelFileUseCase,
     val getHandBookListUseCase: getHandBookListUseCase,
     val deleteExcelUseCase : DeleteExcelFileUseCase,
+    val getRecordScoreUseCase: GetRecordScoreUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(){
 
@@ -59,6 +62,8 @@ class RecordViewModel @Inject constructor(
 
     private val _deleteExcelState = mutableStateOf(DeleteExcelState())
     val deleteExcelState = _deleteExcelState
+    private val _getScoreState = mutableStateOf(GetScoreState())
+    val getScoreState=  _getScoreState
 
     init {
        userId = savedStateHandle.get<Long>("userId")!!
@@ -241,6 +246,36 @@ class RecordViewModel @Inject constructor(
                 is Resource.Error -> {
                     _deleteExcelState.value = DeleteExcelState(
                         isError = true
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+   fun getStudentScore(percentage:Int){
+        getRecordScoreUseCase(userId,percentage).onEach {
+                result ->
+
+            when (result) {
+
+                is Resource.Loading -> {
+                    _getScoreState.value = GetScoreState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+
+                is Resource.Success -> {
+                    _getScoreState.value = GetScoreState(
+                        isLoading = false,
+                        isSuccess = true,
+                        score = result.data!!
+                    )
+                }
+
+                is Resource.Error -> {
+                    _getScoreState.value = GetScoreState(
+                        isError = true,
                     )
                 }
             }
