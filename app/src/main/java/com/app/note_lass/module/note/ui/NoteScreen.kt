@@ -30,37 +30,6 @@ import com.app.note_lass.ui.component.AppBar
 @Composable
 fun NoteScreen() {
 
-        var pdfUri by remember {
-            mutableStateOf<Uri?>(null)
-        }
-        val context = LocalContext.current
-
-        val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent(),
-            onResult = { uri ->
-                pdfUri = uri
-                if (uri != null) {
-                    val intent = Intent(context, NoteActivity::class.java).apply {
-                        putExtra("pdfUri", uri)
-                    }
-                    pdfUri?.path?.let { Log.e("PDFURI", it) }
-                    context.startActivity(intent)
-                }
-            }
-        )
-
-        Column {
-            if (pdfUri != null) {
-                // Show the selected PDF file information or preview if needed
-            } else {
-                Button(
-                    onClick = { launcher.launch("application/pdf") },
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text("Select PDF File")
-                }
-            }
-        }
 
 }
 
