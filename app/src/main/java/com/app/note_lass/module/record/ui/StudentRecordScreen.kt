@@ -5,6 +5,7 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.provider.ContactsContract.CommonDataKinds.Note
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
@@ -34,6 +35,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -95,8 +97,12 @@ fun StudentRecordScreen(
     }
     val getRecordState= recordViewModel.getRecordState
     val getScoreState = recordViewModel.getScoreState
-    if(getRecordState.value.isSuccess) {
-        content.value = getRecordState.value.content
+
+    LaunchedEffect(key1 = getRecordState.value.isSuccess) {
+        if (getRecordState.value.isSuccess) {
+            content.value = getRecordState.value.content
+
+        }
     }
     val context = LocalContext.current
     @SuppressLint("Range")

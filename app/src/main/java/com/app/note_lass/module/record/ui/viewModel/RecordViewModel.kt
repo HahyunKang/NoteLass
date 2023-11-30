@@ -7,6 +7,7 @@ import androidx.datastore.core.DataStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.note_lass.common.DownloadStatusListener
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
@@ -43,7 +44,7 @@ class RecordViewModel @Inject constructor(
     val deleteExcelUseCase : DeleteExcelFileUseCase,
     val getRecordScoreUseCase: GetRecordScoreUseCase,
     savedStateHandle: SavedStateHandle
-) : ViewModel(){
+) : ViewModel(), DownloadStatusListener {
 
     var userId : Long = 0
     var studentName : String =""
@@ -64,13 +65,20 @@ class RecordViewModel @Inject constructor(
     val deleteExcelState = _deleteExcelState
     private val _getScoreState = mutableStateOf(GetScoreState())
     val getScoreState=  _getScoreState
-
+    private var _downloadStatus = mutableStateOf("")
+    val downloadStatus  = _downloadStatus
     init {
        userId = savedStateHandle.get<Long>("userId")!!
         Log.e("userId",userId.toString())
         getStudentHandBookList()
     }
+    override fun onDownloadStatusUpdated(status: String) {
+        _downloadStatus.value = status
+    }
 
+    fun setStatus(){
+        _downloadStatus.value = "null"
+    }
     fun getStudentRecord(){
         getRecordUseCase(userId).onEach {
             result ->
@@ -211,8 +219,9 @@ class RecordViewModel @Inject constructor(
                         isSuccess = true,
                         excelUrl = result.data!!.fileUrl
                     )
-                    deleteExcel()
+
                     downLoadExcel()
+                    //deleteExcel()
                 }
 
                 is Resource.Error -> {

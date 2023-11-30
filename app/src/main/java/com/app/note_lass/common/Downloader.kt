@@ -4,3 +4,7 @@ interface Downloader {
     fun downloadFile(url : String) : Long
 
 }
+
+interface DownloadStatusListener {
+    fun onDownloadStatusUpdated(status: String)
+}
