@@ -14,12 +14,14 @@ import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.group.data.CreateGroupState
 import com.app.note_lass.module.record.data.DeleteExcelState
 import com.app.note_lass.module.record.data.GetExcelState
+import com.app.note_lass.module.record.data.GetGuidelineState
 import com.app.note_lass.module.record.data.GetRecordContentState
 import com.app.note_lass.module.record.data.GetScoreState
 import com.app.note_lass.module.record.data.PostRecordContentState
 import com.app.note_lass.module.record.data.RecordBody
 import com.app.note_lass.module.record.domain.usecase.DeleteExcelFileUseCase
 import com.app.note_lass.module.record.domain.usecase.GetExcelFileUseCase
+import com.app.note_lass.module.record.domain.usecase.GetGuidelineUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordScoreUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordUseCase
 import com.app.note_lass.module.record.domain.usecase.PostExcelUseCase
@@ -43,6 +45,7 @@ class RecordViewModel @Inject constructor(
     val getHandBookListUseCase: getHandBookListUseCase,
     val deleteExcelUseCase : DeleteExcelFileUseCase,
     val getRecordScoreUseCase: GetRecordScoreUseCase,
+    val getGuidelineUseCase: GetGuidelineUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), DownloadStatusListener {
 
@@ -60,6 +63,9 @@ class RecordViewModel @Inject constructor(
 
     private val _getExcelState = mutableStateOf(GetExcelState())
     val getExcelState= _getExcelState
+
+    private val _getGuidelineState = mutableStateOf(GetGuidelineState())
+    val getGuidelineState = _getGuidelineState
 
     private val _deleteExcelState = mutableStateOf(DeleteExcelState())
     val deleteExcelState = _deleteExcelState
@@ -291,4 +297,35 @@ class RecordViewModel @Inject constructor(
 
         }.launchIn(viewModelScope)
     }
+
+    fun getGuideline(keywords : List<String>,handbookIds : List<Int>){
+        getGuidelineUseCase(userId, keywords, handbookIds).onEach {
+                result ->
+
+            when (result) {
+
+                is Resource.Loading -> {
+                    _getGuidelineState.value = GetGuidelineState(
+                    isLoading = true,
+                    )
+                }
+
+                is Resource.Success -> {
+                    _getGuidelineState.value = GetGuidelineState(
+                        isLoading = false,
+                        isSuccess = true,
+                        guideLine = result.data!!
+                    )
+                }
+
+                is Resource.Error -> {
+                    _getGuidelineState.value = GetGuidelineState(
+                        isError = true
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+
 }

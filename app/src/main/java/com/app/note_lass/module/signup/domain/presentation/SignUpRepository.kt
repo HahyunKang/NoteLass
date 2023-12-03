@@ -11,5 +11,7 @@ import javax.inject.Inject
 interface  SignUpRepository{
 
     suspend fun postSignUp(signUpRequest: SignUpRequest) : NoteResponseBody<Nothing>
+    suspend fun emailRequest(email:String) : NoteResponseBody<Nothing>
+    suspend fun emailValidate(email:String,authCode: String) : NoteResponseBody<Boolean>
 
 }
