@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.app.note_lass.common.DateFormatter
 import com.app.note_lass.ui.theme.NoteLassTheme
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -35,10 +37,40 @@ fun HandBookContent(
     Column(verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = formatDate,
-            style = NoteLassTheme.Typography.twelve_600_pretendard,
-            color = Color.Gray
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = formatDate,
+                    style = NoteLassTheme.Typography.twelve_600_pretendard,
+                    color = Color.Gray
+                )
+
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "수정",
+                    style = NoteLassTheme.Typography.twelve_600_pretendard,
+                    color = Color.Gray
+                )
+                Text(
+                    text = "삭제",
+                    style = NoteLassTheme.Typography.twelve_600_pretendard,
+                    color = Color.Gray
+                )
+            }
+
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Box(
             modifier =  Modifier.fillMaxWidth()

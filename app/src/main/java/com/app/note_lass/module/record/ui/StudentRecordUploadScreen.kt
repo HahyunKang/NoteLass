@@ -100,7 +100,9 @@ fun StudentRecordUploadScreen(
     val isSecondDialogShow = remember {
         mutableStateOf(false)
     }
-
+    val isMemoActive = remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
 
     val handBookListState = recordViewModel.getHandBookState
@@ -160,11 +162,10 @@ fun StudentRecordUploadScreen(
             bottomBar = {
             },
             content = {
-
                 Row(
                     modifier = Modifier
                         .padding(
-                            top = it.calculateTopPadding() + 30.dp,
+                            top = it.calculateTopPadding() + 15.dp,
                             bottom = 20.dp,
                             start = 30.dp,
                             end = 30.dp
@@ -188,7 +189,9 @@ fun StudentRecordUploadScreen(
                         Column(
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            StudentRecordScreen()
+                            StudentRecordScreen(isMemoActive =  {
+                                isMemoActive.value = it
+                            })
                         }
                     }
 
@@ -209,7 +212,10 @@ fun StudentRecordUploadScreen(
                             .fillMaxHeight()
                             .padding(horizontal = 24.dp, vertical = 15.dp)
                     ) {
-                        HandBookListScreen(handBookList = handBookListState.value.handBookList)
+                        HandBookListScreen(
+                            handBookList = handBookListState.value.handBookList,
+                            isMemoActive = isMemoActive.value,
+                        )
 
 
                     }

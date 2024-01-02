@@ -30,19 +30,20 @@ fun ToggleButton(
         if(selected.value)
             Modifier
                 .border(1.dp,color = PrimarayBlue,shape = RoundedCornerShape(20.dp))
-                .padding(horizontal = 5.dp, vertical = 3.dp)
-            .clickable {
-                selected.value = !selected.value
-                getSelected(false)
-            }
+                .clickable {
+                    selected.value = !selected.value
+                    getSelected(false)
+                }
+                .padding(horizontal = 8.dp, vertical = 3.dp)
         else
             Modifier
                 .border(1.dp, PrimaryGray,shape = RoundedCornerShape(20.dp))
-                .padding(horizontal = 5.dp, vertical = 3.dp)
                 .clickable {
-                selected.value = !selected.value
-                getSelected(true)
-            },
+                    selected.value = !selected.value
+                    getSelected(true)
+                }
+                .padding(horizontal = 8.dp, vertical = 3.dp)
+           ,
         textAlign = TextAlign.Center
     )
 }

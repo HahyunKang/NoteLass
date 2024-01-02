@@ -21,7 +21,9 @@ import com.app.note_lass.ui.theme.PrimaryBlack
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HandBookListScreen(
-    handBookList : List<HandBook>
+    handBookList : List<HandBook>,
+    isMemoActive : Boolean,
+    getHandBookList : () -> List<Int>
 ) {
     val scrollState = rememberScrollState()
 
@@ -31,14 +33,14 @@ fun HandBookListScreen(
             .fillMaxSize()
     ) {
         Text(
-            text = "활동기록 총 정리",
+            text = "학생 수첩",
             style = NoteLassTheme.Typography.twenty_700_pretendard,
             color = PrimaryBlack,
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
         handBookList.forEach {
-            val formatDate =StringToDate(it.createdDate).localDateTime
+            val formatDate = StringToDate(it.createdDate).localDateTime
             HandBookContent(date = formatDate, content = it.content)
         }
 
