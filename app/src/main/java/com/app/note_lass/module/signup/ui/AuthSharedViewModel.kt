@@ -2,6 +2,7 @@ package com.app.note_lass.module.signup.ui
 
 import android.util.Log
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +12,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.navigation.AuthScreen
+import com.app.note_lass.module.signup.data.EmailRequestState
+import com.app.note_lass.module.signup.data.EmailValidateState
 import com.app.note_lass.module.signup.data.SchoolName
 import com.app.note_lass.module.signup.data.SignUpApiState
 import com.app.note_lass.module.signup.data.SignUpRequest
@@ -19,6 +22,8 @@ import com.app.note_lass.module.signup.domain.usecase.ValidatePassWord
 import com.app.note_lass.module.signup.domain.usecase.ValidateRepeatedPassWord
 import com.app.note_lass.module.signup.domain.presentation.RegistrationFormEvent
 import com.app.note_lass.module.signup.domain.presentation.RegistrationFormState
+import com.app.note_lass.module.signup.domain.usecase.EmailRequestUseCase
+import com.app.note_lass.module.signup.domain.usecase.EmailValidateUseCase
 import com.app.note_lass.module.signup.domain.usecase.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +41,9 @@ class AuthSharedViewModel @Inject constructor(
     private val validateEmail: ValidateEmail,
     private val validatePassWord: ValidatePassWord,
     private val validateRepeatedPassWord: ValidateRepeatedPassWord,
-    private val postSignUp : SignUpUseCase
+    private val postSignUp : SignUpUseCase,
+    private val emailRequestUseCase: EmailRequestUseCase,
+    private val emailValidateUseCase: EmailValidateUseCase
 ) :ViewModel() {
    //매번 새로운 객체 생성
     var state by mutableStateOf(RegistrationFormState())
@@ -48,7 +55,11 @@ class AuthSharedViewModel @Inject constructor(
     private val _signUpApiState = mutableStateOf(SignUpApiState())
     val signUpApiState = _signUpApiState
 
+    private val _emailRequestState= mutableStateOf(EmailRequestState())
+    val emailRequestState = _emailRequestState
 
+    private val _emailValidate = mutableStateOf(EmailValidateState())
+    val emailValidateState = _emailValidate
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
 
@@ -174,6 +185,73 @@ class AuthSharedViewModel @Inject constructor(
 
                 }
         }
+
+
+        }.launchIn(viewModelScope)
+    }
+
+    fun emailRequest(email:String, isToast :  () -> Unit){
+       emailRequestUseCase(email).onEach {
+                result ->
+
+            when(result)
+            {
+                is Resource.Success -> {
+                    _emailRequestState.value  = EmailRequestState(
+                            isSuccess = true,
+                            isLoading = false
+                    )
+                    isToast()
+                }
+
+                is Resource.Error-> {
+                    _emailRequestState.value  = EmailRequestState(
+                        isError = true
+                    )
+                }
+                is Resource.Loading -> {
+                    Log.e("signup Api", result.message.toString())
+                    _emailRequestState.value  = EmailRequestState(
+                        isSuccess = false,
+                        isLoading = true
+                    )
+                }
+            }
+
+
+        }.launchIn(viewModelScope)
+    }
+
+    fun emailValidate(email:String,authCode:String, isToast :  (String) -> Unit){
+        emailValidateUseCase(email,authCode).onEach {
+                result ->
+
+            when(result)
+            {
+                is Resource.Success -> {
+                    _emailValidate.value  = EmailValidateState(
+                        isSuccess = true,
+                        isLoading = false
+                    )
+                    isToast("이메일 인증에 성공했습니다.")
+                }
+
+                is Resource.Error-> {
+                    _emailValidate.value  = EmailValidateState(
+                        isError = true
+                    )
+                    Log.e("signup Api", result.message.toString())
+                    isToast(result.message.toString())
+
+                }
+                is Resource.Loading -> {
+                    Log.e("signup Api", result.message.toString())
+                    _emailValidate.value  = EmailValidateState(
+                        isSuccess = false,
+                        isLoading = true
+                    )
+                }
+            }
 
 
         }.launchIn(viewModelScope)

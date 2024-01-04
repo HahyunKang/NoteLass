@@ -13,4 +13,12 @@ class SignUpImpl @Inject constructor(
         return api.postSignUp(signUpRequest)
     }
 
+    override suspend fun emailRequest(email: String): NoteResponseBody<Nothing> {
+        return api.emailRequest(email)
+    }
+
+    override suspend fun emailValidate(email: String, authCode: String): NoteResponseBody<Boolean> {
+        return api.emailValidate(email, authCode)
+    }
+
 }

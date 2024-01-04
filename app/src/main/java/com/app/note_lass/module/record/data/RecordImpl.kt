@@ -1,10 +1,8 @@
 package com.app.note_lass.module.record.data
 
 import com.app.note_lass.common.NoteResponseBody
-import com.app.note_lass.module.login.domain.repository.LoginRepository
 import com.app.note_lass.module.record.domain.RecordRepository
 import okhttp3.MultipartBody
-import java.io.File
 import javax.inject.Inject
 
 class RecordImpl @Inject constructor(
@@ -41,6 +39,20 @@ class RecordImpl @Inject constructor(
         percentage: Int
     ): NoteResponseBody<RecordScore> {
         return recordApi.getScore(token,groupId, userId, percentage)
+    }
+
+    override suspend fun getSynonym(token: String, word: String): NoteResponseBody<List<String>> {
+        return recordApi.getSynonym(token,word)
+    }
+
+    override suspend fun getGuideline(
+        token: String,
+        groudId: Long,
+        userId: Long,
+        keywords: String,
+        handbookIds: String
+    ): NoteResponseBody<String> {
+        return recordApi.getGuideline(token,groudId,userId, keywords, handbookIds)
     }
 
 

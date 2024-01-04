@@ -1,10 +1,12 @@
 package com.app.note_lass.module.record.ui
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.content.ContentResolver
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -20,6 +22,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +36,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.common.AndroidDownLoader
+import com.app.note_lass.common.DownloadCompletedReceiver
+import com.app.note_lass.common.DownloadStatusListener
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
@@ -51,7 +57,7 @@ fun StudentRecordUploadScreen(
     studentId : Long,
     studentName : String,
     protoViewModel : ProtoViewModel = hiltViewModel(),
-    recordViewModel: RecordViewModel = hiltViewModel()
+    recordViewModel: RecordViewModel = hiltViewModel(),
 ) {
 
 
@@ -81,19 +87,41 @@ fun StudentRecordUploadScreen(
         }
     }
 
+    DisposableEffect(Unit) {
+        DownloadCompletedReceiver.registerListener(recordViewModel)
+        onDispose {
+            DownloadCompletedReceiver.unregisterListener()
+        }
+    }
+    val idList = remember {
+        mutableStateOf(mutableListOf<Int>())
+    }
+
     val isFirstDialogShow = remember {
         mutableStateOf(false)
     }
     val isSecondDialogShow = remember {
         mutableStateOf(false)
     }
-    val excelFile = remember {
-        mutableStateOf<MultipartBody.Part?>(null)
+    val isMemoActive = remember {
+        mutableStateOf(false)
+    }
+    val isPrinted = remember {
+        mutableStateOf(false)
     }
     val context = LocalContext.current
 
     val handBookListState = recordViewModel.getHandBookState
+    val downloadStatus = recordViewModel.downloadStatus
+    Log.e("다운로드",downloadStatus.value)
 
+    LaunchedEffect(key1 = downloadStatus.value) {
+        if (downloadStatus.value == "Successful") {
+            isSecondDialogShow.value = true
+            recordViewModel.deleteExcel()
+            recordViewModel.setStatus()
+        }
+    }
     if (isFirstDialogShow.value) {
         DialogInRecord(
             setShowDialog = {
@@ -102,14 +130,15 @@ fun StudentRecordUploadScreen(
             content = "한셀로 출력하시겠습니까?",
             buttonText = "출력하기"
         ) {
-            val downloader = AndroidDownLoader(context)
+            val downloader = AndroidDownLoader(context, "생기부.cell")
             recordViewModel.getExcel(downLoadExcel = {
                 downloader.downloadFile(excelState.value.excelUrl)
-                isSecondDialogShow.value = true
             }
             )
+            isFirstDialogShow.value = false
 
         }
+    }
         if (isSecondDialogShow.value) {
             DialogInRecord(
                 setShowDialog = {
@@ -120,9 +149,10 @@ fun StudentRecordUploadScreen(
                 buttonText = "확인"
             ) {
                 isSecondDialogShow.value = false
+                isPrinted.value = true
             }
         }
-    }
+
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -139,11 +169,10 @@ fun StudentRecordUploadScreen(
             bottomBar = {
             },
             content = {
-
                 Row(
                     modifier = Modifier
                         .padding(
-                            top = it.calculateTopPadding() + 30.dp,
+                            top = it.calculateTopPadding() + 15.dp,
                             bottom = 20.dp,
                             start = 30.dp,
                             end = 30.dp
@@ -167,7 +196,11 @@ fun StudentRecordUploadScreen(
                         Column(
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            StudentRecordScreen()
+                            StudentRecordScreen(isMemoActive =  {
+                                isMemoActive.value = it
+                            },
+                                handbookList = idList.value
+                            )
                         }
                     }
 
@@ -188,7 +221,13 @@ fun StudentRecordUploadScreen(
                             .fillMaxHeight()
                             .padding(horizontal = 24.dp, vertical = 15.dp)
                     ) {
-                        HandBookListScreen(handBookList = handBookListState.value.handBookList)
+                        HandBookListScreen(
+                            handBookList = handBookListState.value.handBookList,
+                            isMemoActive = isMemoActive.value,
+                            getHandBookList = {
+                                idList.value = it.toMutableList()
+                            }
+                        )
 
 
                     }

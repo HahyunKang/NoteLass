@@ -7,18 +7,21 @@ import androidx.datastore.core.DataStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.note_lass.common.DownloadStatusListener
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.group.data.CreateGroupState
 import com.app.note_lass.module.record.data.DeleteExcelState
 import com.app.note_lass.module.record.data.GetExcelState
+import com.app.note_lass.module.record.data.GetGuidelineState
 import com.app.note_lass.module.record.data.GetRecordContentState
 import com.app.note_lass.module.record.data.GetScoreState
 import com.app.note_lass.module.record.data.PostRecordContentState
 import com.app.note_lass.module.record.data.RecordBody
 import com.app.note_lass.module.record.domain.usecase.DeleteExcelFileUseCase
 import com.app.note_lass.module.record.domain.usecase.GetExcelFileUseCase
+import com.app.note_lass.module.record.domain.usecase.GetGuidelineUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordScoreUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordUseCase
 import com.app.note_lass.module.record.domain.usecase.PostExcelUseCase
@@ -42,8 +45,9 @@ class RecordViewModel @Inject constructor(
     val getHandBookListUseCase: getHandBookListUseCase,
     val deleteExcelUseCase : DeleteExcelFileUseCase,
     val getRecordScoreUseCase: GetRecordScoreUseCase,
+    val getGuidelineUseCase: GetGuidelineUseCase,
     savedStateHandle: SavedStateHandle
-) : ViewModel(){
+) : ViewModel(), DownloadStatusListener {
 
     var userId : Long = 0
     var studentName : String =""
@@ -60,18 +64,28 @@ class RecordViewModel @Inject constructor(
     private val _getExcelState = mutableStateOf(GetExcelState())
     val getExcelState= _getExcelState
 
+    private val _getGuidelineState = mutableStateOf(GetGuidelineState())
+    val getGuidelineState = _getGuidelineState
+
     private val _deleteExcelState = mutableStateOf(DeleteExcelState())
     val deleteExcelState = _deleteExcelState
     private val _getScoreState = mutableStateOf(GetScoreState())
     val getScoreState=  _getScoreState
-
+    private var _downloadStatus = mutableStateOf("")
+    val downloadStatus  = _downloadStatus
     init {
        userId = savedStateHandle.get<Long>("userId")!!
         Log.e("userId",userId.toString())
         getStudentHandBookList()
     }
+    override fun onDownloadStatusUpdated(status: String) {
+        _downloadStatus.value = status
+    }
 
-    fun getStudentRecord(){
+    fun setStatus(){
+        _downloadStatus.value = "null"
+    }
+    private fun getStudentRecord(){
         getRecordUseCase(userId).onEach {
             result ->
 
@@ -80,6 +94,8 @@ class RecordViewModel @Inject constructor(
                     is Resource.Loading -> {
                         _getRecordState.value = GetRecordContentState(
                             isLoading = true,
+                            isSuccess = false,
+                            content = ""
                         )
                     }
 
@@ -94,6 +110,7 @@ class RecordViewModel @Inject constructor(
                     is Resource.Error -> {
                         _getRecordState.value = GetRecordContentState(
                             isError = true,
+                            content = ""
                         )
                     }
                 }
@@ -211,8 +228,9 @@ class RecordViewModel @Inject constructor(
                         isSuccess = true,
                         excelUrl = result.data!!.fileUrl
                     )
-                    deleteExcel()
+
                     downLoadExcel()
+                    //deleteExcel()
                 }
 
                 is Resource.Error -> {
@@ -282,4 +300,35 @@ class RecordViewModel @Inject constructor(
 
         }.launchIn(viewModelScope)
     }
+
+    fun getGuideline(keywords : List<String>,handbookIds : List<Int>){
+        getGuidelineUseCase(userId, keywords, handbookIds).onEach {
+                result ->
+
+            when (result) {
+
+                is Resource.Loading -> {
+                    _getGuidelineState.value = GetGuidelineState(
+                    isLoading = true,
+                    )
+                }
+
+                is Resource.Success -> {
+                    _getGuidelineState.value = GetGuidelineState(
+                        isLoading = false,
+                        isSuccess = true,
+                        guideLine = result.data!!
+                    )
+                }
+
+                is Resource.Error -> {
+                    _getGuidelineState.value = GetGuidelineState(
+                        isError = true
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+
 }

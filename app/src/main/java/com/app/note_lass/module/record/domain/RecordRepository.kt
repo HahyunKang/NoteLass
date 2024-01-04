@@ -13,5 +13,9 @@ interface RecordRepository {
     suspend fun getExcel(token : String,groupId : Long) : NoteResponseBody<File>
     suspend fun deleteExcel(token: String,groupId: Long) : NoteResponseBody<Nothing>
     suspend fun getRecordScore(token: String, groupId : Long, userId : Long, percentage : Int) : NoteResponseBody<RecordScore>
+    suspend fun getSynonym(token: String, word :String) : NoteResponseBody<List<String>>
+    suspend fun getGuideline(
+        token: String, groudId: Long, userId: Long, keywords: String, handbookIds: String
+    ) : NoteResponseBody<String>
 
 }

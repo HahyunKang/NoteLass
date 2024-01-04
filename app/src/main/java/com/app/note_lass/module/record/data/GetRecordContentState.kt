@@ -32,3 +32,10 @@ data class GetScoreState(
     var score  :RecordScore = RecordScore(0, emptyList(),0)
 )
 
+data class GetGuidelineState(
+    var isSuccess : Boolean = false,
+    var isError : Boolean = false,
+    var isLoading : Boolean = false,
+    var guideLine : String = ""
+    )
+
