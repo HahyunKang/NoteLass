@@ -54,6 +54,8 @@ class  SignUpViewModel @Inject constructor(
             is RegistrationFormEvent.Submit -> {
 
             }
+
+            else -> {}
         }
 
 

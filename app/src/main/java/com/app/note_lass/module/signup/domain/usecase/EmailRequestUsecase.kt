@@ -1,5 +1,6 @@
 package com.app.note_lass.module.signup.domain.usecase
 
+import android.util.Log
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.signup.data.SignUpRequest
@@ -20,7 +21,8 @@ class EmailRequestUseCase @Inject constructor(
         try {
             emit(Resource.Loading())
             val emailResponse = repository.emailRequest(email)
-            emit(Resource.Success(
+            emit(
+                Resource.Success(
                 data = emailResponse,
                 code = emailResponse.code,
                 message = emailResponse.message
@@ -28,7 +30,8 @@ class EmailRequestUseCase @Inject constructor(
             )
         }
         catch (e: HttpException) {
-            emit(Resource.Error(e.localizedMessage ?: "An unexpected error occured"))
+            Log.e("errorMessage",e.code().toString())
+            emit(Resource.Error(message = e.localizedMessage ?: "An unexpected error occured",code = e.code()))
         } catch (e: IOException) {
             emit(Resource.Error("Couldn't reach server. Check your internet connection."))
         }
