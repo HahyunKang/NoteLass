@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -51,6 +52,7 @@ import kotlinx.coroutines.supervisorScope
 fun GroupScreen(
      onClickTeacherGroup : (Int) -> Unit,
      onClickStudentGroup : (Int) -> Unit,
+     onClickLogout : () -> Unit,
      viewModel: GroupViewModel = hiltViewModel(),
      protoViewModel : ProtoViewModel = hiltViewModel()
 ){
@@ -67,12 +69,9 @@ fun GroupScreen(
     }
 
     val enterCode = remember{
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
     val state = viewModel.groupListState
-
-    val enterCodeState = viewModel.enterGroupState
-    val joinGroupState = viewModel.joinGroupState
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -85,6 +84,9 @@ fun GroupScreen(
              onGroupClick ={
                  showFirstDialog.value = true
              },
+             onClickLogout = {
+                 onClickLogout()
+             }
              )
 
         },
@@ -116,10 +118,10 @@ fun GroupScreen(
                                        showFirstDialog.value = it
                         } , getCode = {
                             code ->
-                            enterCode.value = code.toInt()
+                            enterCode.intValue = code.toInt()
                         }
                     ) {
-                        viewModel.enterGroup(enterCode.value)
+                        viewModel.enterGroup(enterCode.intValue)
                         showSecondDialog.value = true
                         showFirstDialog.value = false
                     }
@@ -188,7 +190,6 @@ fun GroupScreen(
                                 else onClickStudentGroup(groupList[it].id.toInt())
                             }
                         )
-                    Log.e("groupList",groupList[it].id.toString())
                     }
                 }else{
                    //그룹 비어있을 때

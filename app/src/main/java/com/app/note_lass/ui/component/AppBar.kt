@@ -46,7 +46,8 @@ fun AppBar(
     badgeCount : Int,
     role : Role,
     isGroupButton : Boolean,
-    onGroupClick : () -> Unit  = {}
+    onGroupClick : () -> Unit  = {},
+    onClickLogout : () -> Unit ={}
 ) {
     Row(
         modifier = Modifier
@@ -67,7 +68,6 @@ fun AppBar(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.width(384.dp)
         ){
             Log.e("role in Log",role.toString())
           if(isGroupButton && role == Role.TEACHER)
@@ -132,7 +132,7 @@ fun AppBar(
             Spacer(modifier = Modifier.width(20.dp))
             Icon(painter = painterResource(id = R.drawable.appbar_person_circle_small), contentDescription = null)
             Spacer(modifier = Modifier.width(20.dp))
-            AppBarDropDown()
+            AppBarDropDown(onClickLogout = onClickLogout)
         }
     }
 
@@ -143,7 +143,9 @@ fun AppBar(
 fun AppBarForTeacherInGroup(
     title : String,
     badgeCount : Int,
-    onGroupClick : () -> Unit  = {}
+    onGroupClick : () -> Unit  = {},
+    onClickLogout : () -> Unit = {}
+
 ) {
     Row(
         modifier = Modifier
@@ -164,7 +166,6 @@ fun AppBarForTeacherInGroup(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.width(384.dp)
         ){
 
                 Box(modifier = Modifier
@@ -217,7 +218,7 @@ fun AppBarForTeacherInGroup(
             Spacer(modifier = Modifier.width(20.dp))
             Icon(painter = painterResource(id = R.drawable.appbar_person_circle_small), contentDescription = null)
             Spacer(modifier = Modifier.width(20.dp))
-            AppBarDropDown()
+            AppBarDropDown(onClickLogout = onClickLogout)
         }
     }
 
@@ -265,7 +266,8 @@ fun AppBarForNotice(
 fun AppBarForRecord(
     title : String,
     badgeCount : Int,
-    onClick : () -> Unit  = {}
+    onClick : () -> Unit  = {},
+    onClickLogout : () -> Unit={}
 ) {
     Row(
         modifier = Modifier
@@ -341,7 +343,7 @@ fun AppBarForRecord(
             Spacer(modifier = Modifier.width(20.dp))
             Icon(painter = painterResource(id = R.drawable.appbar_person_circle_small), contentDescription = null)
             Spacer(modifier = Modifier.width(20.dp))
-            AppBarDropDown()
+            AppBarDropDown(onClickLogout = onClickLogout)
         }
     }
 

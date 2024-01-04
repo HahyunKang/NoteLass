@@ -7,5 +7,5 @@ import com.app.note_lass.module.login.data.LoginRequest
 
 interface LoginRepository {
     suspend fun login(loginRequest: LoginRequest) : NoteResponseBody<LoginDto>
-
+    suspend fun logout(accessToken : String) : NoteResponseBody<Nothing>
 }

@@ -472,7 +472,7 @@ fun StudentRecordScreen(
                         ),
                         contentPadding = PaddingValues(0.dp),
                         onClick = {
-                            if(textFieldsCount.intValue<6) {
+                            if(textFieldsCount.intValue<6 ) {
                                 textFieldsCount.intValue++
                                 texts.value.add(" ")
                             }

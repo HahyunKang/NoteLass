@@ -147,6 +147,7 @@ class AuthSharedViewModel @Inject constructor(
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun postSignUp(signUpState: MutableState<SignupInfo>){
         Log.e("signup Api",signUpState.value.email)
         val signUpRequest : SignUpRequest = SignUpRequest(
@@ -167,14 +168,11 @@ class AuthSharedViewModel @Inject constructor(
             {
                 is Resource.Success -> {
                     result.data?.let { Log.e("signup Api Success", it.message.toString()) }
-
                     if(result.code == 201){
                         _signUpApiState.value  =SignUpApiState(
                             isSuccess = true
                         )
                     }
-
-
                 }
 
                 is Resource.Loading -> {

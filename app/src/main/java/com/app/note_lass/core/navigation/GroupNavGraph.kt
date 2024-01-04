@@ -10,7 +10,7 @@ import com.app.note_lass.module.group.ui.GroupScreen
 import com.app.note_lass.module.group.ui.GroupStudentScreen
 import com.app.note_lass.module.group.ui.GroupTeacherScreen
 
-fun NavGraphBuilder.GroupNavGraph(navController: NavController) {
+fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavController:NavController) {
 
 
     navigation(startDestination = GroupScreen.Home.route, route = GROUP_ROUTE) {
@@ -21,7 +21,16 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController) {
          },
              onClickStudentGroup = {
              navController.navigate(GroupScreen.GroupForStudent.passQuery(it))
-         })
+         },
+             onClickLogout = {
+             outerNavController.navigate(AUTH_ROUTE){
+                 popUpTo(GroupScreen.Home.route) {
+                     inclusive = true
+                 }
+                 launchSingleTop = true
+             }
+             }
+         )
         }
 
         composable(
