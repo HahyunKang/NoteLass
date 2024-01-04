@@ -88,7 +88,8 @@ import kotlin.time.minutes
 @Composable
 fun StudentRecordScreen(
     recordViewModel: RecordViewModel = hiltViewModel(),
-    isMemoActive : (Boolean)-> Unit
+    isMemoActive : (Boolean)-> Unit,
+    handbookList : List<Int>
 ) {
 
     val percentCriteria = remember {
@@ -102,24 +103,20 @@ fun StudentRecordScreen(
     val guideLine = remember {
         mutableStateOf("")
     }
-
-    val keyword = remember {
-        mutableStateOf("")
-    }
     val excelFile = remember {
         mutableStateOf<MultipartBody.Part?>(null)
     }
-
     val getRecordState = recordViewModel.getRecordState
     val getScoreState = recordViewModel.getScoreState
     val getGuidelineState = recordViewModel.getGuidelineState
 
-    LaunchedEffect(key1 = getRecordState.value.isSuccess) {
-        if (getRecordState.value.isSuccess) {
-            content.value = getRecordState.value.content
+//    LaunchedEffect(key1 = getRecordState.value.isSuccess) {
+//        if (getRecordState.value.isSuccess) {
+//            content.value = getRecordState.value.content
+//        }
+//    }
 
-        }
-    }
+    if(getRecordState.value.isSuccess) content.value = getRecordState.value.content
     val context = LocalContext.current
 
     @SuppressLint("Range")
@@ -163,7 +160,7 @@ fun StudentRecordScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1.5f)
-                .padding(top=7.dp),
+                .padding(top = 7.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -182,7 +179,7 @@ fun StudentRecordScreen(
                     Row(
                         modifier = Modifier
                             .size(width = 169.dp, height = 32.dp)
-                            .border(1.dp, PrimarayBlue, RoundedCornerShape(12.dp))
+                            .border(1.dp, PrimarayBlue, RoundedCornerShape(20.dp))
                             .clickable {
                                 val percentage = percentCriteria.value
                                     .dropLast(1)
@@ -357,7 +354,7 @@ fun StudentRecordScreen(
                 Spacer(modifier = Modifier.width(5.dp))
                 Row(
                     modifier = Modifier
-                        .size(width = 169.dp, height = 32.dp)
+                        .height(32.dp)
                         .border(1.dp, PrimarayBlue, RoundedCornerShape(20.dp))
                         .clickable {
                             val percentage = percentCriteria.value
@@ -368,7 +365,7 @@ fun StudentRecordScreen(
                             }
                         },
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = "학생수첩 내용 연동하기",
@@ -377,10 +374,12 @@ fun StudentRecordScreen(
                         modifier = Modifier.clickable {
                             isMemoActive(true)
                         }
+                            .padding(start = 4.dp)
                     )
                     Icon(
                         painter = painterResource(id = R.drawable.record_arrow_small),
                         contentDescription = null,
+                        modifier = Modifier.padding(end = 4.dp),
                         tint = Color.Unspecified
                     )
 
@@ -426,7 +425,8 @@ fun StudentRecordScreen(
                                 },
                                 textStyle = NoteLassTheme.Typography.sixteem_600_pretendard,
                                 modifier = Modifier
-                                    .height(25.dp),
+                                    .height(25.dp)
+                                    .width(61.dp),
                                 enabled = (i == textFieldsCount.intValue - 1)
                             ) {
                                 TextFieldDefaults.TextFieldDecorationBox(
@@ -464,17 +464,22 @@ fun StudentRecordScreen(
                     Log.e("index", textFieldsCount.intValue.toString())
 
                     Button(
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.size(35.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = BackgroundBlue,
                             contentColor = Color.Black
                         ),
+                        contentPadding = PaddingValues(0.dp),
                         onClick = {
-                            textFieldsCount.intValue++
-                            texts.value.add(" ")
+                            if(textFieldsCount.intValue<6) {
+                                textFieldsCount.intValue++
+                                texts.value.add(" ")
+                            }
                         }
                     ) {
-                        Text(text = "+")
+                        Text(text = "+",
+                           style = NoteLassTheme.Typography.twelve_600_pretendard)
                     }
 
                 }
@@ -486,7 +491,7 @@ fun StudentRecordScreen(
                     modifier = Modifier.clickable {
                         var keywordList = listOf<String>()
                         keywordList = keywordSelected.value + texts.value
-                        recordViewModel.getGuideline(keywordList, emptyList())
+                        recordViewModel.getGuideline(keywordList, handbookList)
                     }
                 )
             }
@@ -510,7 +515,6 @@ fun StudentRecordScreen(
                 }
             }
 
-            Log.e("keyword", keywordSelected.value.size.toString())
             guideLine.value = getGuidelineState.value.guideLine
 
             OutlinedTextField(

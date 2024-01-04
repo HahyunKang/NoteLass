@@ -85,7 +85,7 @@ class RecordViewModel @Inject constructor(
     fun setStatus(){
         _downloadStatus.value = "null"
     }
-    fun getStudentRecord(){
+    private fun getStudentRecord(){
         getRecordUseCase(userId).onEach {
             result ->
 
@@ -94,6 +94,8 @@ class RecordViewModel @Inject constructor(
                     is Resource.Loading -> {
                         _getRecordState.value = GetRecordContentState(
                             isLoading = true,
+                            isSuccess = false,
+                            content = ""
                         )
                     }
 
@@ -108,6 +110,7 @@ class RecordViewModel @Inject constructor(
                     is Resource.Error -> {
                         _getRecordState.value = GetRecordContentState(
                             isError = true,
+                            content = ""
                         )
                     }
                 }

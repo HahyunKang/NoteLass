@@ -93,6 +93,9 @@ fun StudentRecordUploadScreen(
             DownloadCompletedReceiver.unregisterListener()
         }
     }
+    val idList = remember {
+        mutableStateOf(mutableListOf<Int>())
+    }
 
     val isFirstDialogShow = remember {
         mutableStateOf(false)
@@ -101,6 +104,9 @@ fun StudentRecordUploadScreen(
         mutableStateOf(false)
     }
     val isMemoActive = remember {
+        mutableStateOf(false)
+    }
+    val isPrinted = remember {
         mutableStateOf(false)
     }
     val context = LocalContext.current
@@ -143,6 +149,7 @@ fun StudentRecordUploadScreen(
                 buttonText = "확인"
             ) {
                 isSecondDialogShow.value = false
+                isPrinted.value = true
             }
         }
 
@@ -191,7 +198,9 @@ fun StudentRecordUploadScreen(
                         ) {
                             StudentRecordScreen(isMemoActive =  {
                                 isMemoActive.value = it
-                            })
+                            },
+                                handbookList = idList.value
+                            )
                         }
                     }
 
@@ -215,6 +224,9 @@ fun StudentRecordUploadScreen(
                         HandBookListScreen(
                             handBookList = handBookListState.value.handBookList,
                             isMemoActive = isMemoActive.value,
+                            getHandBookList = {
+                                idList.value = it.toMutableList()
+                            }
                         )
 
 

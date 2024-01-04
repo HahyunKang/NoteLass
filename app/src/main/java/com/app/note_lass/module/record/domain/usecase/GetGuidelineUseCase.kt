@@ -24,10 +24,7 @@ class GetGuidelineUseCase @Inject constructor(
             val token = "Bearer ${dataStore.data.first().accessToken}"
             val groupId= dataGroupStore.data.first().groupId
             val combined = keywords.joinToString(",")
-            Log.e("combined",combined)
             val handBookIdsList = handbookIds.joinToString(",")
-
-
             emit(Resource.Loading())
 
             val recordResponse = recordRepository.getGuideline(token,groupId!!.toLong(),userId,combined, handBookIdsList)
