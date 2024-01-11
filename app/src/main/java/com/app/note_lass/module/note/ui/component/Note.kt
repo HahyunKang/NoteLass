@@ -27,10 +27,10 @@ import java.time.LocalDateTime
 @Composable
 fun Note(
     title : String,
-    date : LocalDateTime,
-    onClickArrow : () -> Unit
+    teacher : String,
+    onClickArrow : () -> Unit = {}
 ){
-    val formatDate = DateFormatter(date).formattedDate
+  //  val formatDate = DateFormatter(date).formattedDate
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -46,7 +46,7 @@ fun Note(
                 Text(text = title,
                     style = NoteLassTheme.Typography.sixteem_600_pretendard
                 )
-                Text(text = formatDate,
+                Text(text = teacher,
                     style = NoteLassTheme.Typography.twelve_600_pretendard,
                     color = PrimaryGray
                 )

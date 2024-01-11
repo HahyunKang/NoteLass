@@ -10,7 +10,8 @@ interface StudentRepository {
         accessToken : String,
         groupId : Int,
         userId :Int,
-        handBookRequest: HandBookRequest) : NoteResponseBody<Nothing>
+        handBookRequest: HandBookRequest
+    ) : NoteResponseBody<Nothing>
 
     suspend fun getHanBookList(
         accessToken : String,

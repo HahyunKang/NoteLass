@@ -42,7 +42,7 @@ import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
 import com.app.note_lass.module.student.ui.HandBookListScreen
-import com.app.note_lass.ui.component.AppBarForRecord
+import com.app.note_lass.ui.component.AppBarForNoGroup
 import com.app.note_lass.ui.component.DialogInRecord
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
@@ -64,28 +64,6 @@ fun StudentRecordUploadScreen(
     val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("", "", 0))
     val excelState = recordViewModel.getExcelState
 
-    @SuppressLint("Range")
-    fun Uri.asMultipart(name: String, contentResolver: ContentResolver): MultipartBody.Part? {
-        return contentResolver.query(this, null, null, null, null)?.let {
-            if (it.moveToNext()) {
-                val displayName = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                val requestBody = object : RequestBody() {
-                    override fun contentType(): MediaType? {
-                        return contentResolver.getType(this@asMultipart)?.toMediaType()
-                    }
-
-                    override fun writeTo(sink: BufferedSink) {
-                        sink.writeAll(contentResolver.openInputStream(this@asMultipart)?.source()!!)
-                    }
-                }
-                it.close()
-                MultipartBody.Part.createFormData(name, displayName, requestBody)
-            } else {
-                it.close()
-                null
-            }
-        }
-    }
 
     DisposableEffect(Unit) {
         DownloadCompletedReceiver.registerListener(recordViewModel)
@@ -156,7 +134,7 @@ fun StudentRecordUploadScreen(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                AppBarForRecord(
+                AppBarForNoGroup(
                     title = "${groupInfo.value.groupName} ${studentId}번 $studentName",
                     badgeCount = 12,
                     onClick = {
