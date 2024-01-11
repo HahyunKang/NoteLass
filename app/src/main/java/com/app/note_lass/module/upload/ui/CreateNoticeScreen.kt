@@ -114,6 +114,8 @@ fun CreateNoticeScreen(
         contract =  ActivityResultContracts.GetContent(),
         onResult = { uri :Uri? ->
             photoUri = uri
+        }
+    )
 //            photoUri?.let {
 //                if (Build.VERSION.SDK_INT < 28) {
 //                    bitmap.value = MediaStore.Images
@@ -125,8 +127,7 @@ fun CreateNoticeScreen(
 //                    bitmap.value = ImageDecoder.decodeBitmap(source)
 //                }
 //            }
-        }
-    )
+
 
 //    @SuppressLint("Range")
 //    fun getFileName(context: Context, uri: Uri): String? {
