@@ -263,7 +263,7 @@ fun AppBarForNotice(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBarForRecord(
+fun AppBarForNoGroup(
     title : String,
     badgeCount : Int,
     onClick : () -> Unit  = {},
