@@ -80,27 +80,6 @@ fun CreateAssignmentScreen(){
 //            }
         }
     )
-
-//    @SuppressLint("Range")
-//    fun getFileName(context: Context, uri: Uri): String? {
-//        val cursor = context.contentResolver.query(uri, null, null, null, null)
-//        var displayName: String? = "pdf"
-//        cursor?.moveToFirst()
-//        displayName = cursor?.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-//        cursor?.close()
-//        return displayName
-//    }
-//
-//    fun getFileSize(context: Context, uri: Uri): Long {
-//        return try {
-//            context.contentResolver.openFileDescriptor(uri, "r")?.use { parcelFileDescriptor ->
-//                val size = parcelFileDescriptor.statSize / (1000000).toLong()
-//                size
-//            } ?: 0L
-//        } catch (e: IOException) {
-//            0L
-//        }
-//    }
     val context = LocalContext.current
     var fileName by remember { mutableStateOf<String?>(null) }
     var fileSize by remember { mutableStateOf<Long?>(null) }
@@ -182,7 +161,9 @@ fun CreateAssignmentScreen(){
           Box(modifier = Modifier.size(200.dp, 30.dp)) {
               RectangleEnabledWithBorderButton(
                   text = "라이브러리에서 파일 탐색",
-                  onClick = { pdfLauncher.launch("application/pdf") },
+                  onClick = {
+                      pdfLauncher.launch("application/pdf")
+                            },
                   containerColor = Color.White,
                   textColor = PrimaryGray,
                   borderColor = Gray50

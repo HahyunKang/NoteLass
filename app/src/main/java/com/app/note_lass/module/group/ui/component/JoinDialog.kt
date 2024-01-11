@@ -79,7 +79,6 @@ fun JoinDialog(
                 .height(580.dp)
                 .background(color = Color.White, shape = RoundedCornerShape(12.dp))
                 .padding(horizontal = 40.dp, vertical = 30.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Icon(

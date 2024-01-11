@@ -149,7 +149,6 @@ class AuthSharedViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun postSignUp(signUpState: MutableState<SignupInfo>){
-        Log.e("signup Api",signUpState.value.email)
         val signUpRequest : SignUpRequest = SignUpRequest(
             admissionYear = signUpState.value.admissionYear,
             classNum = if(signUpState.value.role =="TEACHER")null else signUpState.value.studentClass.toInt(),
@@ -167,20 +166,24 @@ class AuthSharedViewModel @Inject constructor(
             when(result)
             {
                 is Resource.Success -> {
-                    result.data?.let { Log.e("signup Api Success", it.message.toString()) }
                     if(result.code == 201){
                         _signUpApiState.value  =SignUpApiState(
-                            isSuccess = true
+                            isSuccess = true,
+                            isLoading = false
                         )
                     }
                 }
 
                 is Resource.Loading -> {
-
+                    _signUpApiState.value  =SignUpApiState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
                 }
                 is Resource.Error -> {
-                    Log.e("signup Api", result.message.toString())
-
+                    _signUpApiState.value  =SignUpApiState(
+                        isError = true
+                    )
                 }
         }
 
@@ -188,7 +191,7 @@ class AuthSharedViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun emailRequest(email:String, isToast :  () -> Unit){
+    fun emailRequest(email:String, isToast :  () -> Unit ){
        emailRequestUseCase(email).onEach {
                 result ->
             when(result)
@@ -205,15 +208,12 @@ class AuthSharedViewModel @Inject constructor(
                     _emailRequestState.value  = EmailRequestState(
                         isError = true
                     )
-                    Log.e("emailError",result.code.toString())
 
                     if(result.code == 400){
-                        Log.e("emailError","error")
                         state= state.copy(emailError = "이미 등록된 이메일입니다.")
                     }
                 }
                 is Resource.Loading -> {
-                    Log.e("signup Api", result.message.toString())
                     _emailRequestState.value  = EmailRequestState(
                         isSuccess = false,
                         isLoading = true
@@ -225,7 +225,7 @@ class AuthSharedViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun emailValidate(email:String,authCode:String, isToast :  (String) -> Unit ={}){
+    fun emailValidate(email:String,authCode:String, isToast :  (String) -> Unit ={} ){
         emailValidateUseCase(email,authCode).onEach {
                 result ->
 
@@ -245,7 +245,6 @@ class AuthSharedViewModel @Inject constructor(
                     }
                     Log.e("signup Success Api", result.message.toString())
 
-                    // isToast("이메일 인증에 성공했습니다.")
                 }
 
                 is Resource.Error-> {

@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,11 +40,18 @@ fun ApplicationStudent(
     studentInfo : JoinStudentInfo,
     onClickAccept : (Int)-> Unit={},
     onClickDecline : (Int)-> Unit ={},
-)
-{
-    Row(modifier = Modifier.fillMaxWidth(),
+) {
+
+    val decline = remember {
+        mutableStateOf(false)
+    }
+    val accept = remember {
+        mutableStateOf(false)
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Text(
             text = id.toString(),
             style = NoteLassTheme.Typography.twenty_700_pretendard,
@@ -52,65 +61,124 @@ fun ApplicationStudent(
         )
 
         Column(
-            modifier = Modifier.wrapContentHeight()
-                    .weight(5f)
+            modifier = Modifier
+                .wrapContentHeight()
+                .weight(5f)
 
         ) {
 
-        Text(
-            text = studentInfo.name,
-            style = NoteLassTheme.Typography.twenty_700_pretendard,
-            color = PrimaryBlack,
-        )
+            Text(
+                text = studentInfo.name,
+                style = NoteLassTheme.Typography.twenty_700_pretendard,
+                color = PrimaryBlack,
+            )
             Text(
                 text = "${studentInfo.school}/${studentInfo.grade}학년 ${studentInfo.classNum}반",
                 style = NoteLassTheme.Typography.fourteen_600_pretendard,
                 color = PrimaryGray,
             )
         }
-        Box(
-            modifier= Modifier
-                .wrapContentSize()
-                .background(color =Color(0x339EA4AA), shape = RoundedCornerShape(size = 20.dp))
-                .padding(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 3.dp)
-                .clickable { onClickDecline(studentInfo.userId.toInt()) }
-                .weight(1f)
-        ){
-            Text("거절",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                    fontWeight = FontWeight(600),
-                    color = Color(0xFF9EA4AA),
-                    textAlign = TextAlign.Center,
+        if (!decline.value)
+            Box(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .background(color = Color(0x339EA4AA), shape = RoundedCornerShape(size = 20.dp))
+                    .padding(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 3.dp)
+                    .clickable {
+                        decline.value = true
+                        onClickDecline(studentInfo.userId.toInt())
+                    }
+                    .weight(1f)
+            ) {
+                Text(
+                    "거절",
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                        fontWeight = FontWeight(600),
+                        color = Color(0xFF9EA4AA),
+                        textAlign = TextAlign.Center,
+                    )
                 )
-            )
-        }
-        Box(
-            modifier= Modifier
-                .wrapContentSize()
-                .background(color = Color(0xFFEDEDFF), shape = RoundedCornerShape(size = 20.dp))
-                .padding(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 3.dp)
-                .clickable { onClickAccept(studentInfo.userId.toInt()) }
-                .weight(1f)
-        ){
-            Text("수락",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                    fontWeight = FontWeight(600),
-                    color = Color(0xFF4849FF),
-                    textAlign = TextAlign.Center,
+            } else {
+            Box(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .background(color = Color(0xFFFFE4E7), shape = RoundedCornerShape(size = 20.dp))
+                    .padding(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 3.dp)
+                    .weight(1f)
+            ) {
+                Text(
+                    "거절",
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                        fontWeight = FontWeight(600),
+                        color = Color(0xFFFF7788),
+                        textAlign = TextAlign.Center,
+                    )
                 )
-            )
-        }
+            }
+            if (!accept.value) {
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .background(
+                            color = Color(0x339EA4AA),
+                            shape = RoundedCornerShape(size = 20.dp)
+                        )
+                        .padding(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 3.dp)
+                        .clickable {
+                            accept.value = true
+                            onClickAccept(studentInfo.userId.toInt())
+                        }
+                        .weight(1f)
+                ) {
+                    Text(
+                        "수락",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                            fontWeight = FontWeight(600),
+                            color = Color(0xFF9EA4AA),
+                            textAlign = TextAlign.Center,
+                        )
+                    )
 
+
+                }
+            }
+            else {
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .background(
+                            color = Color(0xFFEDEDFF),
+                            shape = RoundedCornerShape(size = 20.dp)
+                        )
+                        .padding(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 3.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        "수락",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                            fontWeight = FontWeight(600),
+                            color = Color(0xFF4849FF),
+                            textAlign = TextAlign.Center,
+                        )
+                    )
+                }
+
+            }
+        }
     }
 }
 
-@Preview
-@Composable
-fun previewJoinList(){
-    val studentInfo = JoinStudentInfo(1,"광남고등학교",1,1,"강하하")
-    com.app.note_lass.module.group.ui.component.ApplicationStudent(1,studentInfo)
-}
+//@Preview
+//@Composable
+//fun previewJoinList(){
+//    val studentInfo = JoinStudentInfo(1,"광남고등학교",1,1,"강하하")
+//    com.app.note_lass.module.group.ui.component.ApplicationStudent(1,studentInfo)
+//}

@@ -1,6 +1,7 @@
 package com.app.note_lass.module.student.data
 
 import com.app.note_lass.common.NoteResponseBody
+import com.app.note_lass.common.Resources
 import com.app.note_lass.module.group.data.applicationList.ApplicationStudent
 import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.groupList.GroupListDto
@@ -28,5 +29,9 @@ interface StudentApi {
       @Path(value = "userId") userId : Int,
   ) : NoteResponseBody<List<HandBook>>
 
-
+    @GET("api/notice/{groupId}")
+    suspend fun getNoticeList(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId : Int,
+    ) : NoteResponseBody<List<Resources>>
 }

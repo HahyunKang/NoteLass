@@ -28,6 +28,7 @@ import okhttp3.internal.notifyAll
 @Composable
 fun GroupStudentScreen(
     onTouchNoticeClick : (Long) -> Unit,
+    onTouchNoticeListClick: () -> Unit,
     studentViewModel: GroupForStudentViewModel = hiltViewModel()
 ){
 
@@ -60,7 +61,7 @@ fun GroupStudentScreen(
                     )
                     .padding(horizontal = 24.dp)
                 ){
-                    SectionHeader(title = "공지")
+                    SectionHeader(title = "공지", onTouchIcon = onTouchNoticeListClick)
                     NoticePreviewScreenForStudent(
                         noticeList =noticeState.value.noticeList,
                         onClick=onTouchNoticeClick
