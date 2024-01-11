@@ -8,7 +8,7 @@ import retrofit2.Response
 import javax.inject.Inject
 
 
-interface  SignUpRepository{
+interface  SignUpRepository {
 
     suspend fun postSignUp(signUpRequest: SignUpRequest) : NoteResponseBody<Nothing>
     suspend fun emailRequest(email:String) : NoteResponseBody<Nothing>

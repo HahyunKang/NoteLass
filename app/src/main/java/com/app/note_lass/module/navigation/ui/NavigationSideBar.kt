@@ -84,7 +84,9 @@ fun NavigationSideBar(
                     .weight(1f)
                     .padding(bottom = 30.dp)
                     .background(color = PrimarayBlue, shape = RoundedCornerShape(20.dp))
-                    .clickable { onClick() }
+                    .clickable {
+                        onClick()
+                    }
             ) {
                 Row(
                     modifier = Modifier

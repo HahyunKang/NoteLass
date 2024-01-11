@@ -1,17 +1,15 @@
 package com.app.note_lass.module.signup.ui
 
+import android.os.Build
 import android.util.Log
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.runtime.Composable
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.Resource
-import com.app.note_lass.core.navigation.AuthScreen
 import com.app.note_lass.module.signup.data.EmailRequestState
 import com.app.note_lass.module.signup.data.EmailValidateState
 import com.app.note_lass.module.signup.data.SchoolName
@@ -49,7 +47,8 @@ class AuthSharedViewModel @Inject constructor(
     var state by mutableStateOf(RegistrationFormState())
 
    // var signupState by mutableStateOf(SignupInfo())
-    var signupState =
+   @RequiresApi(Build.VERSION_CODES.O)
+   var signupState =
         mutableStateOf(SignupInfo())
 
     private val _signUpApiState = mutableStateOf(SignUpApiState())
@@ -112,10 +111,11 @@ class AuthSharedViewModel @Inject constructor(
                 state = state.copy(email = event.email)
                 val emailResult = validateEmail.execute(state.email)
                 //유효하면 success
-                if (!emailResult.successful) state =
-                    state.copy(emailError = emailResult.errorMessage)
+                if (!emailResult.successful)
+                    state = state.copy(emailError = emailResult.errorMessage, emailValidationError = "이메일 인증 오류")
                 else{
-                    state= state.copy(emailError = null)
+                    state= state.copy(emailError = null, emailValidationError = null)
+                    emailValidate(state.email,state.emailValidation)
                 }
             }
             is RegistrationFormEvent.PassWordChanged ->{
@@ -136,7 +136,10 @@ class AuthSharedViewModel @Inject constructor(
                     state= state.copy(repeatedPasswordError = null)
                 }
             }
-
+            is RegistrationFormEvent.ValidationChanged -> {
+                state = state.copy(emailValidation =  event.validatedNum)
+                emailValidate(state.email,state.emailValidation)
+            }
             else -> {}
         }
 
@@ -144,8 +147,8 @@ class AuthSharedViewModel @Inject constructor(
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun postSignUp(signUpState: MutableState<SignupInfo>){
-        Log.e("signup Api",signUpState.value.email)
         val signUpRequest : SignUpRequest = SignUpRequest(
             admissionYear = signUpState.value.admissionYear,
             classNum = if(signUpState.value.role =="TEACHER")null else signUpState.value.studentClass.toInt(),
@@ -163,26 +166,24 @@ class AuthSharedViewModel @Inject constructor(
             when(result)
             {
                 is Resource.Success -> {
-                    Log.e("signup Api SUCCESS ", result.message.toString())
-                    Log.e("signup Api Success", result.code.toString())
-                    result.data?.let { Log.e("signup Api Success", it.message.toString()) }
-
                     if(result.code == 201){
                         _signUpApiState.value  =SignUpApiState(
-                            isSuccess = true
+                            isSuccess = true,
+                            isLoading = false
                         )
-
                     }
-
-
                 }
 
                 is Resource.Loading -> {
-
+                    _signUpApiState.value  =SignUpApiState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
                 }
                 is Resource.Error -> {
-                    Log.e("signup Api", result.message.toString())
-
+                    _signUpApiState.value  =SignUpApiState(
+                        isError = true
+                    )
                 }
         }
 
@@ -190,10 +191,9 @@ class AuthSharedViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun emailRequest(email:String, isToast :  () -> Unit){
+    fun emailRequest(email:String, isToast :  () -> Unit ){
        emailRequestUseCase(email).onEach {
                 result ->
-
             when(result)
             {
                 is Resource.Success -> {
@@ -208,9 +208,12 @@ class AuthSharedViewModel @Inject constructor(
                     _emailRequestState.value  = EmailRequestState(
                         isError = true
                     )
+
+                    if(result.code == 400){
+                        state= state.copy(emailError = "이미 등록된 이메일입니다.")
+                    }
                 }
                 is Resource.Loading -> {
-                    Log.e("signup Api", result.message.toString())
                     _emailRequestState.value  = EmailRequestState(
                         isSuccess = false,
                         isLoading = true
@@ -222,30 +225,38 @@ class AuthSharedViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun emailValidate(email:String,authCode:String, isToast :  (String) -> Unit){
+    fun emailValidate(email:String,authCode:String, isToast :  (String) -> Unit ={} ){
         emailValidateUseCase(email,authCode).onEach {
                 result ->
 
             when(result)
             {
                 is Resource.Success -> {
-                    _emailValidate.value  = EmailValidateState(
-                        isSuccess = true,
-                        isLoading = false
-                    )
-                    isToast("이메일 인증에 성공했습니다.")
+                    if(result.data==true) {
+                        _emailValidate.value = EmailValidateState(
+                            isSuccess = true,
+                            isLoading = false
+                        )
+                    }else{
+                        _emailValidate.value = EmailValidateState(
+                            isSuccess = false,
+                            isLoading = false
+                        )
+                    }
+                    Log.e("signup Success Api", result.message.toString())
+
                 }
 
                 is Resource.Error-> {
                     _emailValidate.value  = EmailValidateState(
                         isError = true
                     )
-                    Log.e("signup Api", result.message.toString())
+                    Log.e("signup Error Api", result.message.toString())
                     isToast(result.message.toString())
 
                 }
                 is Resource.Loading -> {
-                    Log.e("signup Api", result.message.toString())
+                    Log.e("signup Loading Api", result.message.toString())
                     _emailValidate.value  = EmailValidateState(
                         isSuccess = false,
                         isLoading = true

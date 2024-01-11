@@ -64,7 +64,8 @@ import com.app.note_lass.ui.theme.arcYellow
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
-    navController: NavController
+    navController: NavController,
+    onClickLogout : () -> Unit
 ){
 
     Row(

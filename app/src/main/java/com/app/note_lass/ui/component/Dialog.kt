@@ -159,6 +159,7 @@ fun CreateGroup(
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.End)
+
             )
 
             Text(
@@ -271,9 +272,12 @@ fun DialogGroupCode(
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.End)
+                    .padding(15.dp)
             )
 
-                Text(
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
                     text = "그룹 입장 코드",
                     style = NoteLassTheme.Typography.twenty_700_pretendard,
                     color = PrimaryBlack,
@@ -285,7 +289,7 @@ fun DialogGroupCode(
                     color = PrimarayBlue,
                 )
 
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(130.dp))
 
             Box(
                 modifier = Modifier

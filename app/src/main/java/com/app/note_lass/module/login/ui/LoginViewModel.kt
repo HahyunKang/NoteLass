@@ -11,7 +11,9 @@ import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.login.data.LoginRequest
 import com.app.note_lass.module.login.data.LoginState
+import com.app.note_lass.module.login.data.LogoutState
 import com.app.note_lass.module.login.domain.LoginUseCase
+import com.app.note_lass.module.login.domain.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,10 +22,14 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     val loginUseCase: LoginUseCase,
+    val logoutUseCase: LogoutUseCase
     ) :ViewModel(){
 
     private var _loginState = mutableStateOf(LoginState())
     val loginState = _loginState
+
+    private var _logoutState = mutableStateOf(LogoutState())
+    val logoutState = _logoutState
 
     fun login(email: String, password: String, tokenViewModel: ProtoViewModel){
         val loginRequest=  LoginRequest(email = email, password = password)
@@ -35,13 +41,9 @@ class LoginViewModel @Inject constructor(
                                 isSuccess = true,
                                 isMessage = result.data?.token!!
                             )
-                            Log.e("role in Login",result.data.role)
-                            Log.e("token in Login",result.data.token)
-
                             tokenViewModel.updateAccessToken(result.data.token)
                             if(result.data.role == "STUDENT") tokenViewModel.updateRole(Role.STUDENT)
                             else tokenViewModel.updateRole(Role.TEACHER)
-
                         }
                         is Resource.Error -> {
                             Log.e("login api",result.message.toString())
@@ -64,5 +66,41 @@ class LoginViewModel @Inject constructor(
 
 
     }
+
+    fun logout(tokenViewModel: ProtoViewModel){
+       logoutUseCase().onEach {
+                result ->
+            when(result){
+                is Resource.Success -> {
+                    _logoutState.value = LogoutState(
+                        isSuccess = true,
+                        isLoading = false
+                    )
+                    tokenViewModel.resetToken()
+
+                }
+                is Resource.Error -> {
+                    Log.e("login api",result.message.toString())
+                    _logoutState.value = LogoutState(
+                        isError = true,
+
+                    )
+                }
+
+                is Resource.Loading->{
+                    _logoutState.value = LogoutState(
+                        isLoading = true,
+                        isSuccess  = false
+                    )
+                }
+            }
+
+
+
+        }.launchIn(viewModelScope)
+
+
+    }
+
 
 }

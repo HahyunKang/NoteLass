@@ -1,5 +1,6 @@
 package com.app.note_lass.ui.component
 
+import android.widget.Toast
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
@@ -28,13 +29,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
+import com.app.note_lass.core.Proto.ProtoViewModel
+import com.app.note_lass.module.login.ui.LoginViewModel
+import kotlinx.coroutines.selects.whileSelect
 
 
 @Composable
 fun AppBarDropDown(
+    onClickLogout : () -> Unit
 ) {
 
+    val protoViewModel : ProtoViewModel =  hiltViewModel()
+    val loginViewModel : LoginViewModel = hiltViewModel()
+
+    val logoutState = loginViewModel.logoutState
     val dropdownItems = listOf("개인 정보 수정", "로그아웃")
     var isContextMenuVisible by rememberSaveable {
         mutableStateOf(false)
@@ -51,6 +61,10 @@ fun AppBarDropDown(
     }
     val density = LocalDensity.current
 
+    if(logoutState.value.isSuccess){
+        onClickLogout()
+    }else{
+    }
     Icon(painter = painterResource(id = R.drawable.appbar_arrowdown_small),
         contentDescription = null,
         tint = Color(0xFF26282B),
@@ -82,11 +96,19 @@ fun AppBarDropDown(
             )
         ) {
 
-            dropdownItems.forEach {
+            dropdownItems.forEachIndexed {
+                index,text->
                 DropdownMenuItem(onClick = {
                     isContextMenuVisible = false
-                }) {
-                    Text(text = it,
+                    if(index ==0){
+
+                    }else{
+                        loginViewModel.logout(tokenViewModel = protoViewModel)
+                    }
+
+                }
+                ) {
+                    Text(text = text,
                         textAlign = TextAlign.Center)
                 }
             }
@@ -102,6 +124,6 @@ fun AppBarDropDown(
 @Preview
 @Composable
 fun dropDownPreview(){
-    AppBarDropDown()
+   // AppBarDropDown()
 }
 

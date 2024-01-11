@@ -1,6 +1,8 @@
 package com.app.note_lass.module.signup.ui
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,8 +37,10 @@ import com.app.note_lass.ui.component.RectangleUnableButton
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
+import java.time.Year
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SchoolInfoScreen(
     viewModel : AuthSharedViewModel,
@@ -113,8 +117,8 @@ fun SchoolInfoScreen(
                 color = PrimaryBlack,
                 modifier = Modifier.align(Alignment.Start)
             )
-            val menuList = listOf("2016년","2017년","2018년","2019년"
-            ,"2020년","2021년","2022년","2023년")
+            val menuList = listOf("2016","2017","2018","2019"
+            ,"2020","2021","2022","2023","2024")
 
             Spacer(modifier = Modifier.height(15.dp))
 
@@ -128,8 +132,9 @@ fun SchoolInfoScreen(
                 },
                 onGetInfo = {
                     signupState.value = signupState.value.copy(
-                        admissionYear = it
+                        admissionYear = Year.parse(it).value
                     )
+
                 }
             )
 

@@ -82,7 +82,8 @@ fun assignmentBox(
                     number = num ,
                     backgroundColor = backGroundColor,
                     color = contentColor,
-                    radius = 24.dp)
+                    radius = 24.dp
+                )
             }
         }
     }

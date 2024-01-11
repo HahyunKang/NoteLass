@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.app.note_lass.R
@@ -65,6 +66,7 @@ val items = listOf(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(
+    outerNavController: NavController,
     navController: NavHostController = rememberNavController(),
     protoViewModel : ProtoViewModel = hiltViewModel()
 
@@ -89,7 +91,7 @@ fun MainScreen(
                 modifier = Modifier
                     .padding(start = 240.dp, top = it.calculateTopPadding()),
             ) {
-                MainNavGraph(navController = navController)
+                MainNavGraph(navController = navController, outerNavController = outerNavController)
             }
         },
 

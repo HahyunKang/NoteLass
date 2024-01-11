@@ -1,5 +1,7 @@
 package com.app.note_lass.core.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -15,6 +17,7 @@ import com.app.note_lass.module.signup.ui.SchoolInfoScreen
 import com.app.note_lass.module.signup.ui.SignUpScreen
 import com.app.note_lass.module.signup.ui.StudentInfoScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.AuthNavGraph(navController: NavController) {
 
 

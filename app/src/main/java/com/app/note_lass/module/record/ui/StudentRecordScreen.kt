@@ -66,6 +66,7 @@ import com.app.note_lass.module.record.data.RecordBody
 import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
 import com.app.note_lass.module.signup.domain.presentation.RegistrationFormEvent
 import com.app.note_lass.ui.component.RectangleEnabledButton
+import com.app.note_lass.ui.component.RotatingIcon
 import com.app.note_lass.ui.component.ToggleButton
 import com.app.note_lass.ui.component.noRippleClickable
 import com.app.note_lass.ui.theme.BackgroundBlue
@@ -371,9 +372,10 @@ fun StudentRecordScreen(
                         text = "학생수첩 내용 연동하기",
                         style = NoteLassTheme.Typography.fourteen_600_pretendard,
                         color = PrimaryBlack,
-                        modifier = Modifier.clickable {
-                            isMemoActive(true)
-                        }
+                        modifier = Modifier
+                            .clickable {
+                                isMemoActive(true)
+                            }
                             .padding(start = 4.dp)
                     )
                     Icon(
@@ -472,7 +474,7 @@ fun StudentRecordScreen(
                         ),
                         contentPadding = PaddingValues(0.dp),
                         onClick = {
-                            if(textFieldsCount.intValue<6) {
+                            if(textFieldsCount.intValue<6 ) {
                                 textFieldsCount.intValue++
                                 texts.value.add(" ")
                             }
@@ -484,7 +486,12 @@ fun StudentRecordScreen(
 
                 }
 
-                Icon(
+                if(getGuidelineState.value.isLoading)RotatingIcon(
+                    icon = R.drawable.record_keyword_small,
+                    tint = PrimarayBlue,
+                )
+
+                if(!getGuidelineState.value.isLoading)Icon(
                     painter = painterResource(id = R.drawable.record_keyword_small),
                     contentDescription = null,
                     tint = PrimarayBlue,

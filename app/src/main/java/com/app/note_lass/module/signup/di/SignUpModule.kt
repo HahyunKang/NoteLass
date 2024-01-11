@@ -1,6 +1,7 @@
 package com.app.note_lass.module.signup.di
 
 import com.app.note_lass.common.Constants
+import com.app.note_lass.common.OkhttpClient
 import com.app.note_lass.module.signup.data.SignUpImpl
 import com.app.note_lass.module.signup.data.SignupApi
 import com.app.note_lass.module.signup.domain.presentation.SignUpRepository
@@ -16,12 +17,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthModule {
+    val client = OkhttpClient().httpClient
+
     @Provides
     @Singleton
     fun provideSignUpApi() :SignupApi{
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
             .build()
             .create(SignupApi::class.java)
     }

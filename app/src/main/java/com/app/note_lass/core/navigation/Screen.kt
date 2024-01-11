@@ -41,6 +41,8 @@ sealed class GroupScreen(val route : String){
         }
     }
 
+    object NoticeForStudent : GroupScreen("group/student/notice")
+
 
 
 }

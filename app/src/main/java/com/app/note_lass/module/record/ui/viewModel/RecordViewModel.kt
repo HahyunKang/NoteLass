@@ -309,7 +309,8 @@ class RecordViewModel @Inject constructor(
 
                 is Resource.Loading -> {
                     _getGuidelineState.value = GetGuidelineState(
-                    isLoading = true,
+                        isLoading = true,
+                        isSuccess = false
                     )
                 }
 

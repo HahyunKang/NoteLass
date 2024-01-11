@@ -1,9 +1,11 @@
 package com.app.note_lass.module.signup.ui
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -64,6 +66,7 @@ import com.app.note_lass.ui.theme.PrimaryGreen
 import com.app.note_lass.ui.theme.PrimaryPink
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalFoundationApi::class, ExperimentalFoundationApi::class
@@ -96,7 +99,7 @@ fun SignUpScreen (
     var buttonFilled by remember {
         mutableStateOf(false)
     }
-    var emailValidated = remember {
+    val emailValidated = remember {
         mutableStateOf(false)
     }
     var validatedEmail = remember {
@@ -119,12 +122,9 @@ fun SignUpScreen (
         emailValue.value != "" && state.emailError == null && password != "" && state.passwordError == null
                 && repeatedPassword != "" && state.repeatedPasswordError == null && emailValidated.value
 
-    LaunchedEffect(key1 = validateSuccess.value.isSuccess) {
-        if ( validateSuccess.value.isSuccess) {
-            emailValidated.value  = true
-            validatedEmail.value = emailValidationValue.value
-        }
-    }
+
+    emailValidated.value = validateSuccess.value.isSuccess
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -241,6 +241,7 @@ fun SignUpScreen (
                 value = emailValidationValue.value,
                 onValueChange = { it ->
                     emailValidationValue.value = it
+                    signUpViewModel.onEvent(RegistrationFormEvent.ValidationChanged(emailValidationValue.value))
                 },
                 textStyle = NoteLassTheme.Typography.twenty_600_pretendard,
                 modifier = Modifier
@@ -513,8 +514,8 @@ fun SignUpScreen (
             setShowDialog = {
                 showDialog = it
             },
-            content = schoolInfo + " " + grade + "학년 " + studentClass + "반 " + id + "번 " + "\n" +
-                    name + "님이 맞습니까?",
+            content = if(grade.isNotEmpty())schoolInfo + " " + grade + "학년 " + studentClass + "반 " + id + "번 " + "\n" +
+                    name + "님이 맞습니까?" else schoolInfo + "\n"+ name + "님이 맞습니까?",
             onDecline = { showDialog = false },
             onAccept = {
                 Log.e("signUp API",signupState.value.email)
@@ -529,7 +530,10 @@ fun SignUpScreen (
 
 
     }
-    if (signUpViewModel.signUpApiState.value.isSuccess) GotoLogin()
+    if (signUpViewModel.signUpApiState.value.isSuccess) {
+        Toast.makeText(context,"회원가입이 완료되었습니다",Toast.LENGTH_SHORT).show()
+        GotoLogin()
+    }
 
 
 }
