@@ -1,9 +1,9 @@
 package com.app.note_lass.module.note.data
 
 import com.app.note_lass.common.NoteResponseBody
-import com.app.note_lass.module.login.domain.repository.LoginRepository
 import com.app.note_lass.module.note.domain.NoteRepository
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class NoteImpl @Inject constructor(
@@ -16,9 +16,10 @@ class NoteImpl @Inject constructor(
     override suspend fun makeMaterial(
         accessToken: String,
         groupId: Long,
+        noteRequest: RequestBody,
         fileList: MultipartBody.Part
     ): NoteResponseBody<Nothing> {
-        return noteApi.makeMaterial(accessToken, groupId, fileList)
+        return noteApi.makeMaterial(accessToken, groupId, noteRequest,fileList)
     }
 
 

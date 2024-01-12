@@ -41,6 +41,7 @@ import com.app.note_lass.R
 import com.app.note_lass.common.UriToFile
 import com.app.note_lass.core.FilePicker.FileManager
 import com.app.note_lass.module.note.NoteActivity
+import com.app.note_lass.module.note.data.NoteRequest
 import com.app.note_lass.module.note.ui.NoteViewModel
 import com.app.note_lass.ui.component.DropDownMenuForMemo
 import com.app.note_lass.ui.component.FileUpload
@@ -353,6 +354,7 @@ fun CreateLectureDialog(
                         onClick = {
                             if(title.value.isNotEmpty() && content.value.isNotEmpty() && requestFile.value!=null){
                                 viewModel.makeMaterial(groupId.intValue.toLong(),
+                                    NoteRequest(title.value,content.value),
                                     requestFile.value!!
                                 )
                             }

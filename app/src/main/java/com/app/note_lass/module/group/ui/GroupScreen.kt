@@ -110,7 +110,6 @@ fun GroupScreen(
                         showSecondDialog.value = true
                         showFirstDialog.value = false
                         viewModel.createGroup(groupRequest.value)
-
                     }
                 }else{
                     DialogEnterGroup(

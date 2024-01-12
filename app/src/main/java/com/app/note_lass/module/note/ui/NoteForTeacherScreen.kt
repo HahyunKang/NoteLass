@@ -39,6 +39,7 @@ fun NoteForTeacherScreen(
     val showDialog = remember{
         mutableStateOf(false)
     }
+
     if(showDialog.value){
         CreateLectureDialog(setShowDialog = {
             showDialog.value = it

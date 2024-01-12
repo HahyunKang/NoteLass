@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
+import com.app.note_lass.common.Resources
 import com.app.note_lass.module.student.ui.viewmodel.StudentNoticeListViewModel
 import com.app.note_lass.ui.component.AcademicResources
 import com.app.note_lass.ui.component.AppBar
@@ -118,12 +119,17 @@ fun NoticeListScreen(
 
                 Spacer(modifier = Modifier.height(27.dp))
 
+                var noticeList=  emptyList<Resources>()
                 if(state.value.isSuccess)
+                    noticeList = if(isRead.value) state.value.result!!.filter { it.unread }
+                    else {
+                        state.value.result!!
+                    }
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ){
-                    items(state.value.result!!.size){
-                        AcademicResources(resources = state.value.result!![it])
+                    items(noticeList.size){
+                        AcademicResources(resources = noticeList[it])
                     }
                 }
 
