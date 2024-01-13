@@ -44,7 +44,7 @@ import org.w3c.dom.Text
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NoticeListScreen(
-    viewModel : StudentNoticeListViewModel = hiltViewModel()
+    viewModel : StudentNoticeListViewModel = hiltViewModel(),
 ){
 
     val state =viewModel.noticeListState
@@ -121,9 +121,9 @@ fun NoticeListScreen(
 
                 var noticeList=  emptyList<Resources>()
                 if(state.value.isSuccess)
-                    noticeList = if(isRead.value) state.value.result!!.filter { it.unread }
+                    noticeList = if(isRead.value) state.value.result!!.reversed().filter { it.unread }
                     else {
-                        state.value.result!!
+                        state.value.result!!.reversed()
                     }
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(16.dp)

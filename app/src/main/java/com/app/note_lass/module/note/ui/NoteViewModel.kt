@@ -9,6 +9,7 @@ import com.app.note_lass.module.group.data.groupList.GroupHashState
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.note.data.NoteRequest
+import com.app.note_lass.module.note.domain.GetMaterialToNoteUseCase
 import com.app.note_lass.module.note.domain.GetNoteListUseCase
 import com.app.note_lass.module.upload.domain.PostMaterialUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,8 @@ import javax.inject.Inject
 class NoteViewModel @Inject constructor(
     val getGroupUseCase: GetGroupUseCase,
     val  noteListUseCase : GetNoteListUseCase,
-    val  makeMaterialUseCase: PostMaterialUseCase
+    val  makeMaterialUseCase: PostMaterialUseCase,
+    val getMaterialToNoteUseCase: GetMaterialToNoteUseCase
     ): ViewModel() {
 
 
@@ -36,6 +38,10 @@ class NoteViewModel @Inject constructor(
 
     private val _makeMaterialState = mutableStateOf(RequestState<Nothing>())
     val makeMaterialState = _makeMaterialState
+
+    private val _getMaterialToNoteState = mutableStateOf(RequestState<Nothing>())
+    val getMaterialToNoteState = _getMaterialToNoteState
+
     init {
         getNoteList()
         getGroupList()
@@ -84,7 +90,8 @@ class NoteViewModel @Inject constructor(
                 is Resource.Loading -> {
                     _noteListState.value = RequestState(
                         isLoading = true,
-                        isSuccess = true
+                        isSuccess = true,
+                        result = emptyList()
                     )
                 }
 
@@ -108,8 +115,8 @@ class NoteViewModel @Inject constructor(
 
     }
 
-    fun makeMaterial(groupId: Long, noteRequest: NoteRequest,fileList : MultipartBody.Part) {
-        makeMaterialUseCase(groupId, noteRequest,fileList).onEach { result ->
+    fun makeMaterial(groupId: Long, noteRequest: NoteRequest, fileList: MultipartBody.Part) {
+        makeMaterialUseCase(groupId, noteRequest, fileList).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
                     _makeMaterialState.value = RequestState(
@@ -128,7 +135,37 @@ class NoteViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     _makeMaterialState.value = RequestState(
-                      isError = true
+                        isError = true
+                    )
+                }
+
+
+            }
+        }.launchIn(viewModelScope)
+
+    }
+
+
+    fun makeMaterialToNote(materialId: Long) {
+        getMaterialToNoteUseCase(materialId).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _getMaterialToNoteState.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+
+                is Resource.Success -> {
+                    _getMaterialToNoteState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true
+                    )
+                }
+
+                is Resource.Error -> {
+                    _getMaterialToNoteState.value = RequestState(
+                        isError = true
                     )
                 }
 

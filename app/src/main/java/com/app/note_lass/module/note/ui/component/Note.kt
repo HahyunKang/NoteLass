@@ -38,7 +38,7 @@ fun Note(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
-            Icon(painter = painterResource(id = R.drawable.note_lecture_small),contentDescription = null)
+            Icon(painter = painterResource(id = R.drawable.note_lecture_small),contentDescription = null,tint = Color.Unspecified)
             Spacer(modifier = Modifier.width(24.dp))
             Column(
                 verticalArrangement = Arrangement.Center

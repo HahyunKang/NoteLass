@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -31,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
+import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.group.ui.TabViewForTeacher
 import com.app.note_lass.module.upload.data.viewmodel.UploadViewModel
 import com.app.note_lass.ui.theme.PrimaryBlack
@@ -38,7 +38,8 @@ import com.app.note_lass.ui.theme.PrimaryBlack
 @Composable
 fun AssignmentUploadScreen(
     protoViewModel : ProtoViewModel = hiltViewModel(),
-    uploadViewModel: UploadViewModel = hiltViewModel()
+    uploadViewModel: UploadViewModel = hiltViewModel(),
+    goBackToGroup: (Role,Long) -> Unit
 ){
 
 
@@ -101,7 +102,9 @@ fun AssignmentUploadScreen(
                         }
 
                         2 -> {
-                            CreateLectureNoteScreen()
+                            CreateLectureNoteScreen(
+                                goBackToGroup = goBackToGroup
+                            )
                         }
                     }
                 }

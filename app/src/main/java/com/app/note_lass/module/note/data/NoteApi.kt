@@ -11,6 +11,8 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
+import javax.annotation.processing.Generated
 
 interface NoteApi {
     @GET("api/note")
@@ -25,4 +27,10 @@ interface NoteApi {
         @Part("materialCreateDto") materialContents: RequestBody,
         @Part fileList: MultipartBody.Part
         ) : NoteResponseBody<Nothing>
+
+    @POST("api/material")
+    suspend fun getMaterialToNote(
+        @Header(value = "Authorization") accessToken : String,
+        @Query(value = "materialId") id : Long
+    ) : NoteResponseBody<Nothing>
 }

@@ -22,5 +22,12 @@ class NoteImpl @Inject constructor(
         return noteApi.makeMaterial(accessToken, groupId, noteRequest,fileList)
     }
 
+    override suspend fun getMaterialToNote(
+        accessToken: String,
+        materialId: Long
+    ): NoteResponseBody<Nothing> {
+        return noteApi.getMaterialToNote(accessToken,materialId)
+    }
+
 
 }

@@ -28,10 +28,11 @@ class GroupForStudentViewModel @Inject constructor(
     private val _studentNoticeState = mutableStateOf(NoticeListState())
     val studentNoticeState = _studentNoticeState
 
-    private val _studentMaterialState = mutableStateOf(RequestState<List<Material>>())
+    private val _studentMaterialState = mutableStateOf(RequestState<List<Material>>(result = emptyList()))
     val studentMaterialState =_studentMaterialState
     init{
         groupId.value = savedStateHandle.get<Int>("groupId")!!
+        Log.e("groupId",groupId.value.toString())
         getNoticeList()
         getMaterialList()
     }
@@ -69,7 +70,7 @@ class GroupForStudentViewModel @Inject constructor(
     }
 
     private fun getMaterialList(){
-        getMaterialListUseCase().onEach {
+        getMaterialListUseCase(groupId.value.toLong()).onEach {
                 result ->
             when(result) {
 
@@ -77,13 +78,14 @@ class GroupForStudentViewModel @Inject constructor(
                     _studentMaterialState.value = RequestState(
                         isLoading = false,
                         isSuccess = true,
-                       result= result.data!!
+                        result= result.data!!
                     )
                 }
                 is Resource.Loading-> {
                     _studentMaterialState.value = RequestState(
                         isLoading = true,
                         isSuccess = false,
+                        result = emptyList()
                     )
                 }
 

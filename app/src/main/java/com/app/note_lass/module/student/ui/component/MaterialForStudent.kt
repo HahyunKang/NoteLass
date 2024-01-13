@@ -22,6 +22,7 @@ import com.app.note_lass.R
 import com.app.note_lass.common.DateFormatter
 import com.app.note_lass.common.StringToDate
 import com.app.note_lass.module.upload.data.Material.Material
+import com.app.note_lass.ui.component.MaterialDropDown
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryGray
 
@@ -54,8 +55,7 @@ fun MaterialForStudent(
 
             }
         }
-        
-        Icon(painter = painterResource(id = R.drawable.material_more_small),contentDescription = null,tint = PrimaryGray)
+        MaterialDropDown(material = material)
     }
 
 }

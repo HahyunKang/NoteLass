@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +17,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.OutlinedTextField
@@ -58,11 +58,12 @@ import okio.source
 
 @Composable
 fun CreateLectureNoteScreen(
-    viewModel : UploadViewModel = hiltViewModel(),
-    protoViewModel : ProtoViewModel = hiltViewModel()
-
+    viewModel: UploadViewModel = hiltViewModel(),
+    protoViewModel: ProtoViewModel = hiltViewModel(),
+    goBackToGroup: (Role, Long) -> Unit
 ){
     val groupInfo  = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",-1))
+    val role  = protoViewModel.token.collectAsState(initial = Token("",Role.NONE))
 
     val title = remember{
         mutableStateOf("")
@@ -299,6 +300,10 @@ fun CreateLectureNoteScreen(
 
 
       }
+        if(viewModel.makeMaterialState.value.isSuccess){
+            Toast.makeText(context,"강의자료 생성이 완료되었습니다",Toast.LENGTH_SHORT).show()
+            goBackToGroup(role.value.role,groupInfo.value.groupId!!)
+        }
 
         Row(modifier = Modifier
             .align(Alignment.End)

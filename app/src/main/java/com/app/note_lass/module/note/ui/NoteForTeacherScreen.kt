@@ -3,6 +3,7 @@ package com.app.note_lass.module.note.ui
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,7 +53,8 @@ fun NoteForTeacherScreen(
                         bottom = 20.dp,
                         start = 30.dp,
                         end = 30.dp
-                    )
+                    ),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
                     UploadNote(title = "신규 노트 만들기") {

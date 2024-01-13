@@ -1,6 +1,7 @@
 package com.app.note_lass.module.group.ui
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -178,21 +179,28 @@ fun GroupStudentScreen(
                         )
                         .padding(horizontal = 24.dp)
                 ) {
-                    materialState.value.result?.let { it1 -> MaterialListScreen(list = it1) }
 
+                    if (
+                        materialState.value.isSuccess
+                    ) {
+                        MaterialListScreen(list = materialState.value.result!!)
+                    } else {
+                        Log.e("loading in material", "")
+                    }
                 }
-
             }
 
-
-        })
-
+            })
 
 
+        }
 
 
 
-}
+
+
+
+
 @Preview
 @Composable
 fun PreviewGroupStudentScreen(){
