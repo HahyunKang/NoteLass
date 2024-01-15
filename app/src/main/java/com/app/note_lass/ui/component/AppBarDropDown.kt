@@ -89,7 +89,9 @@ fun AppBarDropDown(
     val density = LocalDensity.current
 
     if(logoutState.value.isSuccess){
-        onClickLogout()
+        LaunchedEffect(true) {
+            onClickLogout()
+        }
     }else{
     }
     Icon(painter = painterResource(id = R.drawable.appbar_arrowdown_small),

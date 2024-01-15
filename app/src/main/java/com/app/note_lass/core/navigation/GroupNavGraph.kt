@@ -28,9 +28,6 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
          },
              onClickLogout = {
              outerNavController.navigate(AUTH_ROUTE){
-                 popUpTo(GroupScreen.Home.route) {
-                     inclusive = true
-                 }
                  launchSingleTop = true
              }
              }
