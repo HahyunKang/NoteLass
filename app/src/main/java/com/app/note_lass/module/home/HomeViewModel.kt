@@ -1,5 +1,6 @@
 package com.app.note_lass.module.home
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,7 +28,9 @@ class HomeViewModel @Inject constructor(
 
     private val _getLatestNoteState = mutableStateOf(RequestState<List<Note>>())
     val getLatestNoteState= _getLatestNoteState
-
+   init {
+       Log.e("viewModel LifeCycle","Test")
+   }
     fun getLatestMaterial() {
         getLatestUploadMaterialUsecase().onEach { result ->
             when (result) {

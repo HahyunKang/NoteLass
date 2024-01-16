@@ -1,6 +1,7 @@
 package com.app.note_lass.module.main.ui
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -77,8 +79,8 @@ fun MainScreen(
         mutableStateOf(false)
     }
 
-    var selectedItemIndex by rememberSaveable() {
-        mutableStateOf(0)
+    val selectedItemIndex = rememberSaveable() {
+        mutableIntStateOf(0)
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -95,13 +97,26 @@ fun MainScreen(
             }
         },
         )
+    //현재 화면에 맞는 항목의 인덱스를 찾고, 그 인덱스를 selectedItemIndex에 저장
+    navController.addOnDestinationChangedListener { _, destination, _ ->
+        val index = items.indexOfFirst { it.route == destination.route }
+        if (selectedItemIndex.intValue != index) {
+            Log.e("indexTest",index.toString())
+            selectedItemIndex.intValue = index
+        }
+    }
         NavigationSideBar(
             role = role,
             items = items,
-            selectedItemIndex = selectedItemIndex,
+            selectedItemIndex = selectedItemIndex.intValue,
             onNavigate = {
-                selectedItemIndex = it
-                navController.navigate(items[selectedItemIndex].route)
+                selectedItemIndex.intValue = it
+                navController.navigate(items[selectedItemIndex.intValue].route){
+//                    navController.graph.startDestinationRoute?.let {
+//                        popUpTo(it) { saveState = true }
+//                    }g
+                    launchSingleTop = true
+                }
             },
             onClick = {
                 isDialogShow.value = true
