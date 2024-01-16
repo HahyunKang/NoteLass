@@ -72,8 +72,8 @@ fun MainScreen(
 
 ){
 
-    var role = protoViewModel.token.collectAsState(initial = Token("",Role.NONE)).value.role
-    var isDialogShow = remember{
+    val role = protoViewModel.token.collectAsState(initial = Token("",Role.NONE)).value.role
+    val isDialogShow = remember{
         mutableStateOf(false)
     }
 
@@ -91,13 +91,10 @@ fun MainScreen(
                 modifier = Modifier
                     .padding(start = 240.dp, top = it.calculateTopPadding()),
             ) {
-                MainNavGraph(navController = navController, outerNavController = outerNavController)
+                MainNavGraph(navController = navController, outerNavController = outerNavController,role = role)
             }
         },
-
         )
-
-
         NavigationSideBar(
             role = role,
             items = items,

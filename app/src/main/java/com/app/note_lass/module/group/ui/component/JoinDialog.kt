@@ -3,6 +3,7 @@ package com.app.note_lass.module.group.ui.component
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -64,9 +65,9 @@ fun JoinDialog(
     groupInfo: String,
     groupCode: Int,
     onClickDecline : (Int) -> Unit,
-    onClickAccept : (Int) -> Unit
+    onClickAccept : (Int) -> Unit,
+    getStudentList : () -> Unit
 ) {
-
 
 
     Dialog(
@@ -91,7 +92,6 @@ fun JoinDialog(
                         setShowDialog(false)
                     }
             )
-
 
             Text(
                 text = buildAnnotatedString {
@@ -148,10 +148,12 @@ fun JoinDialog(
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            val studentInfo = listOf(JoinStudentInfo(1,"광남고등학교",1,1,"강하현"),
-                JoinStudentInfo(2,"광남고등학교",1,1,"강하현"))
 
-            LazyColumn(modifier = Modifier.fillMaxWidth()){
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            )
+            {
                 itemsIndexed(joinStudentList){
                     index, item ->
                     ApplicationStudent(
@@ -162,7 +164,8 @@ fun JoinDialog(
                         },
                         onClickAccept = {
                             onClickAccept(it)
-                        }
+                        },
+                        getStudentList = getStudentList
                     )
                 }
             }

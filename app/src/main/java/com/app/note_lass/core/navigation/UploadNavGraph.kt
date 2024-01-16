@@ -19,8 +19,13 @@ fun NavGraphBuilder.UploadNavGraph(navController: NavController) {
 
         composable(UploadScreen.CreateNotice.route) {
             AssignmentUploadScreen(goBackToGroup = { role,id ->
-                if(role== Role.STUDENT)navController.navigate(GroupScreen.GroupForStudent.passQuery(id.toInt()))
-                else navController.navigate(GroupScreen.GroupForTeacher.passQuery(id.toInt()))
+                if(role== Role.STUDENT)
+                    navController.navigate(GroupScreen.GroupForStudent.passQuery(id.toInt())){
+                        launchSingleTop = true
+                    }
+                else navController.navigate(GroupScreen.GroupForTeacher.passQuery(id.toInt())){
+                    launchSingleTop = true
+                }
             })
         }
         composable(route = UploadScreen.NoticeDetail.route,

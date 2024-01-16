@@ -233,7 +233,6 @@ fun MaterialDropDown(
                     isContextMenuVisible = false
                    when(index){
                        0 ->{
-                           val writeRequestCode = 43
                            val fileName = "note-lass.pdf"
                            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                                addCategory(Intent.CATEGORY_OPENABLE)

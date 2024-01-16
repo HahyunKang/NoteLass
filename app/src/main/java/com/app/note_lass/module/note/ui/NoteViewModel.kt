@@ -8,9 +8,13 @@ import com.app.note_lass.common.Resource
 import com.app.note_lass.module.group.data.groupList.GroupHashState
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.note.data.Note
+import com.app.note_lass.module.note.data.NoteAccessedDto
 import com.app.note_lass.module.note.data.NoteRequest
+import com.app.note_lass.module.note.domain.AccessNoteUsecase
+import com.app.note_lass.module.note.domain.GetLatestNoteUsecase
 import com.app.note_lass.module.note.domain.GetMaterialToNoteUseCase
 import com.app.note_lass.module.note.domain.GetNoteListUseCase
+import com.app.note_lass.module.upload.data.Material.Material
 import com.app.note_lass.module.upload.domain.PostMaterialUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -24,7 +28,9 @@ class NoteViewModel @Inject constructor(
     val getGroupUseCase: GetGroupUseCase,
     val  noteListUseCase : GetNoteListUseCase,
     val  makeMaterialUseCase: PostMaterialUseCase,
-    val getMaterialToNoteUseCase: GetMaterialToNoteUseCase
+    val getMaterialToNoteUseCase: GetMaterialToNoteUseCase,
+    val getLatestNoteUsecase: GetLatestNoteUsecase,
+    val accessNoteUsecase: AccessNoteUsecase
     ): ViewModel() {
 
 
@@ -41,6 +47,10 @@ class NoteViewModel @Inject constructor(
 
     private val _getMaterialToNoteState = mutableStateOf(RequestState<Nothing>())
     val getMaterialToNoteState = _getMaterialToNoteState
+
+    private val _accessNoteState = mutableStateOf(RequestState<NoteAccessedDto>())
+    val accessNoteState  = _accessNoteState
+
 
     init {
         getNoteList()
@@ -165,6 +175,35 @@ class NoteViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     _getMaterialToNoteState.value = RequestState(
+                        isError = true
+                    )
+                }
+
+
+            }
+        }.launchIn(viewModelScope)
+
+    }
+
+    fun accessNote(noteId: Long) {
+        accessNoteUsecase(noteId).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _accessNoteState.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+
+                is Resource.Success -> {
+                    _accessNoteState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true
+                    )
+                }
+
+                is Resource.Error -> {
+                    _accessNoteState.value = RequestState(
                         isError = true
                     )
                 }

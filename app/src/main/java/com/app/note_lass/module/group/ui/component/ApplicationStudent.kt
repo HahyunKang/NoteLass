@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +34,8 @@ import com.app.note_lass.module.group.data.studentList.Student
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ApplicationStudent(
@@ -40,6 +43,7 @@ fun ApplicationStudent(
     studentInfo : JoinStudentInfo,
     onClickAccept : (Int)-> Unit={},
     onClickDecline : (Int)-> Unit ={},
+    getStudentList : () -> Unit
 ) {
 
     val decline = remember {
@@ -48,6 +52,8 @@ fun ApplicationStudent(
     val accept = remember {
         mutableStateOf(false)
     }
+
+    val scope = rememberCoroutineScope()
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -56,7 +62,9 @@ fun ApplicationStudent(
             text = id.toString(),
             style = NoteLassTheme.Typography.twenty_700_pretendard,
             color = PrimaryBlack,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(0.5f)
+                .align(Alignment.CenterVertically),
             textAlign = TextAlign.Center
         )
 
@@ -64,7 +72,6 @@ fun ApplicationStudent(
             modifier = Modifier
                 .wrapContentHeight()
                 .weight(5f)
-
         ) {
 
             Text(
@@ -85,8 +92,13 @@ fun ApplicationStudent(
                     .background(color = Color(0x339EA4AA), shape = RoundedCornerShape(size = 20.dp))
                     .padding(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 3.dp)
                     .clickable {
-                        decline.value = true
-                        onClickDecline(studentInfo.userId.toInt())
+                        scope.launch {
+                            decline.value = true
+                            onClickDecline(studentInfo.userId.toInt())
+                            delay(1000)
+                            getStudentList()
+
+                        }
                     }
                     .weight(1f)
             ) {
@@ -119,6 +131,7 @@ fun ApplicationStudent(
                     )
                 )
             }
+        }
             if (!accept.value) {
                 Box(
                     modifier = Modifier
@@ -129,8 +142,12 @@ fun ApplicationStudent(
                         )
                         .padding(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 3.dp)
                         .clickable {
-                            accept.value = true
-                            onClickAccept(studentInfo.userId.toInt())
+                            scope.launch {
+                                accept.value = true
+                                onClickAccept(studentInfo.userId.toInt())
+                                delay(1000)
+                                getStudentList()
+                            }
                         }
                         .weight(1f)
                 ) {
@@ -172,7 +189,6 @@ fun ApplicationStudent(
                 }
 
             }
-        }
     }
 }
 

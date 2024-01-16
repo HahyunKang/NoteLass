@@ -71,7 +71,8 @@ fun GroupTeacherScreen(
                     }
                 )
 
-            }
+            },
+            getStudentList= { viewModel.getJoinStudentList() }
         )
     }
 

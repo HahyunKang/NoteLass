@@ -1,6 +1,11 @@
 package com.app.note_lass.module.note.ui
 
+import RetrievePDFfromUrl
+import android.app.Activity
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.core.Proto.GroupInfo
@@ -65,7 +71,12 @@ fun NoteForTeacherScreen(
                 if (state.value.isSuccess) {
                     val noteList = state.value.result
                     items(state.value.result!!.size) {
-                        Note(noteList?.get(it)!!.title,noteList.get(it).teacher,)
+
+                        Note(noteList?.get(it)!!.title,noteList.get(it).teacher, fileUrl = noteList.get(it).fileUrl,
+                            onClickAccess ={
+                                noteViewModel.accessNote(noteList.get(it).id)
+                            })
+
                     }
                 }
             }
