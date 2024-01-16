@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +40,8 @@ import com.app.note_lass.ui.theme.PrimaryGray
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AcademicResources(
-    resources : Resources
+    resources : Resources,
+    goToNoticeDetail : () -> Unit
 ) {
 
     Box(
@@ -56,7 +58,10 @@ fun AcademicResources(
     ){
         Row(
             modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 32.dp, vertical = 24.dp),
+                .clickable {
+                goToNoticeDetail()
+            }.padding(horizontal = 32.dp, vertical = 24.dp)
+              ,
             horizontalArrangement = Arrangement.SpaceBetween,
         ){
             Column(modifier = Modifier.fillMaxHeight(),

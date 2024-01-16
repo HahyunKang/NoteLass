@@ -45,6 +45,7 @@ import org.w3c.dom.Text
 @Composable
 fun NoticeListScreen(
     viewModel : StudentNoticeListViewModel = hiltViewModel(),
+    goToDetailScreen : (Long)-> Unit,
 ){
 
     val state =viewModel.noticeListState
@@ -129,7 +130,9 @@ fun NoticeListScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ){
                     items(noticeList.size){
-                        AcademicResources(resources = noticeList[it])
+                        AcademicResources(resources = noticeList[it], goToNoticeDetail = {
+                            goToDetailScreen(noticeList[it].id)
+                        })
                     }
                 }
 

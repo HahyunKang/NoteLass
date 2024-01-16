@@ -67,7 +67,11 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
         composable(
             route = GroupScreen.NoticeForStudent.route,
             ) {
-            NoticeListScreen()
+            NoticeListScreen(
+                goToDetailScreen = {
+                    navController.navigate(UploadScreen.NoticeDetail.passQuery(it))
+                }
+            )
         }
     }
 }

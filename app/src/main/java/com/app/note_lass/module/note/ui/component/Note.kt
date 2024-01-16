@@ -51,10 +51,12 @@ fun Note(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
                 onClickAccess()
-                val intent = Intent(context, NoteActivity::class.java).apply {
+                val intent1 = Intent(context, NoteActivity::class.java).apply {
                     putExtra("pdfString", fileUrl)
+                    putExtra("pdfTitle",title)
                 }
-                context.startActivity(intent)
+
+                context.startActivity(intent1)
             }
         ){
             Icon(painter = painterResource(id = R.drawable.note_lecture_small),contentDescription = null,tint = Color.Unspecified)
