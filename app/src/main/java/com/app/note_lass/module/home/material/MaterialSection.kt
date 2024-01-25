@@ -51,11 +51,14 @@ fun NoteSection(
 ){
     Column(
         modifier = Modifier.fillMaxSize()
-    ) {
+            .padding(horizontal = 24.dp),
+        ) {
         SectionHeader(title = "최근에 열어본 노트")
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)){
-            items(notes.size){
+            val fiveNotesMaterials = notes.subList(0,5)
+
+            items(fiveNotesMaterials.size){
                 MaterialInHome(title = notes[it].title, fileUrl = notes[it].fileUrl, date = DateFormatter(StringToDate(notes[it].lastAccessed).localDateTime).formattedDate)
             }
         }

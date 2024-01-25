@@ -34,6 +34,7 @@ fun MaterialInHome(
         modifier = Modifier.fillMaxSize().clickable {
         val intent = Intent(context, NoteActivity::class.java).apply {
             putExtra("pdfString", fileUrl)
+            putExtra("pdfTitle",title)
         }
         context.startActivity(intent)
     }

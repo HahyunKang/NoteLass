@@ -101,7 +101,7 @@ fun HomeScreen(
                 isGroupButton = false,
             )
         },
-        containerColor =  Color(0xFFF5F5FC),
+       containerColor =  Color(0xFFF5F5FC),
         contentColor = Color.Black,
         bottomBar = {
         },

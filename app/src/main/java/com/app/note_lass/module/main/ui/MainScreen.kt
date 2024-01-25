@@ -100,8 +100,7 @@ fun MainScreen(
     //현재 화면에 맞는 항목의 인덱스를 찾고, 그 인덱스를 selectedItemIndex에 저장
     navController.addOnDestinationChangedListener { _, destination, _ ->
         val index = items.indexOfFirst { it.route == destination.route }
-        if (selectedItemIndex.intValue != index) {
-            Log.e("indexTest",index.toString())
+        if (selectedItemIndex.intValue != index && index != -1) {
             selectedItemIndex.intValue = index
         }
     }
@@ -112,9 +111,6 @@ fun MainScreen(
             onNavigate = {
                 selectedItemIndex.intValue = it
                 navController.navigate(items[selectedItemIndex.intValue].route){
-//                    navController.graph.startDestinationRoute?.let {
-//                        popUpTo(it) { saveState = true }
-//                    }g
                     launchSingleTop = true
                 }
             },
