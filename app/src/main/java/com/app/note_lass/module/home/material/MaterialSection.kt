@@ -18,6 +18,7 @@ import com.app.note_lass.common.StringToDate
 import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.upload.data.Material.Material
 import com.app.note_lass.ui.component.SectionHeader
+import java.lang.Integer.min
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -56,7 +57,7 @@ fun NoteSection(
         SectionHeader(title = "최근에 열어본 노트")
         Spacer(modifier = Modifier.height(12.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)){
-            val fiveNotesMaterials = notes.subList(0,5)
+            val fiveNotesMaterials = notes.subList(0,min(notes.size,5))
 
             items(fiveNotesMaterials.size){
                 MaterialInHome(title = notes[it].title, fileUrl = notes[it].fileUrl, date = DateFormatter(StringToDate(notes[it].lastAccessed).localDateTime).formattedDate)
