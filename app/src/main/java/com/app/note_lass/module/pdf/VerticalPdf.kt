@@ -54,7 +54,8 @@ fun VerticalPdf(
     ) {
         val scope = rememberCoroutineScope()
 
-        val background = Modifier.background(MaterialTheme.colorScheme.background.copy(alpha = 0.75f),MaterialTheme.shapes.small)
+        val background = Modifier
+            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.75f),MaterialTheme.shapes.small)
             .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = MaterialTheme.shapes.small)
             .clip(MaterialTheme.shapes.small)
         val iconTint = MaterialTheme.colorScheme.onBackground
