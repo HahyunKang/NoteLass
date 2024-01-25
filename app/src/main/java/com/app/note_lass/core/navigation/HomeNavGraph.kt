@@ -6,11 +6,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.home.HomeScreen
 import com.app.note_lass.module.home.NoticeScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun NavGraphBuilder.HomeNavGraph(navController: NavController,outerNavController: NavController) {
+fun NavGraphBuilder.HomeNavGraph(navController: NavController,outerNavController: NavController,role : Role) {
 
 
     navigation(startDestination = HomeScreen.Home.route, route = HOME_ROUTE) {
@@ -24,7 +25,8 @@ fun NavGraphBuilder.HomeNavGraph(navController: NavController,outerNavController
                     launchSingleTop = true
                 }
 
-            }
+            },
+                role = role
             )
         }
         composable(HomeScreen.Notice.route) {

@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,8 +57,18 @@ fun GroupScreen(
      viewModel: GroupViewModel = hiltViewModel(),
      protoViewModel : ProtoViewModel = hiltViewModel()
 ){
-    val role  = protoViewModel.token.collectAsState(initial = Token("",Role.STUDENT))
 
+    val role =
+        remember {
+            mutableStateOf(Token("", Role.STUDENT))
+        }
+    LaunchedEffect(true) {
+        Log.e("role in Log(Test)",role.value.role.toString())
+        protoViewModel.token.collect { newToken ->
+            Log.e("role in Log(Test)",newToken.role.toString())
+            role.value = newToken
+        }
+    }
     val showFirstDialog = remember {
         mutableStateOf(false)
     }
@@ -87,8 +98,7 @@ fun GroupScreen(
              onClickLogout = {
                  onClickLogout()
              }
-             )
-
+         )
         },
         containerColor =  Color(0xFFF5F5FC),
         contentColor = Color.Black,
@@ -110,7 +120,6 @@ fun GroupScreen(
                         showSecondDialog.value = true
                         showFirstDialog.value = false
                         viewModel.createGroup(groupRequest.value)
-
                     }
                 }else{
                     DialogEnterGroup(

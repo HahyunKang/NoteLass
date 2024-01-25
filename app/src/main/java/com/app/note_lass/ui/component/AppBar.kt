@@ -64,12 +64,10 @@ fun AppBar(
             fontWeight = FontWeight(700),
             color = Color(0xFF26282B)
             )
-
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ){
-            Log.e("role in Log",role.toString())
+            Log.e("role in Log(Test in AppBar)",role.toString())
           if(isGroupButton && role == Role.TEACHER)
           {
               Box(modifier = Modifier

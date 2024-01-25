@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.upload.ui.AssignmentUploadScreen
 import com.app.note_lass.module.upload.ui.NoticeDetailScreen
 
@@ -17,7 +18,15 @@ fun NavGraphBuilder.UploadNavGraph(navController: NavController) {
     navigation(startDestination = UploadScreen.NoticeDetail.route, route = UPLOAD_ROUTE) {
 
         composable(UploadScreen.CreateNotice.route) {
-            AssignmentUploadScreen()
+            AssignmentUploadScreen(goBackToGroup = { role,id ->
+                if(role== Role.STUDENT)
+                    navController.navigate(GroupScreen.GroupForStudent.passQuery(id.toInt())){
+                        launchSingleTop = true
+                    }
+                else navController.navigate(GroupScreen.GroupForTeacher.passQuery(id.toInt())){
+                    launchSingleTop = true
+                }
+            })
         }
         composable(route = UploadScreen.NoticeDetail.route,
             arguments = listOf(navArgument(name = "noticeId") { type = NavType.LongType }

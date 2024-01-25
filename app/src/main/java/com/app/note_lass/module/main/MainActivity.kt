@@ -41,15 +41,7 @@ class MainActivity : ComponentActivity() {
             NotelassTheme {
                 val navController = rememberNavController()
                 RootNavGraph(navController = navController)
-
-
-
                 // A surface container using the 'background' color from the theme
-
-                
-
-
-
             }
         }
     }

@@ -74,7 +74,7 @@ fun NoticeDetailInfo(
         )
         Divider()
 
-        if (fileUrl != null) {
+        if (fileUrl != "") {
 
 //            fileName = fileManager.getFileName(context, pdfUri!!)
 //            fileSize = fileManager.getFileSize(context, pdfUri!!)
@@ -94,7 +94,7 @@ fun NoticeDetailInfo(
 //                       // pdfUri?.path?.let { Log.e("PDFURI", it) }
 //                        context.startActivity(intent)
                          val downloader = AndroidDownLoader(context,"notice.pdf")
-                         downloader.downloadFile(fileUrl)
+                         downloader.downloadFile(fileUrl!!)
                     },
                     onDelete = {
                     //    fileUrl = null

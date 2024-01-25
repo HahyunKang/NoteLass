@@ -1,5 +1,6 @@
 package com.app.note_lass.module.group.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,17 +14,21 @@ import com.app.note_lass.module.upload.data.notice.NoticePreview
 import com.app.note_lass.ui.component.IconAndText
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryGray
+import java.lang.Integer.min
 
 @Composable
 fun NoticePreviewScreenForStudent(
     noticeList : List<NoticePreview>,
     onClick : (Long) -> Unit ={}){
 
+    val list = if(noticeList.isNotEmpty())noticeList.reversed().subList(0,min(noticeList.size,4))
+    else emptyList()
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
 
-        noticeList.forEach {
+        list.forEach {
             val icon : Int = if(it.unread) R.drawable.notice_preview_unread
             else R.drawable.notice_preview_read
             val iconColor : Color =  if(it.unread) PrimarayBlue

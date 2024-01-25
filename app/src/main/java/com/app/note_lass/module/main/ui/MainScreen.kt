@@ -1,6 +1,7 @@
 package com.app.note_lass.module.main.ui
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -72,13 +74,13 @@ fun MainScreen(
 
 ){
 
-    var role = protoViewModel.token.collectAsState(initial = Token("",Role.NONE)).value.role
-    var isDialogShow = remember{
+    val role = protoViewModel.token.collectAsState(initial = Token("",Role.NONE)).value.role
+    val isDialogShow = remember{
         mutableStateOf(false)
     }
 
-    var selectedItemIndex by rememberSaveable() {
-        mutableStateOf(0)
+    val selectedItemIndex = rememberSaveable() {
+        mutableIntStateOf(0)
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -91,20 +93,26 @@ fun MainScreen(
                 modifier = Modifier
                     .padding(start = 240.dp, top = it.calculateTopPadding()),
             ) {
-                MainNavGraph(navController = navController, outerNavController = outerNavController)
+                MainNavGraph(navController = navController, outerNavController = outerNavController,role = role)
             }
         },
-
         )
-
-
+    //현재 화면에 맞는 항목의 인덱스를 찾고, 그 인덱스를 selectedItemIndex에 저장
+    navController.addOnDestinationChangedListener { _, destination, _ ->
+        val index = items.indexOfFirst { it.route == destination.route }
+        if (selectedItemIndex.intValue != index && index != -1) {
+            selectedItemIndex.intValue = index
+        }
+    }
         NavigationSideBar(
             role = role,
             items = items,
-            selectedItemIndex = selectedItemIndex,
+            selectedItemIndex = selectedItemIndex.intValue,
             onNavigate = {
-                selectedItemIndex = it
-                navController.navigate(items[selectedItemIndex].route)
+                selectedItemIndex.intValue = it
+                navController.navigate(items[selectedItemIndex.intValue].route){
+                    launchSingleTop = true
+                }
             },
             onClick = {
                 isDialogShow.value = true

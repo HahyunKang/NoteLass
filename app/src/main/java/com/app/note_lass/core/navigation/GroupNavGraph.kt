@@ -28,9 +28,6 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
          },
              onClickLogout = {
              outerNavController.navigate(AUTH_ROUTE){
-                 popUpTo(GroupScreen.Home.route) {
-                     inclusive = true
-                 }
                  launchSingleTop = true
              }
              }
@@ -70,7 +67,11 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
         composable(
             route = GroupScreen.NoticeForStudent.route,
             ) {
-            NoticeListScreen()
+            NoticeListScreen(
+                goToDetailScreen = {
+                    navController.navigate(UploadScreen.NoticeDetail.passQuery(it))
+                }
+            )
         }
     }
 }

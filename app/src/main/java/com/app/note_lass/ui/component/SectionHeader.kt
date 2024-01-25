@@ -32,7 +32,8 @@ fun SectionHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.
         fillMaxWidth().
-        padding( vertical = 8.dp)){
+        padding( vertical = 8.dp)
+    ){
         Text(title,
             style = TextStyle(
                 fontSize = 20.sp,
@@ -56,12 +57,67 @@ fun SectionHeader(
                     color = Color(0xFF9EA4AA),
                 )
             )
-            Modifier.width(10.dp)
+            Modifier.width(20.dp)
             Icon(painter = painterResource(id = R.drawable.home_assignment_arrow),
                 contentDescription = null,tint= Color(0xFF9EA4AA) )
         }
 
     }
 
+}
 
+@Composable
+fun SectionHeaderWithCreate(
+    title : String,
+    onTouchWachAll : ()-> Unit = {},
+    onTouchCreate : () -> Unit = {}
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+    ) {
+        Text(
+            title,
+            style = TextStyle(
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                fontWeight = FontWeight(700),
+                color = PrimaryBlack,
+            )
+        )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable {
+                onTouchCreate()
+            }
+        ) {
+            Text(
+                "전체보기",
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                    fontWeight = FontWeight(600),
+                    color = Color(0xFF9EA4AA),
+                )
+            )
+            Modifier.width(20.dp)
+            Icon(
+                painter = painterResource(id = R.drawable.home_assignment_arrow),
+                contentDescription = null, tint = Color(0xFF9EA4AA)
+            )
+            Modifier.width(16.dp)
+
+            Text(
+                "생성하기 +",
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                    fontWeight = FontWeight(600),
+                    color = Color(0xFF9EA4AA),
+                )
+            )
+        }
+
+    }
 }

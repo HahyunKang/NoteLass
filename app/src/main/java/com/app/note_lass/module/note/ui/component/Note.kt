@@ -1,7 +1,14 @@
 package com.app.note_lass.module.note.ui.component
 
+import RetrievePDFfromUrl
+import android.app.Activity
+import android.content.Intent
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,10 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.app.note_lass.R
 import com.app.note_lass.common.DateFormatter
+import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryGray
@@ -27,18 +36,30 @@ import java.time.LocalDateTime
 @Composable
 fun Note(
     title : String,
-    date : LocalDateTime,
-    onClickArrow : () -> Unit
+    teacher : String,
+    fileUrl : String,
+    onClickAccess:() -> Unit,
+    onClickArrow : () -> Unit = {}
 ){
-    val formatDate = DateFormatter(date).formattedDate
+    val context = LocalContext.current
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ){
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable {
+                onClickAccess()
+                val intent1 = Intent(context, NoteActivity::class.java).apply {
+                    putExtra("pdfString", fileUrl)
+                    putExtra("pdfTitle",title)
+                }
+
+                context.startActivity(intent1)
+            }
         ){
-            Icon(painter = painterResource(id = R.drawable.note_lecture_small),contentDescription = null)
+            Icon(painter = painterResource(id = R.drawable.note_lecture_small),contentDescription = null,tint = Color.Unspecified)
             Spacer(modifier = Modifier.width(24.dp))
             Column(
                 verticalArrangement = Arrangement.Center
@@ -46,7 +67,7 @@ fun Note(
                 Text(text = title,
                     style = NoteLassTheme.Typography.sixteem_600_pretendard
                 )
-                Text(text = formatDate,
+                Text(text = teacher,
                     style = NoteLassTheme.Typography.twelve_600_pretendard,
                     color = PrimaryGray
                 )

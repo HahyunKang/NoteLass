@@ -6,6 +6,7 @@ import com.app.note_lass.module.group.data.applicationList.ApplicationStudent
 import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.groupList.GroupListDto
 import com.app.note_lass.module.group.data.studentList.Student
+import com.app.note_lass.module.upload.data.Material.Material
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -34,4 +35,11 @@ interface StudentApi {
         @Header(value = "Authorization") accessToken : String,
         @Path(value = "groupId") groupId : Int,
     ) : NoteResponseBody<List<Resources>>
+
+
+    @GET("api/material/{groupId}")
+    suspend fun getMaterialList(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId : Int,
+    ): NoteResponseBody<List<Material>>
 }
