@@ -19,7 +19,6 @@ fun NavGraphBuilder.NoteNavGraph(navController: NavController) {
         composable(NoteScreen.Home.route) {
             FirstNoteScreen()
         }
-
     }
 }
 

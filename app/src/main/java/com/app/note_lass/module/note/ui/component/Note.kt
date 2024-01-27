@@ -39,7 +39,8 @@ fun Note(
     teacher : String,
     fileUrl : String,
     onClickAccess:() -> Unit,
-    onClickArrow : () -> Unit = {}
+    onClickArrow : () -> Unit = {},
+    onClickNote : (Boolean,String) -> Unit
 ){
     val context = LocalContext.current
 
@@ -51,12 +52,14 @@ fun Note(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
                 onClickAccess()
-                val intent1 = Intent(context, NoteActivity::class.java).apply {
-                    putExtra("pdfString", fileUrl)
-                    putExtra("pdfTitle",title)
-                }
+//                val intent1 = Intent(context, NoteActivity::class.java).apply {
+//                    putExtra("pdfString", fileUrl)
+//                    putExtra("pdfTitle",title)
+//                }
+//
+//                context.startActivity(intent1)
+                onClickNote(true,fileUrl)
 
-                context.startActivity(intent1)
             }
         ){
             Icon(painter = painterResource(id = R.drawable.note_lecture_small),contentDescription = null,tint = Color.Unspecified)

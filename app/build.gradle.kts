@@ -57,6 +57,8 @@ android {
     }
 }
 
+
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.9.0")
@@ -116,5 +118,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     implementation("com.squareup.okhttp3:logging-interceptor:4.5.0")
+    implementation("com.github.pratikksahu:JetPDFVue:1.0.3")
 
 }
