@@ -7,14 +7,13 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
+import android.os.Parcelable
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import com.app.note_lass.databinding.ActivityNoteBinding
 import com.github.barteksc.pdfviewer.PDFView
 import com.github.barteksc.pdfviewer.util.FitPolicy
@@ -41,7 +40,7 @@ class NoteActivity: AppCompatActivity() {
     private fun getPdfUri() {
         pdfUri = intent.getParcelableExtra("pdfUri")
         photoUri = intent.getParcelableExtra("photoUri")
-        pdfString = intent.getStringExtra("pdfString")
+        pdfString = intent.getSerializableExtra("pdfString").toString()
     }
 
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
@@ -60,9 +59,10 @@ class NoteActivity: AppCompatActivity() {
 
         getPdfUri()
 
+        titleText.text =  intent.getSerializableExtra("pdfTitle").toString()
         photoView.visibility = View.GONE
+
         if (pdfString != null) {
-            Log.e("pdfString", pdfString!!)
             RetrievePDFfromUrl(doAfter = {
                 pdfView.fromStream(it)
                     .swipeHorizontal(false)
@@ -71,7 +71,8 @@ class NoteActivity: AppCompatActivity() {
                     .pageFling(true)
                     .pageFitPolicy(FitPolicy.BOTH)
                     .load()
-            }).execute(pdfString!!)
+            }
+            ).execute(pdfString!!)
         } else if (pdfUri != null) {
             pdfView.fromUri(pdfUri)
                 .swipeHorizontal(false)
@@ -94,9 +95,7 @@ class NoteActivity: AppCompatActivity() {
                 }
             }
             photoView.setImageBitmap(bitmap)
-
         }
-
     }
 
 }

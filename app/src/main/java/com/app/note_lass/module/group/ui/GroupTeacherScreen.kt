@@ -35,6 +35,7 @@ import com.app.note_lass.ui.component.AppBar
 import com.app.note_lass.ui.component.AppBarForTeacherInGroup
 import com.app.note_lass.ui.component.IconAndText
 import com.app.note_lass.ui.component.SectionHeader
+import com.app.note_lass.ui.component.SectionHeaderWithCreate
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryPurple
 
@@ -70,7 +71,8 @@ fun GroupTeacherScreen(
                     }
                 )
 
-            }
+            },
+            getStudentList= { viewModel.getJoinStudentList() }
         )
     }
 
@@ -125,7 +127,7 @@ fun GroupTeacherScreen(
                             .padding(horizontal = 24.dp)
                     ) {
 
-                        SectionHeader(title = "공지/과제", onTouchIcon = onTouchCreateNotice )
+                        SectionHeaderWithCreate(title = "공지/과제/강의자료", onTouchCreate = onTouchCreateNotice )
 
 
                     }

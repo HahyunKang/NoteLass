@@ -2,28 +2,31 @@ package com.app.note_lass.module.record.domain.usecase
 
 import androidx.datastore.core.DataStore
 import com.app.note_lass.common.Resource
+import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.Token
+import com.app.note_lass.module.record.data.File
 import com.app.note_lass.module.record.domain.RecordRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
-import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
 class GetExcelFileUseCase @Inject constructor(
     private val recordRepository: RecordRepository,
-    val dataStore : DataStore<Token>
+    val dataStore : DataStore<Token>,
+    private val dataGroupStore : DataStore<GroupInfo>
 ) {
 
-    operator fun invoke(groupId : Long) : Flow<Resource<File>> = flow{
+    operator fun invoke() : Flow<Resource<File>> = flow{
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
+            val groupId= dataGroupStore.data.first().groupId
 
             emit(Resource.Loading())
 
-            val recordResponse = recordRepository.getExcel(token,groupId)
+            val recordResponse = recordRepository.getExcel(token,groupId!!)
 
             emit(
                 Resource.Success(

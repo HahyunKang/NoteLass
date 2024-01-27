@@ -1,10 +1,14 @@
 package com.app.note_lass.module.signup.ui
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -56,9 +62,11 @@ import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
+import com.app.note_lass.ui.theme.PrimaryGreen
 import com.app.note_lass.ui.theme.PrimaryPink
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalFoundationApi::class, ExperimentalFoundationApi::class
@@ -74,12 +82,12 @@ fun SignUpScreen (
     val state = signUpViewModel.state
 
     val signupState = signUpViewModel.signupState
-
-    var emailValue by remember {
+    val validateSuccess = signUpViewModel.emailValidateState
+    val emailValue = remember {
         mutableStateOf("")
     }
 
-    var emailValidationValue by remember {
+    var emailValidationValue = remember {
         mutableStateOf("")
     }
     var password by remember {
@@ -90,6 +98,12 @@ fun SignUpScreen (
     }
     var buttonFilled by remember {
         mutableStateOf(false)
+    }
+    val emailValidated = remember {
+        mutableStateOf(false)
+    }
+    var validatedEmail = remember {
+        mutableStateOf("")
     }
 
     var showDialog by remember {
@@ -102,13 +116,14 @@ fun SignUpScreen (
 
     val bringIntoViewRequester_2 = BringIntoViewRequester()
     val coroutineScope_2 = rememberCoroutineScope()
+    val context = LocalContext.current
 
     buttonFilled =
-        emailValue != "" && state.emailError == null && password != "" && state.passwordError == null
-                && repeatedPassword != "" && state.repeatedPasswordError == null
+        emailValue.value != "" && state.emailError == null && password != "" && state.passwordError == null
+                && repeatedPassword != "" && state.repeatedPasswordError == null && emailValidated.value
 
 
-
+    emailValidated.value = validateSuccess.value.isSuccess
 
     Box(
         modifier = Modifier
@@ -147,10 +162,11 @@ fun SignUpScreen (
                     .height(60.dp)
             ) {
                 BasicTextField(
-                    value = emailValue,
+                    value = emailValue.value,
                     onValueChange = { it ->
-                        emailValue = it
-                        signUpViewModel.onEvent(RegistrationFormEvent.EmailChanged(emailValue))
+                        emailValue.value = it
+                        signUpViewModel.onEvent(RegistrationFormEvent.EmailChanged(emailValue.value))
+                        emailValidated.value = it == validatedEmail.value
                     },
                     textStyle = NoteLassTheme.Typography.twenty_600_pretendard,
                     modifier = Modifier
@@ -159,7 +175,7 @@ fun SignUpScreen (
                         .padding(0.dp),
                 ) {
                     TextFieldDefaults.TextFieldDecorationBox(
-                        value = emailValue,
+                        value = emailValue.value,
                         innerTextField = it,
                         singleLine = true,
                         enabled = true,
@@ -187,14 +203,17 @@ fun SignUpScreen (
 
                 }
 
-
-
                 Spacer(modifier = Modifier.width(15.dp))
 
                 RectangleEnabledWithBorderButton(
                     modifier = Modifier.weight(1f),
                     text = "전송",
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        signUpViewModel.emailRequest(emailValue.value,isToast = {
+                            Toast.makeText(context ,"인증번호가 발송되었습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                        )
+                              },
                     containerColor = Color.White,
                     textColor = PrimarayBlue,
                     borderColor = PrimarayBlue,
@@ -219,9 +238,10 @@ fun SignUpScreen (
             )
 
             BasicTextField(
-                value = emailValidationValue,
+                value = emailValidationValue.value,
                 onValueChange = { it ->
-                    emailValidationValue = it
+                    emailValidationValue.value = it
+                    signUpViewModel.onEvent(RegistrationFormEvent.ValidationChanged(emailValidationValue.value))
                 },
                 textStyle = NoteLassTheme.Typography.twenty_600_pretendard,
                 modifier = Modifier
@@ -230,7 +250,7 @@ fun SignUpScreen (
                     .padding(0.dp),
             ) {
                 TextFieldDefaults.TextFieldDecorationBox(
-                    value = emailValidationValue,
+                    value = emailValidationValue.value,
                     innerTextField = it,
                     singleLine = true,
                     enabled = true,
@@ -242,11 +262,33 @@ fun SignUpScreen (
                         unfocusedIndicatorColor = Gray50
                     ),
                     trailingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.signup_check_circle),
-                            tint = PrimaryGray,
-                            contentDescription = null
-                        )
+                        if(!emailValidated.value) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.signup_check_circle),
+                                tint = PrimaryGray,
+                                contentDescription = null,
+                                modifier = Modifier.clickable {
+                                    signUpViewModel.emailValidate(emailValue.value, emailValidationValue.value,
+                                        isToast = {
+                                            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
+                                }
+                            )
+                        }else{
+                            Icon(
+                                painter = painterResource(id = R.drawable.signup_check_circle),
+                                tint = PrimaryGreen,
+                                contentDescription = null,
+                                modifier = Modifier.clickable {
+                                    signUpViewModel.emailValidate(emailValue.value, emailValidationValue.value,
+                                        isToast = {
+                                            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
+                                }
+                            )
+                        }
                     },
                     placeholder = {
                         Text(
@@ -472,13 +514,13 @@ fun SignUpScreen (
             setShowDialog = {
                 showDialog = it
             },
-            content = schoolInfo + " " + grade + "학년 " + studentClass + "반 " + id + "번 " + "\n" +
-                    name + "님이 맞습니까?",
+            content = if(grade.isNotEmpty())schoolInfo + " " + grade + "학년 " + studentClass + "반 " + id + "번 " + "\n" +
+                    name + "님이 맞습니까?" else schoolInfo + "\n"+ name + "님이 맞습니까?",
             onDecline = { showDialog = false },
             onAccept = {
                 Log.e("signUp API",signupState.value.email)
                 signupState.value = signupState.value.copy(
-                    email = emailValue,
+                    email = emailValue.value,
                     password = password
                 )
                 signUpViewModel.postSignUp(signupState)
@@ -488,7 +530,10 @@ fun SignUpScreen (
 
 
     }
-    if (signUpViewModel.signUpApiState.value.isSuccess) GotoLogin()
+    if (signUpViewModel.signUpApiState.value.isSuccess) {
+        Toast.makeText(context,"회원가입이 완료되었습니다",Toast.LENGTH_SHORT).show()
+        GotoLogin()
+    }
 
 
 }

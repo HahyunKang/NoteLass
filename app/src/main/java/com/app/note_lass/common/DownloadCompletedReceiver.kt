@@ -6,19 +6,39 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
+import javax.inject.Inject
 
-class DownloadCompletedReceiver : BroadcastReceiver() {
+class DownloadCompletedReceiver (
+) : BroadcastReceiver() {
     private lateinit var downloadManager : DownloadManager
+    companion object {
+        private var downloadStatusListener: DownloadStatusListener? = null
+
+        fun registerListener(listener: DownloadStatusListener) {
+            downloadStatusListener = listener
+        }
+
+        fun unregisterListener() {
+            downloadStatusListener = null
+        }
+    }
     override fun onReceive(p0: Context?, p1: Intent?) {
         downloadManager = p0?.getSystemService(DownloadManager::class.java)!!
-
         if(p1?.action == "android.intent.action.DOWNLOAD_COMPLETE"){
             val id = p1.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID,-1L)
+            downloadStatusListener?.onDownloadStatusUpdated(getStatus(id))
             Log.e("downloadFail",getStatus(id))
             if(id!=-1L){
                 println("Download with id $id finished")
             }
         }
+    }
+
+    override fun getSentFromUid(): Int {
+        return super.getSentFromUid()
     }
     private fun getStatus(id: Long): String {
         val query: DownloadManager.Query = DownloadManager.Query()

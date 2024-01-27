@@ -8,7 +8,7 @@ data class Notice(
     val title : String,
     val content : String,
     val teacher : String,
-    val createdDate : LocalDateTime,
+    val createdDate : String?,
     val fileUrl : String?,
     val unread : Boolean,
 )
@@ -23,7 +23,7 @@ data class NoticeDetail(
     val title : String,
     val content : String,
     val fileUrl : String?,
-    val createdDate: LocalDateTime?
+    val createdDate: String?
 )
 fun Notice.toPreview(): NoticePreview {
     return NoticePreview(id, title, unread)

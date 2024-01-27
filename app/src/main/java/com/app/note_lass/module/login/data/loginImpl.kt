@@ -11,4 +11,8 @@ class LoginImpl @Inject constructor(
         return loginApi.login(loginRequest)
     }
 
+    override suspend fun logout(accessToken : String) : NoteResponseBody<Nothing>{
+        return loginApi.logout(accessToken)
+    }
+
 }

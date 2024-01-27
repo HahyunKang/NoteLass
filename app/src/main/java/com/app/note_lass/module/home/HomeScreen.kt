@@ -1,6 +1,7 @@
 package com.app.note_lass.module.home
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,8 +21,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,14 +43,21 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.app.note_lass.R
+import com.app.note_lass.core.Proto.ProtoViewModel
+import com.app.note_lass.core.Proto.Role
+import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.group.data.groupInfo
 import com.app.note_lass.module.home.assignment.Assignment
 import com.app.note_lass.module.home.assignment.ui.assignmentBox
+import com.app.note_lass.module.home.material.MaterialSection
+import com.app.note_lass.module.home.material.NoteSection
 import com.app.note_lass.module.home.tab.tabView
 import com.app.note_lass.module.main.MainActivity
+import com.app.note_lass.ui.component.AppBar
 import com.app.note_lass.ui.component.GroupHeader
 import com.app.note_lass.ui.component.HorizontalCalendar
 import com.app.note_lass.ui.component.SectionHeader
@@ -64,179 +74,203 @@ import com.app.note_lass.ui.theme.arcYellow
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
-    navController: NavController
+    navController: NavController,
+    onClickLogout : () -> Unit,
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    role : Role,
 ){
 
-    Row(
-        modifier = Modifier.padding(horizontal = 40.dp,
-            vertical = 30.dp)
-    ){
-
-        Column(
-            modifier= Modifier.weight(5f)
-        ){
-            Box(
-                modifier= Modifier
-                    .shadow(
-                        elevation = 7.dp,
-                        shape =RoundedCornerShape(size = 8.dp),
-                        ambientColor = Color( 0x0A26282B),
-                        spotColor = Color(0x3D26282B)
-                    )
-                    .background(
-                        color = Color(0xFFFFFFFF),
-                    )
-                    .weight(2.3f)
-            ){
-
-                val list = listOf("학교 주요 공지","시간표","오늘의 급식")
-                tabView(titleList = list,navController)
-
-                    
-                }
-
-
-            Spacer(modifier =Modifier.height(15.dp))
-
-            Box(
-                modifier= Modifier.weight(3f)
-            ){
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                   SectionHeader(title = "과제")
-                    val assignmentList= listOf<Assignment>(
-                        Assignment("영어","수능특강 분석",24, arcPink, PrimaryPink),
-                        Assignment("문학","레포트 작성",17, arcGreen, PrimaryGreen),
-                        Assignment("생명과학","유전 문제 풀이",3, arcYellow, PrimaryYellow),
-                        Assignment("확률과 통계","연습 문제 풀이",0, arcPurple, PrimaryPurple),
-
-                        )
-                    val studentNum = 30
-                    
-                    LazyVerticalGrid(
-                        modifier = Modifier.
-                        fillMaxSize(),
-                        columns = GridCells.Fixed(2) ,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ){
-
-                        items(assignmentList.size){
-                            assignmentBox(
-                                title = assignmentList[it].title,
-                                subject = assignmentList[it].subject,
-                                num = assignmentList[it].num,
-                                backGroundColor = assignmentList[it].backgroundColor,
-                                contentColor = assignmentList[it].contentColor,
-                                ratio =  assignmentList[it].num.toFloat() / 30
-                            )
-
-                        }
-
-
-
-                    }
-
-
-
-                    }
-
-            }
-
-            Spacer(modifier =Modifier.height(15.dp))
-
-            Box(
-                modifier= Modifier.weight(3f)
-            ){
-                Box(
-                    modifier= Modifier
-                        .shadow(
-                            elevation = 7.dp,
-                            shape =RoundedCornerShape(size = 8.dp),
-                            ambientColor = Color( 0x0A26282B),
-                            spotColor = Color(0x3D26282B)
-                        )
-                        .background(
-                            color = Color(0xFFFFFFFF),
-                        )
-                        .fillMaxSize()
-                ) {
-                }
-            }
+    val materialState = homeViewModel.getLatestUploadMaterialState
+    val noteState = homeViewModel.getLatestNoteState
+    LaunchedEffect(true) {
+        if(role == Role.TEACHER){
+            homeViewModel.getLatestMaterial()
+        }else{
+            homeViewModel.getLatestNote()
         }
-        Spacer(modifier =Modifier.width(24.dp))
-        Column(
-            modifier= Modifier.weight(3f)
-
-        ) {
-            Box(
-                modifier= Modifier
-                    .shadow(
-                        elevation = 7.dp,
-                        shape =RoundedCornerShape(size = 8.dp),
-                        ambientColor = Color( 0x0A26282B),
-                        spotColor = Color(0x3D26282B)
-                    )
-                    .background(
-                        color = Color(0xFFFFFFFF),
-                    )
-                    .weight(3f)
-            ){
-
-                    HorizontalCalendar(onSelectedDate = {})
-                }
-
-            Spacer(modifier =Modifier.height(24.dp))
-
-            val groupList = listOf<groupInfo>(
-                groupInfo("노트고등학교 3학년 1반 문학","김태연 선생님","문"),
-                groupInfo("노트고등학교 3학년 1반 영어","티파니 선생님","영"),
-                groupInfo("노트고등학교 3학년 1반 확률과 통계","이승규 선생님","확")
-
-            )
-
-            Box(
-                modifier= Modifier
-                    .shadow(
-                        elevation = 7.dp,
-                        shape =RoundedCornerShape(size = 8.dp),
-                        ambientColor = Color( 0x0A26282B),
-                        spotColor = Color(0x3D26282B)
-                    )
-                    .background(
-                        color = Color(0xFFFFFFFF),
-                    )
-                    .weight(2f)
-            ){
-
-                    Column(
-                        modifier= Modifier
-                            .fillMaxHeight(),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Box(
-                            modifier = Modifier.padding(horizontal = 15.dp)
-                        ) {
-                            SectionHeader(title = "내가 속한 그룹")
-                        }
-
-                        groupList.forEachIndexed { index, groupInfo ->
-                            GroupHeader(title = groupInfo.title, teacherName = groupInfo.name, subject =groupInfo.subject )
-                        }
-
-                    }
-
-
-
-
-                }
-            }
-        }
-
-
-
 
     }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            AppBar(
+                title = "홈",
+                badgeCount = 12,
+                role = role,
+                isGroupButton = false,
+            )
+        },
+       containerColor =  Color(0xFFF5F5FC),
+        contentColor = Color.Black,
+        bottomBar = {
+        },
+        content = {
+            Row(
+                modifier = Modifier
+                    .padding(
+                        top = it.calculateTopPadding() + 30.dp,
+                        bottom = 20.dp,
+                        start = 30.dp,
+                        end = 30.dp
+                    )
+            ) {
+
+                Column(
+                    modifier = Modifier.weight(5f)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .shadow(
+                                elevation = 7.dp,
+                                shape = RoundedCornerShape(size = 8.dp),
+                                ambientColor = Color(0x0A26282B),
+                                spotColor = Color(0x3D26282B)
+                            )
+                            .background(
+                                color = Color(0xFFFFFFFF),
+                            )
+                            .weight(2.3f)
+                    ) {
+
+                        val list = listOf("학교 주요 공지", "시간표", "오늘의 급식")
+                        tabView(titleList = list, navController)
+                    }
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
+                    Box(
+                        modifier = Modifier.weight(3f)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            SectionHeader(title = "과제")
+                            val assignmentList = listOf<Assignment>(
+                                Assignment("영어", "수능특강 분석", 24, arcPink, PrimaryPink),
+                                Assignment("문학", "레포트 작성", 17, arcGreen, PrimaryGreen),
+                                Assignment("생명과학", "유전 문제 풀이", 3, arcYellow, PrimaryYellow),
+                                Assignment("확률과 통계", "연습 문제 풀이", 0, arcPurple, PrimaryPurple),
+
+                                )
+                            val studentNum = 30
+
+                            LazyVerticalGrid(
+                                modifier = Modifier.fillMaxSize(),
+                                columns = GridCells.Fixed(2),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+
+                                items(assignmentList.size) {
+                                    assignmentBox(
+                                        title = assignmentList[it].title,
+                                        subject = assignmentList[it].subject,
+                                        num = assignmentList[it].num,
+                                        backGroundColor = assignmentList[it].backgroundColor,
+                                        contentColor = assignmentList[it].contentColor,
+                                        ratio = assignmentList[it].num.toFloat() / 30
+                                    )
+
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Box(
+                        modifier = Modifier.weight(3f)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .shadow(
+                                    elevation = 7.dp,
+                                    shape = RoundedCornerShape(size = 8.dp),
+                                    ambientColor = Color(0x0A26282B),
+                                    spotColor = Color(0x3D26282B)
+                                )
+                                .background(
+                                    color = Color(0xFFFFFFFF),
+                                )
+                                .fillMaxSize()
+                        ) {
+                            if(materialState.value.isSuccess) MaterialSection(
+                                materials =materialState.value.result!!
+                            )
+                            if(noteState.value.isSuccess) NoteSection(notes =noteState.value.result!!)
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.width(24.dp))
+                Column(
+                    modifier = Modifier.weight(3f)
+
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .shadow(
+                                elevation = 7.dp,
+                                shape = RoundedCornerShape(size = 8.dp),
+                                ambientColor = Color(0x0A26282B),
+                                spotColor = Color(0x3D26282B)
+                            )
+                            .background(
+                                color = Color(0xFFFFFFFF),
+                            )
+                            .weight(3f)
+                    ) {
+
+                        HorizontalCalendar(onSelectedDate = {})
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    val groupList = listOf<groupInfo>(
+                        groupInfo("노트고등학교 3학년 1반 문학", "김태연 선생님", "문"),
+                        groupInfo("노트고등학교 3학년 1반 영어", "티파니 선생님", "영"),
+                        groupInfo("노트고등학교 3학년 1반 확률과 통계", "이승규 선생님", "확")
+
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .shadow(
+                                elevation = 7.dp,
+                                shape = RoundedCornerShape(size = 8.dp),
+                                ambientColor = Color(0x0A26282B),
+                                spotColor = Color(0x3D26282B)
+                            )
+                            .background(
+                                color = Color(0xFFFFFFFF),
+                            )
+                            .weight(2f)
+                    ) {
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxHeight(),
+                            verticalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(horizontal = 15.dp)
+                            ) {
+                                SectionHeader(title = "내가 속한 그룹")
+                            }
+
+                            groupList.forEachIndexed { index, groupInfo ->
+                                GroupHeader(
+                                    title = groupInfo.title,
+                                    teacherName = groupInfo.name,
+                                    subject = groupInfo.subject
+                                )
+                            }
+
+                        }
+                    }
+                }
+            }
+        })
+}
+
+
 
 

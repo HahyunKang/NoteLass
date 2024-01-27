@@ -1,3 +1,5 @@
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +13,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-class RetrievePDFfromUrl(val doAfter: (InputStream) -> Unit) {
+class RetrievePDFfromUrl(val doAfter: (InputStream) -> Unit = {}) {
 
     @OptIn(DelicateCoroutinesApi::class)
     fun execute(urlString: String) {
@@ -39,4 +41,40 @@ class RetrievePDFfromUrl(val doAfter: (InputStream) -> Unit) {
             }
         }
     }
+
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun addPdf(context: Context, uri: Uri?, pdfUri : String) {
+
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+
+                val url = URL(pdfUri)
+                val urlConnection = url.openConnection() as HttpsURLConnection
+
+                if (urlConnection.responseCode == HttpsURLConnection.HTTP_OK) {
+                    Log.e("success in background", "?")
+
+                    //Android 장치의 내부 저장소에서 파일을 쓰기 위한 OutputStream을 열기.
+                    // 이 OutputStream은 나중에 웹에서 다운로드한 데이터를 장치에 저장하는 데 사용.
+                    val outputStream = context.contentResolver.openOutputStream(uri!!)
+
+                    val buffer = ByteArray(8192)
+                    var len: Int
+                    while (urlConnection.inputStream?.read(buffer).also { len = it ?: 0 } != -1) {
+                        outputStream?.write(buffer, 0, len)
+                    }
+                    //버퍼에 저장된 데이터를 OutputStream을 통해 파일에 씁니다
+                    urlConnection.inputStream?.close()
+                    outputStream?.close()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+    }
+
+
+
 }

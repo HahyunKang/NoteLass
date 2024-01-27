@@ -1,5 +1,7 @@
 package com.app.note_lass.module.signup.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +41,7 @@ import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentInfoScreen(
@@ -69,8 +72,13 @@ fun StudentInfoScreen(
         mutableStateOf(false)
     }
 
+    val gradeList = (1..3).map{it.toString()}
+    val classList =(1..15).map{it.toString()}
+    val idList = (1..31).map { it.toString() }
+
     buttonFilled = if(isStudent) isChecked && nameValue != "" && gradeFilled && classFilled && idFilled
                   else isChecked && nameValue != ""
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.White)) {
@@ -116,9 +124,6 @@ fun StudentInfoScreen(
 
 
 
-            val gradeList = listOf("1","2","3")
-            val classList = listOf("1","2","3","4","5")
-            val idList = (1..31).map { it.toString() }
             val dropDown = R.drawable.arrow_down
 
 

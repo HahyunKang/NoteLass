@@ -57,6 +57,8 @@ android {
     }
 }
 
+
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.9.0")
@@ -80,6 +82,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
+    implementation("androidx.compose.runtime:runtime-tracing:1.0.0-alpha01")
 
     implementation("androidx.compose.material3:material3:1.1.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
@@ -115,5 +118,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     implementation("com.squareup.okhttp3:logging-interceptor:4.5.0")
+    implementation("com.github.pratikksahu:JetPDFVue:1.0.3")
 
 }

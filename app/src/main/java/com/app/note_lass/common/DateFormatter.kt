@@ -31,7 +31,7 @@ class DateFormatter(val localDateTime: LocalDateTime) {
 }
 class StringToDate(val localString : String) {
     @RequiresApi(Build.VERSION_CODES.O)
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     val localStrings =localString.take(19)
     @RequiresApi(Build.VERSION_CODES.O)
     val localDateTime = LocalDateTime.parse(localStrings, formatter)

@@ -114,41 +114,8 @@ fun CreateNoticeScreen(
         contract =  ActivityResultContracts.GetContent(),
         onResult = { uri :Uri? ->
             photoUri = uri
-//            photoUri?.let {
-//                if (Build.VERSION.SDK_INT < 28) {
-//                    bitmap.value = MediaStore.Images
-//                        .Media.getBitmap(context.contentResolver,it)
-//
-//                } else {
-//                    val source = ImageDecoder
-//                        .createSource(context.contentResolver,it)
-//                    bitmap.value = ImageDecoder.decodeBitmap(source)
-//                }
-//            }
         }
     )
-
-//    @SuppressLint("Range")
-//    fun getFileName(context: Context, uri: Uri): String? {
-//        val cursor = context.contentResolver.query(uri, null, null, null, null)
-//        var displayName: String? = "pdf"
-//        cursor?.moveToFirst()
-//        displayName = cursor?.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-//        cursor?.close()
-//        return displayName
-//    }
-//
-//    fun getFileSize(context: Context, uri: Uri): Long {
-//        return try {
-//            context.contentResolver.openFileDescriptor(uri, "r")?.use { parcelFileDescriptor ->
-//                val size = parcelFileDescriptor.statSize / (1000000).toLong()
-//                size
-//            } ?: 0L
-//        } catch (e: IOException) {
-//            0L
-//        }
-//    }
-  //  val context = LocalContext.current
     var fileName by remember { mutableStateOf<String?>(null) }
     var fileSize by remember { mutableStateOf<Long?>(null) }
     val fileManager  = FileManager()
@@ -268,7 +235,7 @@ fun CreateNoticeScreen(
           Box(
               modifier = Modifier
                   .fillMaxWidth()
-                  .weight(1f)
+                  .weight(2f)
           ) {
 
               FileUpload(
@@ -351,7 +318,7 @@ fun CreateNoticeScreen(
 @Composable
 fun NoticeInfo(
     groupInfo: GroupInfo,
-    createdTime: LocalDateTime
+   // createdTime: LocalDateTime
 ){
 
 

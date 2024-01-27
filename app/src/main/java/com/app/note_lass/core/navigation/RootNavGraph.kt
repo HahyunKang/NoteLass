@@ -29,7 +29,7 @@ fun RootNavGraph(
         AuthNavGraph(navController = navController)
 
         composable(route = MAIN_ROUTE){
-            MainScreen()
+            MainScreen(outerNavController = navController)
         }
     }
 }

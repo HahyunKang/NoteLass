@@ -1,5 +1,8 @@
 package com.app.note_lass.module.signup.domain.usecase
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.signup.data.SignUpRequest
@@ -15,6 +18,7 @@ class SignUpUseCase @Inject constructor(
     val repository: SignUpRepository
 ) {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     operator fun invoke(signUpRequest: SignUpRequest) : Flow<Resource<NoteResponseBody<Nothing>>> = flow {
 
         try {

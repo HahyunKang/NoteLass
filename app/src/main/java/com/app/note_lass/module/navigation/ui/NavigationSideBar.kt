@@ -63,11 +63,12 @@ fun NavigationSideBar(
             modifier = Modifier.align(Alignment.Start)
                 .weight(7f)
         ){
-        items.forEachIndexed{ index,item ->
+        items.forEachIndexed{
+                index,item ->
             NavigationRailItem(
                 modifier = Modifier
                     .padding(start = 40.dp),
-                selected = selectedItemIndex == index ,
+                selected = selectedItemIndex == index,
                 onClick = { onNavigate(index) },
                 icon = {
                     NavigationIcon(item = item, selected = selectedItemIndex == index)
@@ -84,7 +85,9 @@ fun NavigationSideBar(
                     .weight(1f)
                     .padding(bottom = 30.dp)
                     .background(color = PrimarayBlue, shape = RoundedCornerShape(20.dp))
-                    .clickable { onClick() }
+                    .clickable {
+                        onClick()
+                    }
             ) {
                 Row(
                     modifier = Modifier

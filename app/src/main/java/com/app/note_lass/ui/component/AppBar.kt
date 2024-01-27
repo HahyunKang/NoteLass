@@ -46,7 +46,8 @@ fun AppBar(
     badgeCount : Int,
     role : Role,
     isGroupButton : Boolean,
-    onGroupClick : () -> Unit  = {}
+    onGroupClick : () -> Unit  = {},
+    onClickLogout : () -> Unit ={}
 ) {
     Row(
         modifier = Modifier
@@ -63,13 +64,10 @@ fun AppBar(
             fontWeight = FontWeight(700),
             color = Color(0xFF26282B)
             )
-
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.width(384.dp)
         ){
-            Log.e("role in Log",role.toString())
+            Log.e("role in Log(Test in AppBar)",role.toString())
           if(isGroupButton && role == Role.TEACHER)
           {
               Box(modifier = Modifier
@@ -132,7 +130,7 @@ fun AppBar(
             Spacer(modifier = Modifier.width(20.dp))
             Icon(painter = painterResource(id = R.drawable.appbar_person_circle_small), contentDescription = null)
             Spacer(modifier = Modifier.width(20.dp))
-            AppBarDropDown()
+            AppBarDropDown(onClickLogout = onClickLogout)
         }
     }
 
@@ -143,7 +141,9 @@ fun AppBar(
 fun AppBarForTeacherInGroup(
     title : String,
     badgeCount : Int,
-    onGroupClick : () -> Unit  = {}
+    onGroupClick : () -> Unit  = {},
+    onClickLogout : () -> Unit = {}
+
 ) {
     Row(
         modifier = Modifier
@@ -164,7 +164,6 @@ fun AppBarForTeacherInGroup(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.width(384.dp)
         ){
 
                 Box(modifier = Modifier
@@ -217,7 +216,7 @@ fun AppBarForTeacherInGroup(
             Spacer(modifier = Modifier.width(20.dp))
             Icon(painter = painterResource(id = R.drawable.appbar_person_circle_small), contentDescription = null)
             Spacer(modifier = Modifier.width(20.dp))
-            AppBarDropDown()
+            AppBarDropDown(onClickLogout = onClickLogout)
         }
     }
 
@@ -262,10 +261,11 @@ fun AppBarForNotice(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBarForRecord(
+fun AppBarForNoGroup(
     title : String,
     badgeCount : Int,
-    onClick : () -> Unit  = {}
+    onClick : () -> Unit  = {},
+    onClickLogout : () -> Unit={}
 ) {
     Row(
         modifier = Modifier
@@ -341,7 +341,7 @@ fun AppBarForRecord(
             Spacer(modifier = Modifier.width(20.dp))
             Icon(painter = painterResource(id = R.drawable.appbar_person_circle_small), contentDescription = null)
             Spacer(modifier = Modifier.width(20.dp))
-            AppBarDropDown()
+            AppBarDropDown(onClickLogout = onClickLogout)
         }
     }
 
