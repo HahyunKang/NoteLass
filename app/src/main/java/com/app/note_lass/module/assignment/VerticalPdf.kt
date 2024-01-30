@@ -1,23 +1,22 @@
-package com.app.note_lass.module.pdf
+package com.app.note_lass.module.assignment
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.pager.PageSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Share
@@ -28,18 +27,29 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.PaintingStyle
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerType
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.consumePositionChange
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.pratikk.jetpdfvue.HorizontalVueReader
 import com.pratikk.jetpdfvue.VerticalVueReader
-import com.pratikk.jetpdfvue.state.HorizontalVueReaderState
 import com.pratikk.jetpdfvue.state.VerticalVueReaderState
 import kotlinx.coroutines.launch
 @Composable
@@ -55,13 +65,31 @@ fun VerticalPdf(
         val scope = rememberCoroutineScope()
 
         val background = Modifier
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.75f),MaterialTheme.shapes.small)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = MaterialTheme.shapes.small)
+            .background(
+                MaterialTheme.colorScheme.background.copy(alpha = 0.75f),
+                MaterialTheme.shapes.small
+            )
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = MaterialTheme.shapes.small
+            )
             .clip(MaterialTheme.shapes.small)
         val iconTint = MaterialTheme.colorScheme.onBackground
+        val pathData = remember { mutableStateListOf<Offset>() }
 
         VerticalVueReader(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectDragGestures(onDragStart = { offset ->
+                        pathData.add(offset)
+                    }, onDrag = { change, dragAmount ->
+                        if (change.type == PointerType.Stylus) {
+
+                        }
+                    })
+                },
             contentModifier = Modifier.fillMaxSize(),
             verticalVueReaderState = verticalVueReaderState
         )
@@ -198,5 +226,38 @@ fun VerticalPdf(
                         .background(Color.Transparent)
                 )
         }
+//        Box(modifier = Modifier
+//            .fillMaxSize()
+//            .pointerInput(Unit) {
+//                detectDragGestures(onDragStart = { offset ->
+//                    pathData.add(offset)
+//                }, onDrag = { change, dragAmount ->
+//                    if (change.type == PointerType.Stylus) {
+//                        pathData.add(change.position)
+//                        change.consumeAllChanges()
+//                    }
+//                })
+//            }) {
+//            Canvas(modifier = Modifier.fillMaxSize()) {
+//                drawIntoCanvas { canvas ->
+//
+//                    val paint = android.graphics.Paint().apply {
+//                        isAntiAlias = true
+//                        color = android.graphics.Color.BLACK
+//                        style = android.graphics.Paint.Style.STROKE
+//                        strokeWidth = 5f
+//                    }
+//                    val path = android.graphics.Path()
+//                    pathData.forEachIndexed { index, offset ->
+//                        if (index == 0) {
+//                            path.moveTo(offset.x, offset.y)
+//                        } else {
+//                            path.lineTo(offset.x, offset.y)
+//                        }
+//                    }
+//                    canvas.nativeCanvas.drawPath(path, paint)
+//                }
+//            }
+//        }
     }
 }
