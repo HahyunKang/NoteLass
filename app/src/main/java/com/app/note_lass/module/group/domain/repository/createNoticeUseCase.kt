@@ -21,7 +21,12 @@ class CreateNoticeUseCase @Inject constructor(
     val dataStore : DataStore<Token>
 ) {
 
-    operator fun invoke(groupId : Long,title:String,content:String,fileList:MultipartBody.Part) : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
+    operator fun invoke(
+        groupId: Long,
+        title:String,
+        content:String,
+        fileList: List<MultipartBody.Part?>
+    ) : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
 

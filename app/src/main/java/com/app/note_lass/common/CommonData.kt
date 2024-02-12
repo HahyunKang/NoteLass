@@ -13,3 +13,9 @@ data class RequestState<T>(
     val result : T? = null,
     val isError : Boolean = false
 )
+
+data class File(
+    val id : Long,
+    val originalFileName : String,
+    val size : Int
+)

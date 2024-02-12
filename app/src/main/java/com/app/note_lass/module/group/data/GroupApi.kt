@@ -72,8 +72,8 @@ interface GroupApi {
     suspend fun createNotice(
         @Header(value = "Authorization") accessToken: String,
         @Path("groupId") groupId: Long,
-        @Part("noticeCreateDto") noticeContents: RequestBody,
-        @Part fileList: MultipartBody.Part
+        @Part("noticeDto") noticeContents: RequestBody,
+        @Part fileList: List<MultipartBody.Part?>
     ) : NoteResponseBody<Nothing>
 
     @GET("api/notice/{groupId}")

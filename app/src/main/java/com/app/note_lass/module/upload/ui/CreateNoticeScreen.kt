@@ -18,11 +18,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,6 +39,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.app.note_lass.core.FilePicker.FileManager
 import com.app.note_lass.core.Proto.GroupInfo
+import com.app.note_lass.module.group.data.URI
 import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.ui.component.FileUpload
 import com.app.note_lass.ui.component.RectangleEnabledButton
@@ -54,7 +60,7 @@ import java.time.LocalDateTime
 
 @Composable
 fun CreateNoticeScreen(
-    createNotice : (String,String,MultipartBody.Part?) -> Unit
+    createNotice : (String,String,List<MultipartBody.Part?>) -> Unit
 ){
 
     val noticeTitle = remember{
@@ -63,16 +69,15 @@ fun CreateNoticeScreen(
     val noticeContent = remember{
         mutableStateOf("")
     }
-    var pdfUri by remember {
-        mutableStateOf<Uri?>(null)
-    }
 
-    var photoUri by remember {
-        mutableStateOf<Uri?>(null)
+    val uris =  remember {
+        mutableStateOf(mutableListOf<HashMap<URI,Uri>>())
     }
-
-    val requestFileList  = remember {
-        mutableStateOf<MultipartBody.Part?>(null)
+    val finalUris  = remember{
+        mutableStateOf(mutableListOf<HashMap<URI,Uri>>())
+    }
+    val requestFiles  = remember {
+        mutableStateOf(mutableListOf<MultipartBody.Part>())
     }
 
     @SuppressLint("Range")
@@ -102,10 +107,15 @@ fun CreateNoticeScreen(
     val pdfLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri :Uri? ->
-            pdfUri = uri
-            val file = pdfUri?.asMultipart("file",context.contentResolver)
+            uris.value = (uris.value + hashMapOf(Pair(URI.PDFURI, uri!!))).toMutableList()
 
-            requestFileList.value= file
+            val file = uri.asMultipart("file",context.contentResolver)
+            Log.e("uri in PDFLAUNCHER",uri.toString())
+            finalUris.value = uris.value
+
+            if (file != null) {
+                requestFiles.value.add(file)
+            }
 
         }
     )
@@ -113,7 +123,14 @@ fun CreateNoticeScreen(
     val photoLauncher = rememberLauncherForActivityResult(
         contract =  ActivityResultContracts.GetContent(),
         onResult = { uri :Uri? ->
-            photoUri = uri
+
+            val file = uri?.asMultipart("file",context.contentResolver)
+            uris.value = (uris.value + hashMapOf(Pair(URI.PHOTOURI, uri!!))).toMutableList()
+            finalUris.value = uris.value
+
+            if (file != null) {
+                requestFiles.value.add(file)
+            }
         }
     )
     var fileName by remember { mutableStateOf<String?>(null) }
@@ -122,171 +139,250 @@ fun CreateNoticeScreen(
 
     Column(modifier= Modifier.fillMaxSize()) {
 
-      Row(
-          modifier = Modifier
-              .fillMaxWidth()
-              .weight(1f),
-          verticalAlignment = Alignment.CenterVertically
-      ) {
-          Text(text = "공지 제목")
-          Spacer(modifier = Modifier.width(26.dp))
-          OutlinedTextField(
-              value = noticeTitle.value,
-              onValueChange = {
-                  noticeTitle.value = it
-              },
-              textStyle = NoteLassTheme.Typography.fourteen_600_pretendard,
-              placeholder = {
-                  Text(
-                      "공지 제목을 입력하세요",
-                      style = NoteLassTheme.Typography.fourteen_600_pretendard,
-                      color = PrimaryGray
-                  )
-              },
-              colors = TextFieldDefaults.colors(
-                  focusedIndicatorColor = Color.Black,
-                  unfocusedIndicatorColor = Gray50,
-                  focusedContainerColor = Color.White,
-                  unfocusedContainerColor = Color.White
-              ),
-              maxLines = 1,
-              modifier = Modifier.fillMaxWidth()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "공지 제목")
+            Spacer(modifier = Modifier.width(26.dp))
+            OutlinedTextField(
+                value = noticeTitle.value,
+                onValueChange = {
+                    noticeTitle.value = it
+                },
+                textStyle = NoteLassTheme.Typography.fourteen_600_pretendard,
+                placeholder = {
+                    Text(
+                        "공지 제목을 입력하세요",
+                        style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                        color = PrimaryGray
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Black,
+                    unfocusedIndicatorColor = Gray50,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
+                ),
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth()
 
-          )
-      }
-      Spacer(modifier = Modifier.height(15.dp))
+            )
+        }
+        Spacer(modifier = Modifier.height(15.dp))
 
-      Column(
-          modifier = Modifier
-              .fillMaxWidth()
-              .weight(3f),
-          verticalArrangement = Arrangement.Center
-      ) {
-          Text(text = "공지 설명")
-          Spacer(modifier = Modifier.height(18.dp))
-          OutlinedTextField(
-              value = noticeContent.value,
-              onValueChange = {
-                  noticeContent.value = it
-              },
-              textStyle = NoteLassTheme.Typography.fourteen_600_pretendard,
-              placeholder = {
-                  Text(
-                      "공지 설명을 입력하세요",
-                      style = NoteLassTheme.Typography.fourteen_600_pretendard,
-                      color = PrimaryGray
-                  )
-              },
-              colors = TextFieldDefaults.colors(
-                  focusedIndicatorColor = Color.Black,
-                  unfocusedIndicatorColor = Gray50, focusedContainerColor = Color.White,
-                  unfocusedContainerColor = Color.White
-              ),
-              modifier = Modifier
-                  .height(210.dp)
-                  .fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(3f),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "공지 설명")
+            Spacer(modifier = Modifier.height(18.dp))
+            OutlinedTextField(
+                value = noticeContent.value,
+                onValueChange = {
+                    noticeContent.value = it
+                },
+                textStyle = NoteLassTheme.Typography.fourteen_600_pretendard,
+                placeholder = {
+                    Text(
+                        "공지 설명을 입력하세요",
+                        style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                        color = PrimaryGray
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Black,
+                    unfocusedIndicatorColor = Gray50, focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
+                ),
+                modifier = Modifier
+                    .height(210.dp)
+                    .fillMaxWidth()
 
-          )
+            )
 
-      }
-      Spacer(modifier = Modifier.height(18.dp))
+        }
+        Spacer(modifier = Modifier.height(18.dp))
 
-      Row(
-          modifier = Modifier
-              .fillMaxWidth()
-              .weight(1f),
-          verticalAlignment = Alignment.CenterVertically
-      ) {
-          Text(text = "파일 첨부")
-          Spacer(modifier = Modifier.width(26.dp))
-          Box(modifier = Modifier.size(200.dp, 30.dp)) {
-              RectangleEnabledWithBorderButton(
-                  text = "라이브러리에서 파일 탐색",
-                  onClick = {
-                      pdfLauncher.launch("application/pdf")
-                      //cell 확장자
-                      //pdfLauncher.launch("application/octet-stream")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "파일 첨부")
+            Spacer(modifier = Modifier.width(26.dp))
+            Box(modifier = Modifier.size(200.dp, 30.dp)) {
+                RectangleEnabledWithBorderButton(
+                    text = "라이브러리에서 파일 탐색",
+                    onClick = {
+                        pdfLauncher.launch("application/pdf")
+                        //cell 확장자
+                        //pdfLauncher.launch("application/octet-stream")
+                    },
+                    containerColor = Color.White,
+                    textColor = PrimaryGray,
+                    borderColor = Gray50
+                )
+            }
+            Spacer(modifier = Modifier.width(18.dp))
+
+            Box(modifier = Modifier.size(170.dp, 30.dp)) {
+                RectangleEnabledWithBorderButton(
+                    text = "갤러리에서 파일 탐색",
+                    onClick = {
+                        photoLauncher.launch("image/*")
+                    },
+                    containerColor = Color.White,
+                    textColor = PrimaryGray,
+                    borderColor = Gray50
+                )
+            }
+
+        }
+//        val state =  rememberScrollState()
+//            finalUris.value.forEach {
+//                Column(
+//                    modifier = Modifier
+//                        .weight(2f)
+//                        .fillMaxWidth()
+//                        .verticalScroll(state)
+//                ) {
+//                    if (it.containsKey(URI.PDFURI)) {
+//                        fileName = fileManager.getFileName(context, it[URI.PDFURI]!!)
+//                        fileSize = fileManager.getFileSize(context, it[URI.PDFURI]!!)
+//
+//                        Box(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                        ) {
+//
+//                            FileUpload(
+//                                title = fileName.toString(),
+//                                fileSize = fileSize.toString(),
+//                                onClick = {
+//                                    val intent = Intent(context, NoteActivity::class.java).apply {
+//                                        putExtra("pdfUri", pdfUri)
+//                                    }
+//                                    pdfUri?.path?.let { Log.e("PDFURI", it) }
+//                                    context.startActivity(intent)
+//                                },
+//                                onDelete = {
+//                                    pdfUri = null
+//                                }
+//                            )
+//
+//                        }
+//
+//
+//                    } else {
+//
+//                        fileName = fileManager.getFileName(context, it[URI.PHOTOURI]!!)
+//                        fileName = fileManager.getFileName(context, it[URI.PHOTOURI]!!)
+//
+//                        Box(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                        ) {
+//
+//                            FileUpload(
+//                                title = fileName.toString(),
+//                                fileSize = fileSize.toString(),
+//                                onClick = {
+//                                    val intent = Intent(context, NoteActivity::class.java).apply {
+//                                        putExtra("photoUri", photoUri)
+//                                    }
+//                                    context.startActivity(intent)
+//                                },
+//                                onDelete = {
+//                                    photoUri = null
+//                                }
+//                            )
+//
+//                        }
+//
+//
+//                }
+//            }
+//        }
+////
+        LazyColumn(
+            modifier = Modifier
+                .weight(2.5f)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+
+           if(finalUris.value.isNotEmpty())
+               itemsIndexed(finalUris.value) {
+                index , uri ->
+                if (uri.containsKey(URI.PDFURI)) {
+                    fileName = fileManager.getFileName(context, finalUris.value[index][URI.PDFURI]!!)
+                    fileSize = fileManager.getFileSize(context, finalUris.value[index][URI.PDFURI]!!)
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+
+                        FileUpload(
+                            title = fileName.toString(),
+                            fileSize = fileSize.toString(),
+                            onClick = {
+                                val intent = Intent(context, NoteActivity::class.java).apply {
+                                    putExtra("pdfUri",  finalUris.value[index][URI.PDFURI])
+                                    putExtra("pdfTitle",  fileName)
+                                }
+                                finalUris.value[index][URI.PDFURI]?.toString().let {
+                                    if (it != null) {
+                                        Log.e("pdfUri in NoticeScreen", it)
+                                    }
+                                }
+                                context.startActivity(intent)
                             },
-                  containerColor = Color.White,
-                  textColor = PrimaryGray,
-                  borderColor = Gray50
-              )
-          }
-          Spacer(modifier = Modifier.width(18.dp))
+                            onDelete = {
+                                //pdfUri = null
+                            }
+                        )
 
-          Box(modifier = Modifier.size(170.dp, 30.dp)) {
-              RectangleEnabledWithBorderButton(
-                  text = "갤러리에서 파일 탐색",
-                  onClick = {
-                      photoLauncher.launch("image/*")
-                  },
-                  containerColor = Color.White,
-                  textColor = PrimaryGray,
-                  borderColor = Gray50
-              )
-          }
-
-      }
-
-      if (pdfUri != null) {
-          fileName = fileManager.getFileName(context, pdfUri!!)
-          fileSize = fileManager.getFileSize(context, pdfUri!!)
-
-          Box(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .weight(2f)
-          ) {
-
-              FileUpload(
-                  title = fileName.toString(),
-                  fileSize = fileSize.toString(),
-                  onClick = {
-                      val intent = Intent(context, NoteActivity::class.java).apply {
-                          putExtra("pdfUri", pdfUri)
-                      }
-                      pdfUri?.path?.let { Log.e("PDFURI", it) }
-                      context.startActivity(intent)
-                  },
-                  onDelete = {
-                      pdfUri = null
-                  }
-              )
-
-          }
+                    }
 
 
-      }
+                }
+                else if (uri.containsKey(URI.PHOTOURI)) {
+                    fileName = fileManager.getFileName(context, finalUris.value[index][URI.PHOTOURI]!!)
+                    fileName = fileManager.getFileName(context, finalUris.value[index][URI.PHOTOURI]!!)
 
-      if (photoUri != null) {
-          fileName = fileManager.getFileName(context, photoUri!!)
-          fileSize = fileManager.getFileSize(context, photoUri!!)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
 
-          Box(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .weight(1f)
-          ) {
+                        FileUpload(
+                            title = fileName.toString(),
+                            fileSize = fileSize.toString(),
+                            onClick = {
+                                val intent = Intent(context, NoteActivity::class.java).apply {
+                                    putExtra("photoUri",  finalUris.value[index][URI.PHOTOURI])
+                                    putExtra("pdfTitle",  fileName)
+                                }
+                                context.startActivity(intent)
+                            },
+                            onDelete = {
+                         //       photoUri = null
+                            }
+                        )
 
-              FileUpload(
-                  title = fileName.toString(),
-                  fileSize = fileSize.toString(),
-                  onClick = {
-                      val intent = Intent(context, NoteActivity::class.java).apply {
-                          putExtra("photoUri", photoUri)
-                      }
-                      context.startActivity(intent)
-                  },
-                  onDelete = {
-                      photoUri = null
-                  }
-              )
-
-          }
+                    }
 
 
-      }
-
+                }
+            }
+        }
         Row(modifier = Modifier
             .align(Alignment.End)
             .weight(2f)
@@ -301,10 +397,7 @@ fun CreateNoticeScreen(
                 RectangleEnabledButton(text = "생성하기",
                     onClick = {
                         if(noticeTitle.value.isNotEmpty() && noticeContent.value.isNotEmpty()){
-                            if(requestFileList.value == null ){
-                                requestFileList.value = MultipartBody.Part.createFormData("file","empty")
-                            }
-                            createNotice(noticeTitle.value,noticeContent.value,requestFileList.value)
+                            createNotice(noticeTitle.value,noticeContent.value,requestFiles.value)
                         }
 
                     })

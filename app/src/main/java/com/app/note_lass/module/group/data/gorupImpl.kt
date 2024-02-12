@@ -64,7 +64,7 @@ class GroupImpl @Inject constructor(
         accessToken: String,
         groupId: Long,
         noticeContents: RequestBody,
-        fileList: MultipartBody.Part
+        fileList: List<MultipartBody.Part?>
     ): NoteResponseBody<Nothing> {
         return groupApi.createNotice(accessToken,groupId,noticeContents,fileList)
     }

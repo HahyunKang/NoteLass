@@ -5,6 +5,8 @@ import com.app.note_lass.module.group.data.InfoForCreate
 import com.app.note_lass.module.upload.data.Material.Material
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.Response
+import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -13,6 +15,8 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.io.File
+import java.io.InputStream
 import javax.annotation.processing.Generated
 
 interface NoteApi {
@@ -25,7 +29,7 @@ interface NoteApi {
     suspend fun makeMaterial(
         @Header(value = "Authorization") accessToken : String,
         @Path("groupId") groupId: Long,
-        @Part("materialCreateDto") materialContents: RequestBody,
+        @Part("materialDto") materialContents: RequestBody,
         @Part fileList: MultipartBody.Part
         ) : NoteResponseBody<Nothing>
 
@@ -50,6 +54,12 @@ interface NoteApi {
     suspend fun getLatestNote(
         @Header(value = "Authorization") accessToken : String,
     ) : NoteResponseBody<List<Note>>
+
+    @GET("api/file/{fileId}")
+    suspend fun getFile(
+        @Header(value = "Authorization") accessToken : String,
+        @Path("fileId") fileId: Long
+    ) : ResponseBody
 
 
 

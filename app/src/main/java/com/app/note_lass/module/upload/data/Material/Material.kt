@@ -1,5 +1,6 @@
 package com.app.note_lass.module.upload.data.Material
 
+import com.app.note_lass.common.File
 import java.time.LocalDateTime
 
 data class Material(
@@ -7,5 +8,5 @@ data class Material(
     val title :String,
     val content : String,
     val createdDate : String,
-    val fileUrl : String
+    val files : List<File>?
 )

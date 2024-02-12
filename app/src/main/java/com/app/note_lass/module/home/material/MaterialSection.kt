@@ -37,7 +37,10 @@ fun MaterialSection(
         ){
             val fiveLatestMaterials = materials.subList(0,5)
             items(fiveLatestMaterials.size){
-                MaterialInHome(title = materials[it].title, fileUrl = materials[it].fileUrl, date = DateFormatter(StringToDate(materials[it].createdDate).localDateTime).formattedDate)
+                if(materials[it].files?.isNotEmpty() == true){
+                    materials[it].files?.get(0)
+                        ?.let { it1 -> MaterialInHome(title = materials[it].title, file = it1, date = DateFormatter(StringToDate(materials[it].createdDate).localDateTime).formattedDate) }
+                }
             }
         }
 
@@ -60,7 +63,7 @@ fun NoteSection(
             val fiveNotesMaterials = notes.subList(0,min(notes.size,5))
 
             items(fiveNotesMaterials.size){
-                MaterialInHome(title = notes[it].title, fileUrl = notes[it].fileUrl, date = DateFormatter(StringToDate(notes[it].lastAccessed).localDateTime).formattedDate)
+        //        MaterialInHome(title = notes[it].title, fileUrl = notes[it].fileUrl, date = DateFormatter(StringToDate(notes[it].lastAccessed).localDateTime).formattedDate)
             }
         }
 

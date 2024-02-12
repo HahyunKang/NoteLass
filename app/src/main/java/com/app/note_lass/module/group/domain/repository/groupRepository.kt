@@ -26,7 +26,8 @@ interface GroupRepository {
     suspend fun createNotice(
         accessToken: String, groupId: Long,
         noticeContents: RequestBody,
-        fileList: MultipartBody.Part): NoteResponseBody<Nothing>
+        fileList: List<MultipartBody.Part?>
+    ): NoteResponseBody<Nothing>
     suspend fun getNoticeList(accessToken: String, groupId: Long) : NoteResponseBody<List<Notice>>
     suspend fun getNoticeDetail(accessToken: String, noticeId: Long) : NoteResponseBody<Notice>
 
