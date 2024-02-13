@@ -5,6 +5,10 @@ import com.app.note_lass.module.note.domain.NoteRepository
 import com.app.note_lass.module.upload.data.Material.Material
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.Response
+import okhttp3.ResponseBody
+import java.io.File
+import java.io.InputStream
 import javax.inject.Inject
 
 class NoteImpl @Inject constructor(
@@ -42,6 +46,10 @@ class NoteImpl @Inject constructor(
 
     override suspend fun getLatestNote(accessToken: String): NoteResponseBody<List<Note>> {
         return noteApi.getLatestNote(accessToken)
+    }
+
+    override suspend fun getFile(accessToken: String, fileId: Long): ResponseBody{
+        return noteApi.getFile(accessToken, fileId)
     }
 
 

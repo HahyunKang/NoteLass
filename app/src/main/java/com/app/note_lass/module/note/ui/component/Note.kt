@@ -52,12 +52,12 @@ fun Note(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
                 onClickAccess()
-//                val intent1 = Intent(context, NoteActivity::class.java).apply {
-//                    putExtra("pdfString", fileUrl)
-//                    putExtra("pdfTitle",title)
-//                }
-//
-//                context.startActivity(intent1)
+                val intent1 = Intent(context, NoteActivity::class.java).apply {
+                    putExtra("pdfString", fileUrl)
+                    putExtra("pdfTitle",title)
+                }
+
+                context.startActivity(intent1)
                 onClickNote(true,fileUrl)
 
             }

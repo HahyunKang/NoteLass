@@ -194,7 +194,8 @@ fun HomeScreen(
                                 .fillMaxSize()
                         ) {
                             if(materialState.value.isSuccess) MaterialSection(
-                                materials =materialState.value.result!!
+                                materials =materialState.value.result!!,
+
                             )
                             if(noteState.value.isSuccess) NoteSection(notes =noteState.value.result!!)
                         }

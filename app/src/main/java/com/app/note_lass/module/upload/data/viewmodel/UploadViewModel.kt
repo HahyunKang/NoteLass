@@ -28,9 +28,9 @@ class UploadViewModel @Inject constructor(
     private val _makeMaterialState = mutableStateOf(RequestState<Nothing>())
     val makeMaterialState = _makeMaterialState
 
-    fun createNotice(groupId: Long, title:String, content:String, fileList: MultipartBody.Part?){
+    fun createNotice(groupId: Long, title:String, content:String, fileList: List<MultipartBody.Part?>){
 
-        createNoticeUseCase(groupId,title,content,fileList!!).onEach {
+        createNoticeUseCase(groupId, title, content, fileList!!).onEach {
         result ->
             when(result) {
 

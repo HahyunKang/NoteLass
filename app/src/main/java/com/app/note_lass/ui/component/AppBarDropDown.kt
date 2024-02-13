@@ -181,7 +181,7 @@ fun MaterialDropDown(
             result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
             val uri = result.data?.data
-            RetrievePDFfromUrl().addPdf(context, uri,material.fileUrl)
+        //    RetrievePDFfromUrl().addPdf(context, uri,material.fileUrl)
         }
     }
 
@@ -247,7 +247,7 @@ fun MaterialDropDown(
                        }
                        2-> {
                            val intent = Intent(context, NoteActivity::class.java).apply {
-                              putExtra("pdfString", material.fileUrl)
+                          //    putExtra("pdfString", material.fileUrl)
                            }
                          //  material.fileUrl.value?.path?.let { Log.e("PDFURI", it) }
                            context.startActivity(intent)

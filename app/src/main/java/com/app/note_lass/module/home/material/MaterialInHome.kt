@@ -1,6 +1,7 @@
 package com.app.note_lass.module.home.material
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,27 +18,66 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
+import com.app.note_lass.common.File
+import com.app.note_lass.module.home.HomeViewModel
 import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryGray
+import java.io.FileOutputStream
+import java.io.IOException
+
 
 @Composable
 fun MaterialInHome(
     title : String,
-    fileUrl : String,
-    date: String
+    file : File,
+    date: String,
+    viewModel : HomeViewModel = hiltViewModel()
 ){
     val context = LocalContext.current
+    val fileState = viewModel.getMaterialFileState
 
-    Box(
-        modifier = Modifier.fillMaxSize().clickable {
-        val intent = Intent(context, NoteActivity::class.java).apply {
-            putExtra("pdfString", fileUrl)
-            putExtra("pdfTitle",title)
+    if(fileState.value.isSuccess&&file.id == fileState.value.result!!.fileId){
+        val fileMaterial = java.io.File(context.filesDir, "myFile")
+        try {
+            FileOutputStream(fileMaterial).use { outputStream ->
+                val buffer = ByteArray(1024)
+                var length: Int
+                while (fileState.value.result!!.stream.read(buffer).also { length = it } != -1) {
+                    outputStream.write(buffer, 0, length)
+                }
+            }
+            val intent = Intent(context, NoteActivity::class.java)
+            if(file.originalFileName.contains("pdf"))intent.putExtra("filePath", fileMaterial.absolutePath)
+            else{
+                intent.putExtra("photoPath", fileMaterial.absolutePath)
+            }
+            context.startActivity(intent)
+            Log.e("filePath",fileMaterial.absolutePath)
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        context.startActivity(intent)
+
+// 파일 경로를 Intent에 넣어서 전달
+
+// 파일 경로를 Intent에 넣어서 전달
+
+
+//        val intent = Intent(context, NoteActivity::class.java).apply {
+//            val url = "https://notelass.site/api/file/" + file.id
+//            putExtra("pdfString", url)
+//            putExtra("pdfTitle", title)
+//        }
+//        context.startActivity(intent)
     }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable {
+                viewModel.getFile(file.id)
+            }
     ){
         Column(horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center

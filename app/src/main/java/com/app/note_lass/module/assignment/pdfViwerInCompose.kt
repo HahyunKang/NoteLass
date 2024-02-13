@@ -1,7 +1,6 @@
-package com.app.note_lass.module.pdf
+package com.app.note_lass.module.assignment
 
 import android.content.res.Configuration
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -9,13 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,16 +26,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.app.note_lass.module.group.ui.component.NoticeDetailInfo
-import com.app.note_lass.module.upload.ui.NoticeInfo
-import com.app.note_lass.ui.component.AppBarForNotice
 import com.pratikk.jetpdfvue.state.VerticalVueReaderState
 import com.pratikk.jetpdfvue.state.VueFileType
 import com.pratikk.jetpdfvue.state.VueLoadState
 import com.pratikk.jetpdfvue.state.VueResourceType
 import com.pratikk.jetpdfvue.state.rememberVerticalVueReaderState
 import com.pratikk.jetpdfvue.util.compressImageToThreshold
-import com.rizzi.bouquet.rememberVerticalPdfReaderState
 import kotlinx.coroutines.launch
 
 @Composable

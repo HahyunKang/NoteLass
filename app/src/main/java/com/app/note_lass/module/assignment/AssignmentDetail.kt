@@ -1,4 +1,4 @@
-package com.app.note_lass.module.pdf
+package com.app.note_lass.module.assignment
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,23 +16,23 @@ import com.app.note_lass.ui.theme.PrimaryBlack
 @Composable
 fun AssignmentDetail() {
 
-
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        Text(text = "작성자",
+        Text(text = "마감 기한",
             style = NoteLassTheme.Typography.sixteem_600_pretendard,
             color = PrimaryBlack,
         )
 
-            Text(text =  "선생님",
-                style = NoteLassTheme.Typography.sixteem_600_pretendard,
-                color = PrimarayBlue,
-                textDecoration = TextDecoration.Underline
-            )
-        }
+        Text(
+            text =  "23.05.01 , 12:00 AM",
+            style = NoteLassTheme.Typography.sixteem_600_pretendard,
+            color = PrimarayBlue,
+            textDecoration = TextDecoration.Underline
+        )
+
+    }
 
         Spacer(modifier = Modifier.height(16.dp))
 
