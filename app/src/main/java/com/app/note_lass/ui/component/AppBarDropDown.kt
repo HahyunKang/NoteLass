@@ -4,6 +4,9 @@ import RetrievePDFfromUrl
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -44,6 +47,7 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.core.Proto.ProtoViewModel
+import com.app.note_lass.module.group.ui.viewModel.GroupForStudentViewModel
 import com.app.note_lass.module.login.ui.LoginViewModel
 import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.module.note.ui.NoteViewModel
@@ -70,6 +74,7 @@ fun AppBarDropDown(
 
     val protoViewModel : ProtoViewModel =  hiltViewModel()
     val loginViewModel : LoginViewModel = hiltViewModel()
+
 
     val logoutState = loginViewModel.logoutState
     val dropdownItems = listOf("개인 정보 수정", "로그아웃")
@@ -157,6 +162,7 @@ fun MaterialDropDown(
 
     val protoViewModel : ProtoViewModel =  hiltViewModel()
     val noteViewModel : NoteViewModel = hiltViewModel()
+    val groupForStudentViewModel : GroupForStudentViewModel = hiltViewModel()
 
     val dropdownItems = listOf("PDF로 내보내기", "노트탭에 불러오기","자료보기")
     var isContextMenuVisible by rememberSaveable {
@@ -176,12 +182,36 @@ fun MaterialDropDown(
     }
     val density = LocalDensity.current
     val context = LocalContext.current
+    val fileState = groupForStudentViewModel.getMaterialFileState
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
             val uri = result.data?.data
-        //    RetrievePDFfromUrl().addPdf(context, uri,material.fileUrl)
+           if(material.files?.get(0)?.originalFileName?.contains("pdf") == true)RetrievePDFfromUrl().addPdf(context, uri,fileState.value.result!!.stream)
+            else{
+
+               lateinit var bitmap: Bitmap
+               fileState.value.result!!.stream.use { inputStream ->
+                   bitmap = BitmapFactory.decodeStream(inputStream)
+               }
+
+               val pdfDocument = PdfDocument()
+               val pageInfo = PdfDocument.PageInfo.Builder(bitmap.width, bitmap.height, 1).create()
+               val page = pdfDocument.startPage(pageInfo)
+
+               val canvas = page.canvas
+               canvas.drawBitmap(bitmap, 0f, 0f, null)
+               pdfDocument.finishPage(page)
+
+               if (uri != null) {
+                   context.contentResolver?.openFileDescriptor(uri, "w")?.use { parcelFileDescriptor ->
+                       pdfDocument.writeTo(FileOutputStream(parcelFileDescriptor.fileDescriptor))
+                   }
+               }
+
+               pdfDocument.close()
+           }
         }
     }
 
@@ -195,6 +225,18 @@ fun MaterialDropDown(
         }
     }
 
+    if(fileState.value.isSuccess &&
+        material.files?.isNotEmpty() == true &&
+        fileState.value.result!!.fileId == material.files[0].id
+        ){
+        val fileName = material.title
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_TITLE, fileName)
+        }
+        launcher.launch(intent)
+    }
 
     Icon(painter = painterResource(id = R.drawable.material_more_small),
         contentDescription = null,
@@ -233,14 +275,14 @@ fun MaterialDropDown(
                     isContextMenuVisible = false
                    when(index){
                        0 ->{
-                           val fileName = "note-lass.pdf"
-                           val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                               addCategory(Intent.CATEGORY_OPENABLE)
-                               type = "application/pdf"
-                               putExtra(Intent.EXTRA_TITLE, fileName)
-                           }
-                           launcher.launch(intent)
-
+//                           val fileName = material.files!!.get(0).originalFileName
+//                           val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+//                               addCategory(Intent.CATEGORY_OPENABLE)
+//                               type = "application/pdf"
+//                               putExtra(Intent.EXTRA_TITLE, fileName)
+//                           }
+//                           launcher.launch(intent)
+                        if(material.files!!.isNotEmpty()) groupForStudentViewModel.getFile(material.files[0].id)
                            }
                        1 ->{
                            noteViewModel.makeMaterialToNote(materialId = material.id)

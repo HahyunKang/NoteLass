@@ -44,15 +44,15 @@ class RetrievePDFfromUrl(val doAfter: (InputStream) -> Unit = {}) {
 
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun addPdf(context: Context, uri: Uri?, pdfUri : String) {
+    fun addPdf(context: Context, uri: Uri?, inputStream: InputStream) {
 
         GlobalScope.launch(Dispatchers.IO) {
             try {
 
-                val url = URL(pdfUri)
-                val urlConnection = url.openConnection() as HttpsURLConnection
-
-                if (urlConnection.responseCode == HttpsURLConnection.HTTP_OK) {
+//                val url = URL(pdfUri)
+//                val urlConnection = url.openConnection() as HttpsURLConnection
+//
+//                if (urlConnection.responseCode == HttpsURLConnection.HTTP_OK) {
                     Log.e("success in background", "?")
 
                     //Android 장치의 내부 저장소에서 파일을 쓰기 위한 OutputStream을 열기.
@@ -61,13 +61,13 @@ class RetrievePDFfromUrl(val doAfter: (InputStream) -> Unit = {}) {
 
                     val buffer = ByteArray(8192)
                     var len: Int
-                    while (urlConnection.inputStream?.read(buffer).also { len = it ?: 0 } != -1) {
+                    while (inputStream.read(buffer).also { len = it ?: 0 } != -1) {
                         outputStream?.write(buffer, 0, len)
                     }
                     //버퍼에 저장된 데이터를 OutputStream을 통해 파일에 씁니다
-                    urlConnection.inputStream?.close()
+                  inputStream.close()
                     outputStream?.close()
-                }
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }
