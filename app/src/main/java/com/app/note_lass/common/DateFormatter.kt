@@ -40,7 +40,7 @@ class StringToDate(val localString : String) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
-fun printPreviewDate(){
+fun PrintPreviewDate(){
     val dataFormatter = DateFormatter(LocalDateTime.now())
     dataFormatter.printDate()
 }
