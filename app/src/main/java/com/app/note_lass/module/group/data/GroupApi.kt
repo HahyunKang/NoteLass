@@ -59,6 +59,14 @@ interface GroupApi {
         @Path(value = "groupId") groupId: Long,
         @Path(value = "userId") userId: Long,
     ) : NoteResponseBody<Nothing>
+
+
+    @POST("api/group/approve/{groupId}")
+    suspend fun approveAllGroup(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId: Long,
+    ) : NoteResponseBody<Nothing>
+
     @DELETE("api/group/reject/{groupId}/{userId}")
     suspend fun rejectGroup(
         @Header(value = "Authorization") accessToken : String,

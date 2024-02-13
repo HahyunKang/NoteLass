@@ -28,11 +28,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,6 +78,9 @@ fun DialogSignUp(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(24.dp)
+                    .clickable {
+                        setShowDialog(false)
+                    }
             )
 
             Column(modifier = Modifier
@@ -159,7 +165,9 @@ fun CreateGroup(
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.End)
-
+                    .clickable {
+                        setShowDialog(false)
+                    }
             )
 
             Text(
@@ -273,6 +281,9 @@ fun DialogGroupCode(
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(15.dp)
+                    .clickable {
+                        setShowDialog(false)
+                    }
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -297,7 +308,7 @@ fun DialogGroupCode(
                     .width(350.dp)
             ) {
                 RectangleEnabledButton(
-                    text = "다음",
+                    text = "완료",
                     onClick = {
                         onAccept()
                     },
@@ -311,6 +322,7 @@ fun DialogGroupCode(
 fun DialogEnterGroup(
     setShowDialog : (Boolean)-> Unit,
     getCode : (String) -> Unit,
+    isCodeWrong : Boolean,
     onAccept : () -> Unit
 ) {
     val code = remember{
@@ -334,13 +346,18 @@ fun DialogEnterGroup(
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.End)
+                    .weight(1f)
+                    .clickable {
+                        setShowDialog(false)
+                    }
             )
 
             Text(
                 text = "입장 코드 입력",
                 style = NoteLassTheme.Typography.twenty_700_pretendard,
                 color = PrimaryBlack,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
+                modifier = Modifier.weight(2f)
             )
             Spacer(modifier = Modifier.height(30.dp))
 
@@ -351,7 +368,8 @@ fun DialogEnterGroup(
                },
                enabled= true ,
                modifier = Modifier
-                   .size(width = 400.dp, height = 60.dp)
+                   .width(400.dp)
+                   .weight(2.8f)
                    .padding(horizontal = 20.dp),
                textStyle = NoteLassTheme.Typography.sixteem_600_pretendard,
                placeholder = {
@@ -364,21 +382,43 @@ fun DialogEnterGroup(
                shape = RoundedCornerShape(8.dp)
 
            )
-            Spacer(modifier = Modifier.height(47.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            if(isCodeWrong){
+                Text(
+                    text = "존재하지 않는 코드입니다.",
+                    style = NoteLassTheme.Typography.twelve_600_pretendard,
+                    color = Color(0xFFFF7788),
+                    modifier = Modifier.weight(0.8f)
+                )
+            }else{
+                Spacer(modifier = Modifier.weight(0.8f))
+
+            }
+            Spacer(modifier = Modifier.height(30.dp))
 
             Box(
                 modifier = Modifier
-                    .height(56.dp)
+                    .weight(2.5f)
                     .width(350.dp)
                     .padding(horizontal = 20.dp)
             ) {
-                RectangleEnabledButton(
-                    text = "다음",
-                    onClick = {
-                        getCode(code.value)
-                        onAccept()
-                    },
-                )
+                if (code.value.isNotEmpty()) {
+                    RectangleEnabledButton(
+                        text = "다음",
+                        onClick = {
+                            getCode(code.value)
+                            onAccept()
+                        },
+                    )
+                }
+            else{
+                    RectangleUnableButton(
+                        text = "다음",
+                        onClick = {}
+                    )
+
+                }
 
             }
         }
@@ -409,13 +449,25 @@ fun DialogEnterGroupAccept(
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.End)
+                    .clickable {
+                        setShowDialog(false)
+                    }
             )
 
+            Spacer(modifier = Modifier.height(28.dp))
+
             Text(
-                text = "${groupInfo}에\n 입장하시겠습니까?",
+                buildAnnotatedString {
+                      withStyle(style = SpanStyle(color = PrimarayBlue)) {
+                            append(groupInfo)
+                        }
+                    withStyle(style = SpanStyle(color = Color.Black)) {
+                            append("에\n입장하시겠습니까?")
+                        }
+                },
                 style = NoteLassTheme.Typography.twenty_700_pretendard,
                 color = PrimaryBlack,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(50.dp))
 
@@ -462,6 +514,9 @@ fun DialogInRecord(
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.End)
+                    .clickable {
+                        setShowDialog(false)
+                    }
             )
 
             Text(
@@ -587,7 +642,8 @@ fun DialogStudentMemo(
                 painter = painterResource(id = R.drawable.group_filedelete_small),
                 tint = Color(0xFF26282B),
                 contentDescription = null,
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier
+                    .align(Alignment.End)
                     .clickable {
                         setShowDialog(false)
                     }

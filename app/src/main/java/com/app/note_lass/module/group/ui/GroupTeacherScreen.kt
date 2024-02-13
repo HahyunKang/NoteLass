@@ -72,6 +72,17 @@ fun GroupTeacherScreen(
                 )
 
             },
+            onClickAllAccept = {
+                               viewModel.approveAllGroup(
+                                   isToast = {
+                                   Toast.makeText(context,"일괄 승인이 완료되었습니다",Toast.LENGTH_SHORT).show()
+                                       isShowDialog.value = false
+
+                                   }
+                               )
+
+
+            },
             getStudentList= { viewModel.getJoinStudentList() }
         )
     }
