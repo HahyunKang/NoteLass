@@ -108,7 +108,7 @@ fun StudentRecordUploadScreen(
             content = "한셀로 출력하시겠습니까?",
             buttonText = "출력하기"
         ) {
-            val downloader = AndroidDownLoader(context, "생기부.cell")
+            val downloader = AndroidDownLoader(context, "생기부.cell",null)
             recordViewModel.getExcel(downLoadExcel = {
                 downloader.downloadFile(excelState.value.excelUrl)
             }

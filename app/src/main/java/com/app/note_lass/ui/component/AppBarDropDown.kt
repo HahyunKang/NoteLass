@@ -2,13 +2,10 @@ package com.app.note_lass.ui.component
 
 import RetrievePDFfromUrl
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.pdf.PdfDocument
-import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -17,9 +14,7 @@ import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -27,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,7 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.core.Proto.ProtoViewModel
@@ -53,18 +48,10 @@ import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.module.note.ui.NoteViewModel
 import com.app.note_lass.module.upload.data.Material.Material
 import com.app.note_lass.ui.theme.PrimaryGray
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.selects.whileSelect
-import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
-import java.io.FileNotFoundException
+import kotlinx.coroutines.withContext
 import java.io.FileOutputStream
-import java.net.HttpURLConnection
-import java.net.URL
-import javax.net.ssl.HttpsURLConnection
+import java.io.IOException
 
 
 @Composable
@@ -84,6 +71,9 @@ fun AppBarDropDown(
 
     var pressOffset by remember {
         mutableStateOf(DpOffset.Zero)
+    }
+    var pressIndex =  remember {
+        mutableIntStateOf(0)
     }
     var itemWidth by remember {
         mutableStateOf(0.dp)
@@ -174,6 +164,9 @@ fun MaterialDropDown(
     var pressOffset by remember {
         mutableStateOf(DpOffset.Zero)
     }
+    var pressIndex = remember {
+        mutableStateOf(0)
+    }
     var itemWidth by remember {
         mutableStateOf(0.dp)
     }
@@ -225,18 +218,86 @@ fun MaterialDropDown(
         }
     }
 
-    if(fileState.value.isSuccess &&
-        material.files?.isNotEmpty() == true &&
-        fileState.value.result!!.fileId == material.files[0].id
-        ){
-        val fileName = material.title
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/pdf"
-            putExtra(Intent.EXTRA_TITLE, fileName)
+    LaunchedEffect(fileState.value) {
+        if(fileState.value.isSuccess) {
+            when(pressIndex.value) {
+                0-> {
+                    if (material.files?.isNotEmpty() == true &&
+                        fileState.value.result!!.fileId == material.files[0].id
+                    ) {
+                        val fileName = material.title
+                        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                            addCategory(Intent.CATEGORY_OPENABLE)
+                            type = "application/pdf"
+                            putExtra(Intent.EXTRA_TITLE, fileName)
+                        }
+                        launcher.launch(intent)
+                    }
+                }
+                2 -> {
+                    if (material.files?.isNotEmpty() == true &&
+                        fileState.value.result!!.fileId == material.files[0].id
+                    ) {
+                        val fileMaterial = java.io.File(context.filesDir, "myFile")
+                        try {
+                            FileOutputStream(fileMaterial).use { outputStream ->
+                                val buffer = ByteArray(1024)
+                                var length: Int
+                                while (fileState.value.result!!.stream.read(buffer)
+                                        .also { length = it } != -1
+                                ) {
+                                    outputStream.write(buffer, 0, length)
+                                }
+                            }
+                            val intent = Intent(context, NoteActivity::class.java)
+                            if (material.files?.get(0)?.originalFileName?.contains("pdf") == true) {
+                                intent.putExtra("filePath", fileMaterial.absolutePath)
+                                intent.putExtra("pdfTitle", material.files[0].originalFileName)
+                            } else {
+                                intent.putExtra("photoPath", fileMaterial.absolutePath)
+                                intent.putExtra(
+                                    "pdfTitle",
+                                    material.files?.get(0)?.originalFileName
+                                )
+                            }
+                            context.startActivity(intent)
+
+//                        val intent = Intent(context, NoteActivity::class.java)
+//                        if(material.files?.get(0)?.originalFileName?.contains("pdf") == true) {
+//                            intent.putExtra("filePath", fileMaterial.absolutePath)
+//                            intent.putExtra("pdfTitle",material.files[0].originalFileName )
+//                        }
+//                        else{
+//                            intent.putExtra("photoPath", fileMaterial.absolutePath)
+//                            intent.putExtra("pdfTitle", material.files?.get(0)?.originalFileName)
+//                        }
+//                        context.startActivity(intent)
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            }
+
+
         }
-        launcher.launch(intent)
+        if(materialToNote.value.isError) {
+            Toast.makeText(context,"노트 탭 업로드에 실패하였습니다.",Toast.LENGTH_SHORT).show()
+        }
     }
+
+//    if(fileState.value.isSuccess &&
+//        material.files?.isNotEmpty() == true &&
+//        fileState.value.result!!.fileId == material.files[0].id
+//        ){
+//        val fileName = material.title
+//        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+//            addCategory(Intent.CATEGORY_OPENABLE)
+//            type = "application/pdf"
+//            putExtra(Intent.EXTRA_TITLE, fileName)
+//        }
+//        launcher.launch(intent)
+//    }
 
     Icon(painter = painterResource(id = R.drawable.material_more_small),
         contentDescription = null,
@@ -262,10 +323,9 @@ fun MaterialDropDown(
         DropdownMenu(
             expanded = isContextMenuVisible,
             onDismissRequest = { isContextMenuVisible = false },
-
             offset = pressOffset.copy(
                 x = -5.dp,
-                y = pressOffset.y  + 30.dp
+                y = pressOffset.y
             )
         ) {
 
@@ -273,26 +333,26 @@ fun MaterialDropDown(
                     index,text->
                 DropdownMenuItem(onClick = {
                     isContextMenuVisible = false
+                    pressIndex.value = index
                    when(index){
                        0 ->{
-//                           val fileName = material.files!!.get(0).originalFileName
-//                           val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-//                               addCategory(Intent.CATEGORY_OPENABLE)
-//                               type = "application/pdf"
-//                               putExtra(Intent.EXTRA_TITLE, fileName)
-//                           }
-//                           launcher.launch(intent)
-                        if(material.files!!.isNotEmpty()) groupForStudentViewModel.getFile(material.files[0].id)
+
+                        if(material.files!!.isNotEmpty())
+                            groupForStudentViewModel.getFile(material.files[0].id)
+
                            }
                        1 ->{
                            noteViewModel.makeMaterialToNote(materialId = material.id)
                        }
                        2-> {
-                           val intent = Intent(context, NoteActivity::class.java).apply {
-                          //    putExtra("pdfString", material.fileUrl)
-                           }
-                         //  material.fileUrl.value?.path?.let { Log.e("PDFURI", it) }
-                           context.startActivity(intent)
+//                           val intent = Intent(context, NoteActivity::class.java).apply {
+//                          //    putExtra("pdfString", material.fileUrl)
+//                           }
+//                         //  material.fileUrl.value?.path?.let { Log.e("PDFURI", it) }
+//                           context.startActivity(intent)
+                           if(material.files!!.isNotEmpty())
+                           groupForStudentViewModel.getFile(material.files[0].id)
+
                        }
                    }
 
