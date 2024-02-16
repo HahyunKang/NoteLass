@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,16 +18,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,10 +40,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.note_lass.R
+import com.app.note_lass.common.DateFormatter
 import com.app.note_lass.core.FilePicker.FileManager
 import com.app.note_lass.core.Proto.GroupInfo
+import com.app.note_lass.core.Proto.ProtoViewModel
+import com.app.note_lass.core.Proto.Role
+import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.group.data.URI
 import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.ui.component.FileUpload
@@ -60,9 +76,12 @@ import java.time.LocalDateTime
 
 @Composable
 fun CreateNoticeScreen(
-    createNotice : (String,String,List<MultipartBody.Part?>) -> Unit
+    createNotice : (String,String,List<MultipartBody.Part?>) -> Unit,
+    protoViewModel : ProtoViewModel = hiltViewModel(),
+    goBackToGroup: (Role, Long) -> Unit
 ){
-
+    val groupInfo  = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",-1))
+    val role  = protoViewModel.token.collectAsState(initial = Token("", Role.NONE))
     val noticeTitle = remember{
         mutableStateOf("")
     }
@@ -71,9 +90,6 @@ fun CreateNoticeScreen(
     }
 
     val uris =  remember {
-        mutableStateOf(mutableListOf<HashMap<URI,Uri>>())
-    }
-    val finalUris  = remember{
         mutableStateOf(mutableListOf<HashMap<URI,Uri>>())
     }
     val requestFiles  = remember {
@@ -111,7 +127,7 @@ fun CreateNoticeScreen(
 
             val file = uri.asMultipart("file",context.contentResolver)
             Log.e("uri in PDFLAUNCHER",uri.toString())
-            finalUris.value = uris.value
+          //  finalUris.value = uris.value
 
             if (file != null) {
                 requestFiles.value.add(file)
@@ -126,7 +142,7 @@ fun CreateNoticeScreen(
 
             val file = uri?.asMultipart("file",context.contentResolver)
             uris.value = (uris.value + hashMapOf(Pair(URI.PHOTOURI, uri!!))).toMutableList()
-            finalUris.value = uris.value
+          //  finalUris.value = uris.value
 
             if (file != null) {
                 requestFiles.value.add(file)
@@ -317,69 +333,74 @@ fun CreateNoticeScreen(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
 
-           if(finalUris.value.isNotEmpty())
-               itemsIndexed(finalUris.value) {
-                index , uri ->
-                if (uri.containsKey(URI.PDFURI)) {
-                    fileName = fileManager.getFileName(context, finalUris.value[index][URI.PDFURI]!!)
-                    fileSize = fileManager.getFileSize(context, finalUris.value[index][URI.PDFURI]!!)
+            if (uris.value.isNotEmpty()) {
+                itemsIndexed(uris.value) { index, uri ->
+                    if (uri.containsKey(URI.PDFURI)) {
+                        fileName =
+                            fileManager.getFileName(context, uris.value[index][URI.PDFURI]!!)
+                        fileSize =
+                            fileManager.getFileSize(context, uris.value[index][URI.PDFURI]!!)
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
 
-                        FileUpload(
-                            title = fileName.toString(),
-                            fileSize = fileSize.toString(),
-                            onClick = {
-                                val intent = Intent(context, NoteActivity::class.java).apply {
-                                    putExtra("pdfUri",  finalUris.value[index][URI.PDFURI])
-                                    putExtra("pdfTitle",  fileName)
-                                }
-                                finalUris.value[index][URI.PDFURI]?.toString().let {
-                                    if (it != null) {
-                                        Log.e("pdfUri in NoticeScreen", it)
+                            FileUpload(
+                                title = fileName.toString(),
+                                fileSize = fileSize.toString(),
+                                onClick = {
+                                    val intent = Intent(context, NoteActivity::class.java).apply {
+                                        putExtra("pdfUri", uris.value[index][URI.PDFURI])
+                                        putExtra("pdfTitle", fileName)
                                     }
+                                    uris.value[index][URI.PDFURI]?.toString().let {
+                                        if (it != null) {
+                                            Log.e("pdfUri in NoticeScreen", it)
+                                        }
+                                    }
+                                    context.startActivity(intent)
+                                },
+                                onDelete = {
+                                    uris.value = (uris.value - hashMapOf(Pair(URI.PDFURI, uris.value[index][URI.PDFURI]!!))).toMutableList()
+                                    requestFiles.value.removeAt(index = index)
                                 }
-                                context.startActivity(intent)
-                            },
-                            onDelete = {
-                                //pdfUri = null
-                            }
-                        )
+                            )
+
+                        }
+
+
+                    } else if (uri.containsKey(URI.PHOTOURI)) {
+                        fileName =
+                            fileManager.getFileName(context, uris.value[index][URI.PHOTOURI]!!)
+                        fileName =
+                            fileManager.getFileName(context, uris.value[index][URI.PHOTOURI]!!)
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+
+                            FileUpload(
+                                title = fileName.toString(),
+                                fileSize = fileSize.toString(),
+                                onClick = {
+                                    val intent = Intent(context, NoteActivity::class.java).apply {
+                                        putExtra("photoUri", uris.value[index][URI.PHOTOURI])
+                                        putExtra("pdfTitle", fileName)
+                                    }
+                                    context.startActivity(intent)
+                                },
+                                onDelete = {
+                                    uris.value = (uris.value - hashMapOf(Pair(URI.PHOTOURI, uris.value[index][URI.PHOTOURI]!!))).toMutableList()
+                                    requestFiles.value.removeAt(index = index)
+                                }
+                            )
+
+                        }
+
 
                     }
-
-
-                }
-                else if (uri.containsKey(URI.PHOTOURI)) {
-                    fileName = fileManager.getFileName(context, finalUris.value[index][URI.PHOTOURI]!!)
-                    fileName = fileManager.getFileName(context, finalUris.value[index][URI.PHOTOURI]!!)
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-
-                        FileUpload(
-                            title = fileName.toString(),
-                            fileSize = fileSize.toString(),
-                            onClick = {
-                                val intent = Intent(context, NoteActivity::class.java).apply {
-                                    putExtra("photoUri",  finalUris.value[index][URI.PHOTOURI])
-                                    putExtra("pdfTitle",  fileName)
-                                }
-                                context.startActivity(intent)
-                            },
-                            onDelete = {
-                         //       photoUri = null
-                            }
-                        )
-
-                    }
-
-
                 }
             }
         }
@@ -389,7 +410,9 @@ fun CreateNoticeScreen(
         ){
             Box(modifier = Modifier.size(49.dp,40.dp)){
                 RectangleUnableButton(text = "취소",
-                    onClick = { TODO() })
+                    onClick = {
+                        goBackToGroup(role.value.role,groupInfo.value.groupId!!)
+                    })
             }
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -408,6 +431,7 @@ fun CreateNoticeScreen(
   }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NoticeInfo(
     groupInfo: GroupInfo,
@@ -419,39 +443,56 @@ fun NoticeInfo(
         modifier = Modifier.fillMaxSize()
     ) {
 
+        Text("공지 정보",
+            style = TextStyle(
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                fontWeight = FontWeight(700),
+                color = PrimaryBlack,
+            )
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+
         Text(text = "작성자",
             style =NoteLassTheme.Typography.sixteem_600_pretendard,
             color = PrimaryBlack,
         )
+        Spacer(modifier = Modifier.height(5.dp))
 
         groupInfo.teacherName?.let {
-            Text(text = it + "선생님",
+            Text(text = "$it 선생님",
                 style =NoteLassTheme.Typography.sixteem_600_pretendard,
                 color = PrimarayBlue,
                 textDecoration = TextDecoration.Underline
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Divider(modifier = Modifier.padding(vertical = 16.dp), thickness = 1.dp,color = Color(0xFFEDEDFF))
+
 
         Text(text = "게시일",
             style =NoteLassTheme.Typography.sixteem_600_pretendard,
             color = PrimaryBlack
         )
+        Spacer(modifier = Modifier.height(5.dp))
 
-        Text(text =  "2023년 11월 5일",
+        val localDate = LocalDateTime.now()
+
+        Text(text =  DateFormatter(localDate).formattedDateTime,
             style =NoteLassTheme.Typography.sixteem_600_pretendard,
             color = PrimarayBlue,
             textDecoration = TextDecoration.Underline
 
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Divider(modifier = Modifier.padding(vertical = 16.dp), thickness = 1.dp,color = Color(0xFFEDEDFF))
 
         Text(text = "할당된 그룹",
             style =NoteLassTheme.Typography.sixteem_600_pretendard,
             color = PrimaryBlack
         )
+
+        Spacer(modifier = Modifier.height(5.dp))
 
         groupInfo.groupName?.let {
             Text(text = it,

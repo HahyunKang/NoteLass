@@ -30,5 +30,5 @@ interface GroupRepository {
     ): NoteResponseBody<Nothing>
     suspend fun getNoticeList(accessToken: String, groupId: Long) : NoteResponseBody<List<Notice>>
     suspend fun getNoticeDetail(accessToken: String, noticeId: Long) : NoteResponseBody<Notice>
-
+    suspend fun approveAllGroup(accessToken: String, groupId: Long) : NoteResponseBody<Nothing>
 }

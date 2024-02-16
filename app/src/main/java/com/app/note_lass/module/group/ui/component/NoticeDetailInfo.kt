@@ -1,7 +1,5 @@
 package com.app.note_lass.module.group.ui.component
 
-import android.content.Intent
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,26 +18,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.common.AndroidDownLoader
+import com.app.note_lass.common.File
 import com.app.note_lass.core.FilePicker.FileManager
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
-import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.ui.component.Divider
 import com.app.note_lass.ui.component.FileUpload
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryBlack
-import com.app.note_lass.ui.theme.PrimaryGray
 
 @Composable
 fun NoticeDetailInfo(
-    title : String,
-    content : String,
-    fileUrl : String?,
-    protoViewModel: ProtoViewModel = hiltViewModel()
+    title: String,
+    content: String,
+    file: List<File>?,
+    protoViewModel: ProtoViewModel = hiltViewModel(),
 ) {
 
 //    var pdfUri by remember {
@@ -51,6 +47,10 @@ fun NoticeDetailInfo(
     var fileSize by remember { mutableStateOf<Long?>(null) }
     val fileManager = FileManager()
     val context = LocalContext.current
+
+
+
+
 
     Column(
         modifier = Modifier
@@ -72,37 +72,41 @@ fun NoticeDetailInfo(
             style = NoteLassTheme.Typography.sixteem_600_pretendard,
             color = PrimaryBlack
         )
+        Spacer(modifier = Modifier.height(16.dp))
+
         Divider()
 
-        if (fileUrl != "") {
+        Spacer(modifier = Modifier.height(16.dp))
 
 //            fileName = fileManager.getFileName(context, pdfUri!!)
 //            fileSize = fileManager.getFileSize(context, pdfUri!!)
 
+        if (file?.isNotEmpty() == true) {
             Box(
                 modifier = Modifier
-                    .width(150.dp)
-                    .height(40.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
             ) {
                 FileUpload(
-                    title = "파일",
-                    fileSize = "500",
+                    title = file[0].originalFileName,
+                    fileSize = (file[0].size.toFloat() / 1000000.0).toString(),
                     onClick = {
-                        val intent = Intent(context, NoteActivity::class.java).apply {
-                            putExtra("pdfString", fileUrl)
-                        }
-//                       // pdfUri?.path?.let { Log.e("PDFURI", it) }
-//                        context.startActivity(intent)
-                         val downloader = AndroidDownLoader(context,"notice.pdf")
-                         downloader.downloadFile(fileUrl!!)
+
+                            val fileUrl = "https://notelass.site/api/file/" + file[0].id
+                            val downloader =
+                                AndroidDownLoader(context, file!![0].originalFileName, token!!)
+                            downloader.downloadFile(fileUrl)
+                           Log.e("download file", file?.get(0)?.id.toString())
+
                     },
                     onDelete = {
-                    //    fileUrl = null
+                        //    fileUrl = null
                     }
                 )
             }
 
         }
     }
-}
+    }
+
 

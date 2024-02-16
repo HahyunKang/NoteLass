@@ -66,6 +66,7 @@ fun JoinDialog(
     groupCode: Int,
     onClickDecline : (Int) -> Unit,
     onClickAccept : (Int) -> Unit,
+    onClickAllAccept : () -> Unit,
     getStudentList : () -> Unit
 ) {
 
@@ -135,6 +136,9 @@ fun JoinDialog(
                     .wrapContentSize()
                     .background(color = Color(0x339EA4AA), shape = RectangleShape)
                     .padding(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 3.dp)
+                    .clickable {
+                        onClickAllAccept()
+                    }
             ){
                 Text("한 번에 수락하기",
                     style = TextStyle(

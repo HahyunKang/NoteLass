@@ -88,9 +88,6 @@ fun SectionHeaderWithCreate(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable {
-                onTouchCreate()
-            }
         ) {
             Text(
                 "전체보기",
@@ -115,7 +112,10 @@ fun SectionHeaderWithCreate(
                     fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                     fontWeight = FontWeight(600),
                     color = Color(0xFF9EA4AA),
-                )
+                ),
+                modifier = Modifier.clickable {
+                    onTouchCreate()
+                }
             )
         }
 

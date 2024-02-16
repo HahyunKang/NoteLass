@@ -82,4 +82,11 @@ class GroupImpl @Inject constructor(
         return groupApi.getNoticeDetail(accessToken, noticeId)
     }
 
+    override suspend fun approveAllGroup(
+        accessToken: String,
+        groupId: Long
+    ): NoteResponseBody<Nothing> {
+        return groupApi.approveAllGroup(accessToken, groupId)
+    }
+
 }

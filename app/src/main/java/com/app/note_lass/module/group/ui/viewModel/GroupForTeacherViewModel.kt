@@ -13,6 +13,7 @@ import com.app.note_lass.module.group.data.groupList.GroupListState
 import com.app.note_lass.module.group.data.join.ApproveOrRejectGroupState
 import com.app.note_lass.module.group.data.join.JoinStudentListState
 import com.app.note_lass.module.group.data.studentList.StudentListState
+import com.app.note_lass.module.group.domain.repository.ApproveAllGroupUseCase
 import com.app.note_lass.module.group.domain.repository.ApproveGroupUseCase
 import com.app.note_lass.module.group.domain.repository.CreateGroupUseCase
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
@@ -29,6 +30,7 @@ import javax.inject.Inject
 class GroupForTeacherViewModel @Inject constructor(
     val getStudentUseCase : GetStudentListUseCase,
     val approveGroupUseCase: ApproveGroupUseCase,
+    val approveAllGroupUseCase: ApproveAllGroupUseCase,
     val rejectGroupUseCase: RejectGroupUseCase,
     val joinStudentListUseCase: GetJoinStudentListUseCase,
     val savedStateHandle: SavedStateHandle
@@ -173,7 +175,36 @@ class GroupForTeacherViewModel @Inject constructor(
 
         }.launchIn(viewModelScope)
     }
+    fun approveAllGroup(isToast : () -> Unit){
+        approveAllGroupUseCase(groupId.value.toLong()).onEach {
+                result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _approveOrReject.value = ApproveOrRejectGroupState(
+                        isLoading  =  true,
+                        isSuccess = false,
+                    )
+                }
+                is Resource.Success  ->{
+                    _approveOrReject.value = ApproveOrRejectGroupState(
+                        isSuccess = true,
+                        isApprove = true,
+                        isLoading = false,
+                    )
+                    isToast()
+                    Log.e("success in approve",result.code.toString())
+                }
+                is Resource.Error -> {
+                    _approveOrReject.value = ApproveOrRejectGroupState(
+                        isError =  true,
+                        isSuccess = false,
+                    )
+                }
+            }
 
+
+        }.launchIn(viewModelScope)
+    }
 
 
 

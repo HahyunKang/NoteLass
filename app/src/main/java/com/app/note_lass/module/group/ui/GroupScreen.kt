@@ -106,6 +106,10 @@ fun GroupScreen(
         },
         content = {
 
+            val isCodeWrong = remember{
+                mutableStateOf(false)
+            }
+
             if(showFirstDialog.value) {
                 if (role.value.role == Role.TEACHER) {
                     CreateGroup(
@@ -125,16 +129,25 @@ fun GroupScreen(
                     DialogEnterGroup(
                         setShowDialog ={
                                        showFirstDialog.value = it
-                        } , getCode = {
+                        } ,
+                        isCodeWrong = isCodeWrong.value,
+                        getCode = {
                             code ->
                             enterCode.intValue = code.toInt()
                         }
                     ) {
                         viewModel.enterGroup(enterCode.intValue)
-                        showSecondDialog.value = true
-                        showFirstDialog.value = false
+//                        showSecondDialog.value = true
+//                        showFirstDialog.value = false
                     }
                 }
+            }
+            if(viewModel.enterGroupState.value.isSuccess&& showFirstDialog.value) {
+                showSecondDialog.value = true
+                showFirstDialog.value = false
+            }
+            else if(viewModel.enterGroupState.value.isError){
+                isCodeWrong.value = true
             }
 
             if(showSecondDialog.value && viewModel.groupCreateGroupState.value.isSuccess){

@@ -45,7 +45,7 @@ fun AssignmentUploadScreen(
 
     val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",0))
 
-    val titleList = listOf("공지","과제","강의자료")
+    val titleList = listOf("공지","강의자료")
 
     var selectedTabIndex by remember{
         mutableIntStateOf(0)
@@ -93,15 +93,15 @@ fun AssignmentUploadScreen(
                                 createNotice = {
                                     title,content,fileList->
                                     uploadViewModel.createNotice(groupInfo.value.groupId!!,title, content, fileList)
-                                }
+                                },
+                                goBackToGroup = goBackToGroup
                             )
                         }
+//                        1 -> {
+//                            CreateAssignmentScreen()
+//                        }
 
                         1 -> {
-                            CreateAssignmentScreen()
-                        }
-
-                        2 -> {
                             CreateLectureNoteScreen(
                                 goBackToGroup = goBackToGroup
                             )
@@ -128,18 +128,13 @@ fun AssignmentUploadScreen(
                 .fillMaxHeight()
                 .padding(horizontal = 24.dp, vertical = 15.dp)) {
 
-            Text("공지/과제/강의 자료 정보",
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                    fontWeight = FontWeight(700),
-                    color = PrimaryBlack,
-                )
-            )
 
             when(selectedTabIndex) {
                 0 -> {
-                //    NoticeInfo(groupInfo.value,)
+                   NoticeInfo(groupInfo.value)
+                }
+                1-> {
+                    LectureNoteInfo(groupInfo.value)
                 }
         }
 

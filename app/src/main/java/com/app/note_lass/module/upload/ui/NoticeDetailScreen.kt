@@ -1,5 +1,7 @@
 package com.app.note_lass.module.upload.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +26,7 @@ import com.app.note_lass.module.group.ui.component.NoticeDetailInfo
 import com.app.note_lass.module.upload.data.viewmodel.NoticeDetailViewModel
 import com.app.note_lass.ui.component.AppBarForNotice
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NoticeDetailScreen(
     noticeDetailViewModel: NoticeDetailViewModel = hiltViewModel(),
@@ -34,7 +37,7 @@ fun NoticeDetailScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-       AppBarForNotice(title = "공지/과제/강의자료")
+       AppBarForNotice(title = "공지")
         },
         containerColor =  Color(0xFFF5F5FC),
         contentColor = Color.Black,
@@ -64,10 +67,11 @@ fun NoticeDetailScreen(
                         .fillMaxHeight()
                         .padding(horizontal = 24.dp)
                 ) {
+                    if(detailState.value.isSuccess)
                     NoticeDetailInfo(
                         title =detailState.value.noticeDetail.title,
                         content = detailState.value.noticeDetail.content ,
-                        fileUrl = detailState.value.noticeDetail.fileUrl
+                        file = detailState.value.noticeDetail.file
                     )
 
                 }
