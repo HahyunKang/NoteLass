@@ -2,9 +2,9 @@ package com.app.note_lass.module.student.data
 
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resources
-import com.app.note_lass.module.login.domain.repository.LoginRepository
 import com.app.note_lass.module.login.domain.repository.StudentRepository
 import com.app.note_lass.module.upload.data.Material.Material
+import retrofit2.Response
 import javax.inject.Inject
 
 class StudentImpl @Inject constructor(
@@ -34,6 +34,13 @@ class StudentImpl @Inject constructor(
         groupId: Int
     ): NoteResponseBody<List<Material>> {
         return studentApi.getMaterialList(accessToken, groupId)
+    }
+
+    override suspend fun deleteHandBook(
+        accessToken: String,
+        handbookContentId: Long
+    ) : Response<Unit> {
+        return studentApi.deleteHandBook(accessToken, handbookContentId)
     }
 
 }

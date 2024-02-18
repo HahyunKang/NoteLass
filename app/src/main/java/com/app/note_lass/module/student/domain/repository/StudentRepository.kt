@@ -5,6 +5,7 @@ import com.app.note_lass.common.Resources
 import com.app.note_lass.module.student.data.HandBook
 import com.app.note_lass.module.student.data.HandBookRequest
 import com.app.note_lass.module.upload.data.Material.Material
+import retrofit2.Response
 
 interface StudentRepository {
     suspend fun postHandBook(
@@ -27,5 +28,10 @@ interface StudentRepository {
         accessToken : String,
         groupId : Int,
     ) : NoteResponseBody<List<Material>>
+
+    suspend fun deleteHandBook(
+        accessToken: String,
+        handbookContentId: Long
+    ) : Response<Unit>
 
 }

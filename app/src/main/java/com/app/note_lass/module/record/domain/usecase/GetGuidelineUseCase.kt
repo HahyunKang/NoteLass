@@ -1,6 +1,5 @@
 package com.app.note_lass.module.record.domain.usecase
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.GroupInfo

@@ -1,9 +1,8 @@
 package com.app.note_lass.module.student.domain.usecase
 
 import androidx.datastore.core.DataStore
+import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
-import com.app.note_lass.common.Resources
-import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.login.domain.repository.StudentRepository
 import kotlinx.coroutines.flow.Flow
@@ -13,24 +12,22 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class GetNoticeListUseCase @Inject constructor(
-    private val studentRepository: StudentRepository,
-    val dataStore: DataStore<Token>,
-    val dataGroupStore: DataStore<GroupInfo>
+class DeleteHandBookUseCase @Inject constructor(
+    val studentRepository: StudentRepository,
+    val dataStore: DataStore<Token>
 ) {
 
-    operator fun invoke(): Flow<Resource<List<Resources>>> = flow{
+    operator fun invoke(handbookContentId: Long) : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
         try {
             emit(Resource.Loading())
             val token = "Bearer ${dataStore.data.first().accessToken}"
-            val groupId = dataGroupStore.data.first().groupId!!.toInt()
-            val handBookResponse = studentRepository.getNoticeList(accessToken = token, groupId = groupId)
+            studentRepository.deleteHandBook(accessToken = token, handbookContentId = handbookContentId)
 
             emit(
                 Resource.Success(
-                    data = handBookResponse.result!!,
-                    code = handBookResponse.code,
-                    message = handBookResponse.message
+                    data = null,
+                    code = 204,
+                    message = "Delete is successed"
                 )
 
             )

@@ -1,11 +1,9 @@
 package com.app.note_lass.module.record.domain.usecase
 
 import androidx.datastore.core.DataStore
-import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.Token
-import com.app.note_lass.module.record.data.RecordBody
 import com.app.note_lass.module.record.data.RecordScore
 import com.app.note_lass.module.record.domain.RecordRepository
 import kotlinx.coroutines.flow.Flow
