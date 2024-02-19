@@ -1,5 +1,7 @@
 package com.app.note_lass.ui.component
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,16 +19,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.TextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextFieldDefaults
 
 import androidx.compose.material3.Text
+import androidx.compose.material.TextFieldColors
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -45,12 +51,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.app.note_lass.R
 import com.app.note_lass.module.group.data.applicationList.ApplicationStudent
 import com.app.note_lass.module.group.ui.component.ApplicationStudent
+import com.app.note_lass.module.group.ui.viewModel.GroupForTeacherViewModel
+import com.app.note_lass.module.group.ui.viewModel.GroupViewModel
 import com.app.note_lass.module.student.data.HandBookRequest
 import com.app.note_lass.module.student.ui.viewmodel.StudentMemoViewModel
 import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
+import com.app.note_lass.ui.theme.PrimaryGray
 import com.app.note_lass.ui.theme.PrimaryPurple
 
 
@@ -594,35 +603,35 @@ fun DialogStudentMemo(
     studentMemoViewModel: StudentMemoViewModel = hiltViewModel()
 
 ) {
-    val isGroupSelected = remember{
+    val isGroupSelected = remember {
         mutableStateOf(false)
     }
-    val isStudentSelected = remember{
+    val isStudentSelected = remember {
         mutableStateOf(false)
     }
-    val memo = remember{
+    val memo = remember {
         mutableStateOf("")
     }
-    val groupId = remember{
+    val groupId = remember {
         mutableStateOf(0)
     }
-    val studentId = remember{
+    val studentId = remember {
         mutableStateOf(0)
     }
-    val attitudeScore = remember{
+    val attitudeScore = remember {
         mutableStateOf(0)
     }
-    val presentationScore = remember{
+    val presentationScore = remember {
         mutableStateOf(0)
     }
-    val groupListState =studentMemoViewModel.groupHashState
+    val groupListState = studentMemoViewModel.groupHashState
 
     val studentListState = studentMemoViewModel.studentHashState
 
     val submitState = studentMemoViewModel.handBookSubmitState
 
 
-    var handBookRequest  = HandBookRequest(content = null,attitudeScore =0 , presentationNum = 0)
+    var handBookRequest = HandBookRequest(content = null, attitudeScore = 0, presentationNum = 0)
 
 
     Dialog(
@@ -650,9 +659,11 @@ fun DialogStudentMemo(
             )
             Spacer(modifier = Modifier.height(20.dp))
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+            ) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -682,7 +693,7 @@ fun DialogStudentMemo(
                         .fillMaxHeight()
                 ) {
                     DropDownMenuForMemo(
-                        menuList =studentListState.value.studentHash,
+                        menuList = studentListState.value.studentHash,
                         iconDown = R.drawable.arrow_down,
                         iconUp = R.drawable.arrow_down,
                         placeHolder = "학생 선택",
@@ -692,7 +703,7 @@ fun DialogStudentMemo(
                         onGetInfo = { name, id ->
                             getStudentInfo(name, id)
                             studentId.value = id
-                        } ,
+                        },
                         isGroupSelected = studentListState.value.isSuccess
                     )
                 }
@@ -708,40 +719,44 @@ fun DialogStudentMemo(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(240.dp)
-                ,
+                    .height(240.dp),
                 placeholder = {
                     Text(
                         text = "메모를 입력해주세요.",
                         style = NoteLassTheme.Typography.sixteem_600_pretendard,
-                        color= Color.LightGray
+                        color = Color.LightGray
                     )
                 },
-                textStyle=  NoteLassTheme.Typography.sixteem_600_pretendard,
+                textStyle = NoteLassTheme.Typography.sixteem_600_pretendard,
                 shape = RoundedCornerShape(8.dp)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
 
-            Row(modifier = Modifier.fillMaxWidth()
-            , verticalAlignment = Alignment.CenterVertically){
-                Text(text= "발표 횟수",
+            Row(
+                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "발표 횟수",
                     style = NoteLassTheme.Typography.fourteen_600_pretendard,
                     color = PrimaryBlack,
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Box(modifier = Modifier
-                    .width(80.dp)
-                    .height(32.dp)){
-                NumUpAndDown(isNumChange = {
-                    presentationScore.value = it
-                })
+                Box(
+                    modifier = Modifier
+                        .width(80.dp)
+                        .height(32.dp)
+                ) {
+                    NumUpAndDown(isNumChange = {
+                        presentationScore.value = it
+                    })
                 }
                 Spacer(modifier = Modifier.width(24.dp))
 
-                Text(text= "태도 점수",
+                Text(
+                    text = "태도 점수",
                     style = NoteLassTheme.Typography.fourteen_600_pretendard,
                     color = PrimaryBlack,
                     textAlign = TextAlign.Center
@@ -749,9 +764,11 @@ fun DialogStudentMemo(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Box(modifier = Modifier
-                    .width(80.dp)
-                    .height(32.dp)){
+                Box(
+                    modifier = Modifier
+                        .width(80.dp)
+                        .height(32.dp)
+                ) {
                     NumUpAndDown(isNumChange = {
                         attitudeScore.value = it
                     })
@@ -760,7 +777,7 @@ fun DialogStudentMemo(
 
             Spacer(modifier = Modifier.height(35.dp))
 
-            Row(modifier = Modifier.align(Alignment.End)){
+            Row(modifier = Modifier.align(Alignment.End)) {
 
                 Box(modifier = Modifier.size(width = 49.dp, height = 40.dp)) {
                     RectangleUnableButton(text = "취소") {
@@ -772,10 +789,18 @@ fun DialogStudentMemo(
 
                 Box(modifier = Modifier.size(width = 73.dp, height = 40.dp)) {
                     RectangleEnabledButton(text = "저장하기") {
-                        handBookRequest = HandBookRequest(memo.value,attitudeScore.value,presentationScore.value)
-                        studentMemoViewModel.postHandBook(groupId.value, studentId.value, handBookRequest, onSuccess = {
-                            setShowDialog(false)
-                        })
+                        handBookRequest = HandBookRequest(
+                            memo.value,
+                            attitudeScore.value,
+                            presentationScore.value
+                        )
+                        studentMemoViewModel.postHandBook(
+                            groupId.value,
+                            studentId.value,
+                            handBookRequest,
+                            onSuccess = {
+                                setShowDialog(false)
+                            })
                     }
                 }
 
@@ -785,6 +810,232 @@ fun DialogStudentMemo(
         }
     }
 }
+@Composable
+fun DialogGroupInfo(
+    setShowDialog : (Boolean)-> Unit,
+    onClickDelete : () -> Unit,
+    groupViewModel: GroupViewModel = hiltViewModel()
+) {
+
+//    if(showDeleteDialog.value) {
+//        Log.e("그룹 삭제","그룹 삭제 Dialog")
+//        DialogDeleteGroup(
+//            setShowDialog = {
+//                showDeleteDialog.value = it
+//            }
+//        )
+//    }
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Box(
+            modifier = Modifier
+                .size(width = 480.dp, height = 288.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+        ){
+            Icon(
+                painter= painterResource(id = R.drawable.group_filedelete_small),
+                tint =Color(0xFF26282B),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(24.dp)
+                    .clickable {
+                        setShowDialog(false)
+                    }
+            )
+
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 70.dp, bottom = 40.dp, start = 16.dp, end = 15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text(
+                    text=
+                    "수정 또는 삭제하실 수 있습니다.",
+                    style = NoteLassTheme.Typography.twenty_700_pretendard,color = PrimaryBlack)
+
+                Spacer(modifier = Modifier.height(64.dp))
+
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(58.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ){
+                    Box(modifier = Modifier.weight(1f)){
+                        RectangleEnabledButton(
+                            text ="그룹 삭제"
+                        ) {
+                            onClickDelete()
+                            setShowDialog(false)
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Box(modifier = Modifier.weight(1f)){
+                        RectangleEnabledButton(
+                            text ="명단 수정"
+                        ) {
+                          //  onModify()
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+
+@Composable
+fun DialogDeleteGroup(
+    setShowDialog : (Boolean)-> Unit,
+    goBackToGroup : () -> Unit ,
+    groupViewModel : GroupForTeacherViewModel = hiltViewModel()
+) {
+    val text  = remember{
+        mutableStateOf("")
+    }
+    val isTextWrong = remember{
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
+    val deleteState = groupViewModel.deleteGroupState
+    if(deleteState.value.isSuccess)setShowDialog(false)
+    if(deleteState.value.isError) Toast.makeText(context,"오류가 발생했습니다.",Toast.LENGTH_SHORT).show()
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .size(width = 540.dp, height = 288.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+                .padding(vertical = 25.dp)
+//                .padding(horizontal = 40.dp, vertical = 25.dp),
+                ,
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 15.dp)
+                    .weight(1.5f),
+                horizontalArrangement = Arrangement.SpaceBetween,
+
+                ) {
+                Text(
+                    text = "그룹 삭제시 그룹 내 모든 데이터가 삭제됩니다.",
+                    color = PrimarayBlue,
+                    style = NoteLassTheme.Typography.twenty_700_pretendard
+                )
+
+                Icon(
+                    painter = painterResource(id = R.drawable.group_filedelete_small),
+                    tint = Color(0xFF26282B),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable {
+                            setShowDialog(false)
+                        }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(25.dp))
+
+            Text(
+                text = "그룹을 삭제합니다",
+                style = NoteLassTheme.Typography.twenty_700_pretendard,
+                color = PrimaryBlack,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .weight(1.5f)
+                    .padding(start = 80.dp)
+                ,
+                )
+            Spacer(modifier = Modifier.height(20.dp))
+
+            TextField(
+                value = text.value ,
+                onValueChange = {
+                    text.value = it
+                },
+                enabled= true ,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(3.2f)
+                    .padding(horizontal = 80.dp),
+                textStyle = NoteLassTheme.Typography.sixteem_600_pretendard,
+                placeholder = {
+                    Text(
+                        text = "위 문장을 적어주세요.",
+                        style = NoteLassTheme.Typography.sixteem_600_pretendard,
+                        color= Color.LightGray
+                    )
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor =  Color.White,
+                    unfocusedIndicatorColor = PrimaryGray,
+                    focusedIndicatorColor = PrimarayBlue
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            if(isTextWrong.value){
+                Text(
+                    text = "문장을 제대로 적어주세요.",
+                    style = NoteLassTheme.Typography.twelve_600_pretendard,
+                    color = Color(0xFFFF7788),
+                    modifier = Modifier.weight(1f)
+                        .padding(start = 80.dp),
+                    )
+            }else{
+                Spacer(modifier = Modifier.weight(0.8f))
+
+            }
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Box(
+                modifier = Modifier
+                    .weight(2.5f)
+                    .width(350.dp)
+                    .padding(horizontal = 20.dp)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                if (text.value == "그룹을 삭제합니다") {
+                    RectangleEnabledButton(
+                        text = "삭제하기",
+                        onClick = {
+                            groupViewModel.deleteGroup()
+                            goBackToGroup()
+                        },
+                    )
+                }
+                else{
+                    RectangleUnableButton(
+                        text = "삭제하기",
+                        onClick = {
+                            isTextWrong.value = true
+                        }
+                    )
+
+                }
+
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
 @Preview
 @Composable
 fun DialogPreview(){

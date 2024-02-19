@@ -141,9 +141,9 @@ fun AppBar(
 fun AppBarForTeacherInGroup(
     title : String,
     badgeCount : Int,
+    onGroupInfoClick : () -> Unit= {},
     onGroupClick : () -> Unit  = {},
     onClickLogout : () -> Unit = {}
-
 ) {
     Row(
         modifier = Modifier
@@ -154,6 +154,10 @@ fun AppBarForTeacherInGroup(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
+        Icon(painter = painterResource(id = R.drawable.arrow_left_small), contentDescription = null)
+
+        Spacer(modifier = Modifier.width(16.dp))
+
         Text(
             title, fontSize = 20.sp,
             fontFamily = FontFamily(Font(R.font.pretendard_regular)),
@@ -161,22 +165,34 @@ fun AppBarForTeacherInGroup(
             color = Color(0xFF26282B)
         )
 
+        Box(modifier = Modifier
+            .width(76.dp)
+            .height(40.dp)
+        ){
+            RectangleEnabledButton(text = "그룹 정보") {
+                onGroupInfoClick()
+            }
+        }
+        Box(modifier = Modifier
+            .width(76.dp)
+            .height(40.dp)
+        ){
+            RectangleEnabledButton(text = "학생등록") {
+                onGroupClick()
+            }
+        }
+        Box(modifier = Modifier
+            .width(133.dp)
+            .height(40.dp)
+        ){
+            RectangleEnabledButton(text = "자기평가서 생성") {
+                onGroupClick()
+            }
+        }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ){
-
-                Box(modifier = Modifier
-                    .width(76.dp)
-                    .height(40.dp)
-                ){
-                    RectangleEnabledButton(text = "그룹 정보") {
-                        onGroupClick()
-                    }
-                }
-
-
-            Spacer(modifier = Modifier.width(20.dp))
 
             Box(modifier = Modifier
                 .width(224.dp)

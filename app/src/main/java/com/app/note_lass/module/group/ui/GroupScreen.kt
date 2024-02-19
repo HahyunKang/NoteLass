@@ -51,7 +51,7 @@ import kotlinx.coroutines.supervisorScope
 
 @Composable
 fun GroupScreen(
-     onClickTeacherGroup : (Int) -> Unit,
+     onClickTeacherGroup : (Int, String) -> Unit,
      onClickStudentGroup : (Int) -> Unit,
      onClickLogout : () -> Unit,
      viewModel: GroupViewModel = hiltViewModel(),
@@ -167,7 +167,8 @@ fun GroupScreen(
                DialogEnterGroupAccept(
                    setShowDialog ={
                                   showSecondDialog.value = it
-                   } , groupInfo = viewModel.enterGroupState.value.groupInfo
+                   } ,
+                   groupInfo = viewModel.enterGroupState.value.groupInfo
                ) {
                    viewModel.joinGroup()
                    showSecondDialog.value = false
@@ -208,7 +209,9 @@ fun GroupScreen(
                                     )
                                 )
 
-                                if(role.value.role == Role.TEACHER) onClickTeacherGroup(groupList[it].id.toInt())
+                                if(role.value.role == Role.TEACHER)
+                                    onClickTeacherGroup(groupList[it].id.toInt(), "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}"
+                                )
                                 else onClickStudentGroup(groupList[it].id.toInt())
                             }
                         )

@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -74,7 +76,7 @@ import java.time.LocalDateTime
 fun CreateLectureNoteScreen(
     viewModel: UploadViewModel = hiltViewModel(),
     protoViewModel: ProtoViewModel = hiltViewModel(),
-    goBackToGroup: (Role, Long) -> Unit
+    goBackToGroup: (Role, Long,String) -> Unit
 ){
     val groupInfo  = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",-1))
     val role  = protoViewModel.token.collectAsState(initial = Token("",Role.NONE))
@@ -307,7 +309,7 @@ fun CreateLectureNoteScreen(
       }
         if(viewModel.makeMaterialState.value.isSuccess){
             Toast.makeText(context,"강의자료 생성이 완료되었습니다",Toast.LENGTH_SHORT).show()
-            goBackToGroup(role.value.role,groupInfo.value.groupId!!)
+            goBackToGroup(role.value.role,groupInfo.value.groupId!!,groupInfo.value.groupName!!)
         }
 
         Row(modifier = Modifier
@@ -317,7 +319,7 @@ fun CreateLectureNoteScreen(
             Box(modifier = Modifier.size(49.dp,40.dp)){
                 RectangleUnableButton(text = "취소",
                     onClick = {
-                        goBackToGroup(role.value.role,groupInfo.value.groupId!!)
+                        goBackToGroup(role.value.role,groupInfo.value.groupId!!,groupInfo.value.groupName!!)
                     }
                 )
             }
@@ -346,6 +348,7 @@ fun CreateLectureNoteScreen(
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LectureNoteInfo(
     groupInfo: GroupInfo,

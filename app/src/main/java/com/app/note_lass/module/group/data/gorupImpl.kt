@@ -89,4 +89,11 @@ class GroupImpl @Inject constructor(
         return groupApi.approveAllGroup(accessToken, groupId)
     }
 
+    override suspend fun deleteGroup(
+        accessToken: String,
+        groupId: Long
+    ): NoteResponseBody<Nothing> {
+        return groupApi.deleteGroup(accessToken, groupId)
+    }
+
 }

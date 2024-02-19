@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.group.data.CreateGroupState
 import com.app.note_lass.module.group.data.InfoForCreate
@@ -16,6 +17,7 @@ import com.app.note_lass.module.group.data.studentList.StudentListState
 import com.app.note_lass.module.group.domain.repository.ApproveAllGroupUseCase
 import com.app.note_lass.module.group.domain.repository.ApproveGroupUseCase
 import com.app.note_lass.module.group.domain.repository.CreateGroupUseCase
+import com.app.note_lass.module.group.domain.repository.DeleteGroupUseCase
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.group.domain.repository.GetJoinStudentListUseCase
 import com.app.note_lass.module.group.domain.repository.GetStudentListUseCase
@@ -33,7 +35,8 @@ class GroupForTeacherViewModel @Inject constructor(
     val approveAllGroupUseCase: ApproveAllGroupUseCase,
     val rejectGroupUseCase: RejectGroupUseCase,
     val joinStudentListUseCase: GetJoinStudentListUseCase,
-    val savedStateHandle: SavedStateHandle
+    val deleteGroupUseCase: DeleteGroupUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel(){
 
     private val _studentListState = mutableStateOf(StudentListState())
@@ -44,6 +47,10 @@ class GroupForTeacherViewModel @Inject constructor(
 
     private val _approveOrReject = mutableStateOf(ApproveOrRejectGroupState())
     val approveOrReject = _approveOrReject
+
+    private val _deleteGroupState = mutableStateOf(RequestState<Nothing>())
+    val deleteGroupState = _deleteGroupState
+
 
     private val groupId = mutableStateOf(0)
 
@@ -205,7 +212,35 @@ class GroupForTeacherViewModel @Inject constructor(
 
         }.launchIn(viewModelScope)
     }
+    fun deleteGroup(){
+        deleteGroupUseCase(groupId.value.toLong()).onEach {
+                result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _deleteGroupState.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+                is Resource.Success  ->{
+                    _deleteGroupState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                    )
+                    Log.e("success in reject",result.code.toString())
 
+                }
+                is Resource.Error -> {
+                    _deleteGroupState.value = RequestState(
+                        isError =  true,
+                        isSuccess = false,
+                    )
+                }
+            }
+
+
+        }.launchIn(viewModelScope)
+    }
 
 
 }
