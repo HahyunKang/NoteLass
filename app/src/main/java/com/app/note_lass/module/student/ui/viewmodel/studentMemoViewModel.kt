@@ -4,17 +4,18 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.group.data.groupList.GroupHashState
-import com.app.note_lass.module.group.data.groupList.GroupListState
 import com.app.note_lass.module.group.data.groupList.StudentHashState
-import com.app.note_lass.module.group.data.studentList.StudentListState
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.group.domain.repository.GetStudentListUseCase
-import com.app.note_lass.module.login.domain.LoginUseCase
+import com.app.note_lass.module.student.data.HandBookListState
 import com.app.note_lass.module.student.data.HandBookRequest
 import com.app.note_lass.module.student.data.HandBookSubmitState
+import com.app.note_lass.module.student.domain.usecase.DeleteHandBookUseCase
 import com.app.note_lass.module.student.domain.usecase.PostHandBookUseCase
+import com.app.note_lass.module.student.domain.usecase.getHandBookListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,8 +27,10 @@ import javax.inject.Inject
 class StudentMemoViewModel @Inject constructor(
     val getGroupUseCase: GetGroupUseCase,
     val getStudentUseCase: GetStudentListUseCase,
-    val postHandBookUseCase: PostHandBookUseCase
-) : ViewModel() {
+    val postHandBookUseCase: PostHandBookUseCase,
+    val deleteHandBookUseCase: DeleteHandBookUseCase,
+    val getHandBookListUseCase: getHandBookListUseCase,
+    ) : ViewModel() {
 
     private val _groupHashState = mutableStateOf(GroupHashState())
     val groupHashState = _groupHashState
@@ -38,10 +41,16 @@ class StudentMemoViewModel @Inject constructor(
     private val _handBookSubmitState = mutableStateOf(HandBookSubmitState())
     val handBookSubmitState = _handBookSubmitState
 
+    private val _handBookDeleteState = mutableStateOf(RequestState<Nothing>())
+    val handBookDeleteState = _handBookDeleteState
+
+    private val _handBookListState = mutableStateOf(HandBookListState())
+    val getHandBooksState = _handBookListState
+
     init {
         getGroupList()
     }
-    fun getGroupList() {
+    private fun getGroupList() {
         getGroupUseCase().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -111,8 +120,6 @@ class StudentMemoViewModel @Inject constructor(
 
 
         }.launchIn(viewModelScope)
-
-
     }
 
     fun postHandBook(groupId : Int, userId: Int, handBookRequest: HandBookRequest, onSuccess : () -> Unit){
@@ -141,7 +148,60 @@ class StudentMemoViewModel @Inject constructor(
 
 
         }.launchIn(viewModelScope)
+    }
 
+    fun deleteHandBook(id : Long){
+        deleteHandBookUseCase(id).onEach {
+                result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _handBookDeleteState.value = RequestState(
+                        isLoading = true,
+                    )
+                }
+                is Resource.Success  ->{
+                    _handBookDeleteState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                    )
+                    Log.e("success in studentList",result.code.toString())
+                }
+                is Resource.Error -> {
+                    _handBookDeleteState.value = RequestState(
+                        isError = true,
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 
+    private fun getStudentHandBookList(userId: Int){
+        getHandBookListUseCase(userId.toInt()).onEach {
+                result ->
+
+            when (result) {
+
+                is Resource.Loading -> {
+                    _handBookListState.value = HandBookListState(
+                        isLoading = true,
+                    )
+                }
+
+                is Resource.Success -> {
+                    _handBookListState.value = HandBookListState(
+                        isSuccess = true,
+                        handBookList = result.data!!,
+                        isLoading = false
+                    )
+                }
+
+                is Resource.Error -> {
+                    _handBookListState.value = HandBookListState(
+                        isError = true
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
     }
 }

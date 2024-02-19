@@ -1,7 +1,9 @@
 package com.app.note_lass.core.navigation
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -21,7 +23,8 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
         composable(GroupScreen.Home.route) {
          GroupScreen(
              onClickTeacherGroup = {
-             navController.navigate(GroupScreen.GroupForTeacher.passQuery(it))
+                 id, info ->
+             navController.navigate(GroupScreen.GroupForTeacher.passQuery(id,info))
          },
              onClickStudentGroup = {
              navController.navigate(GroupScreen.GroupForStudent.passQuery(it))
@@ -36,17 +39,28 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
 
         composable(
             route = GroupScreen.GroupForTeacher.route,
-            arguments = listOf(navArgument(name = "groupId") { type = NavType.IntType }
+            arguments = listOf(
+                navArgument(name = "groupId") { type = NavType.IntType },
+                navArgument(name = "groupInfo") { type = NavType.StringType}
             ) ) {
-            GroupTeacherScreen(
-                onTouchCreateNotice = {
-                navController.navigate(UploadScreen.CreateNotice.route)
-            },
-                onClickStudentRecord = {
-                    userId, studentId, name ->
-                    navController.navigate(RecordScreen.RecordDetail.passQuery(userId,studentId,name))
-                }
-            )
+            val groupInfo = it.arguments?.getString("groupInfo")
+            val context = LocalContext.current
+            if (groupInfo != null) {
+                GroupTeacherScreen(
+                    groupInfo = groupInfo,
+                    onTouchCreateNotice = {
+                        navController.navigate(UploadScreen.CreateNotice.route)
+                    },
+                    onClickStudentRecord = {
+                            userId, studentId, name ->
+                        navController.navigate(RecordScreen.RecordDetail.passQuery(userId,studentId,name))
+                    },
+                    goBackToGroup = {
+                        navController.navigate(GroupScreen.Home.route)
+                        Toast.makeText(context,"삭제되었습니다.",Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
         }
 
         composable(

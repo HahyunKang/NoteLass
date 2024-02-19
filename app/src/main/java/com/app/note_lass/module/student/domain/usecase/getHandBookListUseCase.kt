@@ -1,17 +1,11 @@
 package com.app.note_lass.module.student.domain.usecase
 
-import android.util.Log
 import androidx.datastore.core.DataStore
-import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.Token
-import com.app.note_lass.module.login.data.LoginDto
-import com.app.note_lass.module.login.data.LoginRequest
-import com.app.note_lass.module.login.domain.repository.LoginRepository
 import com.app.note_lass.module.login.domain.repository.StudentRepository
 import com.app.note_lass.module.student.data.HandBook
-import com.app.note_lass.module.student.data.HandBookRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow

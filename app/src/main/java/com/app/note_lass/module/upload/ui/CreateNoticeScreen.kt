@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -32,7 +30,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -76,9 +73,9 @@ import java.time.LocalDateTime
 
 @Composable
 fun CreateNoticeScreen(
-    createNotice : (String,String,List<MultipartBody.Part?>) -> Unit,
-    protoViewModel : ProtoViewModel = hiltViewModel(),
-    goBackToGroup: (Role, Long) -> Unit
+    createNotice: (String, String, List<MultipartBody.Part?>) -> Unit,
+    protoViewModel: ProtoViewModel = hiltViewModel(),
+    goBackToGroup: (Role, Long, String) -> Unit
 ){
     val groupInfo  = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",-1))
     val role  = protoViewModel.token.collectAsState(initial = Token("", Role.NONE))
@@ -411,7 +408,7 @@ fun CreateNoticeScreen(
             Box(modifier = Modifier.size(49.dp,40.dp)){
                 RectangleUnableButton(text = "취소",
                     onClick = {
-                        goBackToGroup(role.value.role,groupInfo.value.groupId!!)
+                        goBackToGroup(role.value.role,groupInfo.value.groupId!!,groupInfo.value.groupName!!)
                     })
             }
             Spacer(modifier = Modifier.width(16.dp))

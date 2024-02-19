@@ -1,14 +1,7 @@
 package com.app.note_lass.module.record.ui
 
-import android.annotation.SuppressLint
-import android.app.DownloadManager
-import android.content.ContentResolver
-import android.net.Uri
 import android.os.Build
-import android.provider.OpenableColumns
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,10 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -37,19 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.common.AndroidDownLoader
 import com.app.note_lass.common.DownloadCompletedReceiver
-import com.app.note_lass.common.DownloadStatusListener
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
+import com.app.note_lass.module.student.data.HandBook
 import com.app.note_lass.module.student.ui.HandBookListScreen
 import com.app.note_lass.ui.component.AppBarForNoGroup
 import com.app.note_lass.ui.component.DialogInRecord
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okio.BufferedSink
-import okio.source
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -63,6 +48,7 @@ fun StudentRecordUploadScreen(
 
     val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("", "", 0))
     val excelState = recordViewModel.getExcelState
+    val handBookState = recordViewModel.getHandBookState
 
 
     DisposableEffect(Unit) {
@@ -87,9 +73,13 @@ fun StudentRecordUploadScreen(
     val isPrinted = remember {
         mutableStateOf(false)
     }
+    val handBooks = remember {
+        mutableStateOf(mutableListOf<HandBook>())
+
+    }
+
     val context = LocalContext.current
 
-    val handBookListState = recordViewModel.getHandBookState
     val downloadStatus = recordViewModel.downloadStatus
     Log.e("다운로드",downloadStatus.value)
 
@@ -199,13 +189,21 @@ fun StudentRecordUploadScreen(
                             .fillMaxHeight()
                             .padding(horizontal = 24.dp, vertical = 15.dp)
                     ) {
+                    if(handBookState.value.isSuccess)  {
+                        handBooks.value = handBookState.value.handBookList.toMutableList()
+
                         HandBookListScreen(
-                            handBookList = handBookListState.value.handBookList,
                             isMemoActive = isMemoActive.value,
                             getHandBookList = {
                                 idList.value = it.toMutableList()
-                            }
+                            },
+                            handBooks = handBookState.value.handBookList,
+                            studentId = studentId,
+                            isDelete = {
+                                recordViewModel.deleteHandBook(it)
+                            },
                         )
+                    }
 
 
                     }

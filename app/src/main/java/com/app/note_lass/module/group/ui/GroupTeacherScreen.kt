@@ -33,6 +33,8 @@ import com.app.note_lass.module.group.ui.component.JoinDialog
 import com.app.note_lass.module.group.ui.viewModel.GroupForTeacherViewModel
 import com.app.note_lass.ui.component.AppBar
 import com.app.note_lass.ui.component.AppBarForTeacherInGroup
+import com.app.note_lass.ui.component.DialogDeleteGroup
+import com.app.note_lass.ui.component.DialogGroupInfo
 import com.app.note_lass.ui.component.IconAndText
 import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.component.SectionHeaderWithCreate
@@ -41,11 +43,19 @@ import com.app.note_lass.ui.theme.PrimaryPurple
 
 @Composable
 fun GroupTeacherScreen(
+    groupInfo : String,
     onTouchCreateNotice : () -> Unit,
     onClickStudentRecord : (Long,Long,String) -> Unit,
+    goBackToGroup : () -> Unit,
     viewModel : GroupForTeacherViewModel = hiltViewModel()
 ){
     val isShowDialog = remember{
+        mutableStateOf(false)
+    }
+    val isGroupInfoDialog = remember{
+        mutableStateOf(false)
+    }
+    val isGroupDeleteDialog = remember{
         mutableStateOf(false)
     }
     val context=  LocalContext.current
@@ -87,16 +97,38 @@ fun GroupTeacherScreen(
         )
     }
 
+    if(isGroupInfoDialog.value){
+        DialogGroupInfo(
+            setShowDialog ={
+                isGroupInfoDialog.value = it
+            },
+            onClickDelete = {
+                isGroupDeleteDialog.value = true
+            }
+        )
+    }
+    if(isGroupDeleteDialog.value){
+        DialogDeleteGroup(
+            setShowDialog = {
+            isGroupDeleteDialog.value = it
+        },
+            goBackToGroup = goBackToGroup
+
+        )
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             AppBarForTeacherInGroup(
-                title = "그룹 정보",
+                title = groupInfo,
                 badgeCount = 12,
                 onGroupClick ={
                     isShowDialog.value = true
                     viewModel.getJoinStudentList()
+                },
+                onGroupInfoClick = {
+                    isGroupInfoDialog.value = true
                 }
             )
 
@@ -108,7 +140,6 @@ fun GroupTeacherScreen(
         content = {
 
             val studentListState = viewModel.studentListState
-
 
             Row(
                 modifier = Modifier

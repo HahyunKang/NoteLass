@@ -1,10 +1,10 @@
-package com.app.note_lass.module.login.domain
+package com.app.note_lass.module.group.domain.repository
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.Token
-import com.app.note_lass.module.login.domain.repository.LoginRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -12,23 +12,25 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class LogoutUseCase @Inject constructor(
-    val loginRepository: LoginRepository,
+class DeleteGroupUseCase @Inject constructor(
+    val groupRepository: GroupRepository,
     val dataStore : DataStore<Token>
 ) {
 
-    operator fun invoke() : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
+    operator fun invoke(groupId : Long) : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
         try {
-            emit(Resource.Loading())
             val token = "Bearer ${dataStore.data.first().accessToken}"
+            Log.e("token in GroupList",token)
 
-            val logoutResponse = loginRepository.logout(accessToken = token)
+            emit(Resource.Loading())
+
+            val groupResponse = groupRepository.deleteGroup(token,groupId)
 
             emit(
                 Resource.Success(
-                data = logoutResponse,
-                    code = logoutResponse.code,
-                    message = logoutResponse.message
+                    data = groupResponse,
+                    code = groupResponse.code,
+                    message = groupResponse.message
             )
 
             )

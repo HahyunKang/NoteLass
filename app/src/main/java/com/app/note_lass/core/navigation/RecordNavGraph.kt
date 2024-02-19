@@ -13,8 +13,10 @@ import com.app.note_lass.module.record.ui.StudentRecordUploadScreen
 fun NavGraphBuilder.RecordNavGraph(navController: NavController) {
 
 
-    composable(route = RecordScreen.RecordDetail.route,
-        arguments = listOf(navArgument(name = "userId") { type = NavType.LongType},
+    composable(
+        route = RecordScreen.RecordDetail.route,
+        arguments =
+            listOf(navArgument(name = "userId") { type = NavType.LongType},
             navArgument(name = "studentId") { type = NavType.LongType},
             navArgument(name = "name") { type = NavType.StringType}
         )

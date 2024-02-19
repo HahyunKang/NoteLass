@@ -39,7 +39,8 @@ fun HandBookContent(
     date : LocalDateTime,
     content : String,
     isMemoActive : Boolean,
-    isChecked : (Boolean) -> Unit
+    isChecked : (Boolean) -> Unit,
+    isDelete : () -> Unit
 ){
     val formatDate = DateFormatter(date).formattedDate
     val checked = remember {
@@ -99,7 +100,10 @@ fun HandBookContent(
                 Text(
                     text = "삭제",
                     style = NoteLassTheme.Typography.twelve_600_pretendard,
-                    color = Color.Gray
+                    color = Color.Gray,
+                    modifier = Modifier.clickable {
+                        isDelete()
+                    }
                 )
             }
 

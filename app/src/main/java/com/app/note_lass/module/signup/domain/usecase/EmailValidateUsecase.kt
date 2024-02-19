@@ -1,8 +1,6 @@
 package com.app.note_lass.module.signup.domain.usecase
 
-import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
-import com.app.note_lass.module.signup.data.SignUpRequest
 import com.app.note_lass.module.signup.domain.presentation.SignUpRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

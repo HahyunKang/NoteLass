@@ -1,7 +1,6 @@
 package com.app.note_lass.module.signup.domain.usecase
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource

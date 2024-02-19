@@ -76,7 +76,8 @@ fun RectangleEnabledButton(
     text : String,
     onClick : () -> Unit
 ){
-   Button(onClick = { onClick() },
+   Button(
+       onClick = onClick,
        modifier = Modifier.fillMaxSize(),
        shape = RoundedCornerShape(8.dp),
        colors = ButtonDefaults.textButtonColors(containerColor = PrimarayBlue),
