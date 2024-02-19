@@ -32,5 +32,6 @@ interface GroupRepository {
     suspend fun getNoticeDetail(accessToken: String, noticeId: Long) : NoteResponseBody<Notice>
     suspend fun approveAllGroup(accessToken: String, groupId: Long) : NoteResponseBody<Nothing>
     suspend fun deleteGroup(accessToken: String, groupId: Long): NoteResponseBody<Nothing>
+    suspend fun deleteStudent(accessToken: String, groupId: Long,userId: Long): NoteResponseBody<Nothing>
 
 }

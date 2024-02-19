@@ -8,6 +8,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -27,6 +28,12 @@ interface StudentApi {
       @Path(value = "groupId") groupId : Int,
       @Path(value = "userId") userId : Int,
   ) : NoteResponseBody<List<HandBook>>
+    @PATCH("api/handbook/{handbookContentId}")
+    suspend fun modifyHandBook(
+        @Header(value = "Authorization") accessToken: String,
+        @Path(value = "handbookContentId") handbookContentId: Long,
+        @Body content : String
+    ) : NoteResponseBody<Nothing>
 
     @DELETE("api/handbook/{handbookContentId}")
     suspend fun deleteHandBook(

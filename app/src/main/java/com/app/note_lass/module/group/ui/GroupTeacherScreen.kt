@@ -33,7 +33,9 @@ import com.app.note_lass.module.group.ui.component.JoinDialog
 import com.app.note_lass.module.group.ui.viewModel.GroupForTeacherViewModel
 import com.app.note_lass.ui.component.AppBar
 import com.app.note_lass.ui.component.AppBarForTeacherInGroup
+import com.app.note_lass.ui.component.DialogDeleteConfirm
 import com.app.note_lass.ui.component.DialogDeleteGroup
+import com.app.note_lass.ui.component.DialogDeleteStudent
 import com.app.note_lass.ui.component.DialogGroupInfo
 import com.app.note_lass.ui.component.IconAndText
 import com.app.note_lass.ui.component.SectionHeader
@@ -56,6 +58,12 @@ fun GroupTeacherScreen(
         mutableStateOf(false)
     }
     val isGroupDeleteDialog = remember{
+        mutableStateOf(false)
+    }
+    val isGroupModifyDialog = remember{
+        mutableStateOf(false)
+    }
+    val isStudentDeleteDialog = remember{
         mutableStateOf(false)
     }
     val context=  LocalContext.current
@@ -104,9 +112,37 @@ fun GroupTeacherScreen(
             },
             onClickDelete = {
                 isGroupDeleteDialog.value = true
+            },
+            onClickModify = {
+                isGroupModifyDialog.value = true
             }
         )
     }
+    val deleteStudentId = remember {
+        mutableStateOf(0)
+    }
+    if(isGroupModifyDialog.value){
+        DialogDeleteStudent(
+            groupInfo = groupInfo,
+            setShowDialog = {
+                  isGroupModifyDialog.value = it
+            },
+            onClickDelete = {
+                isStudentDeleteDialog.value = true
+                deleteStudentId.value = it
+            }
+        )
+    }
+    if(isStudentDeleteDialog.value){
+        DialogDeleteConfirm(
+            setShowDialog = {
+                            isStudentDeleteDialog.value = it
+            },
+            studentId = deleteStudentId.value,
+        )
+    }
+
+
     if(isGroupDeleteDialog.value){
         DialogDeleteGroup(
             setShowDialog = {

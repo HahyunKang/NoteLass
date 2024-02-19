@@ -17,15 +17,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextField
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextFieldDefaults
 
 import androidx.compose.material3.Text
 import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +45,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -814,6 +819,7 @@ fun DialogStudentMemo(
 fun DialogGroupInfo(
     setShowDialog : (Boolean)-> Unit,
     onClickDelete : () -> Unit,
+    onClickModify : () -> Unit,
     groupViewModel: GroupViewModel = hiltViewModel()
 ) {
 
@@ -877,7 +883,7 @@ fun DialogGroupInfo(
                         RectangleEnabledButton(
                             text ="명단 수정"
                         ) {
-                          //  onModify()
+                            onClickModify()
                         }
                     }
                 }
@@ -987,7 +993,8 @@ fun DialogDeleteGroup(
                     text = "문장을 제대로 적어주세요.",
                     style = NoteLassTheme.Typography.twelve_600_pretendard,
                     color = Color(0xFFFF7788),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
                         .padding(start = 80.dp),
                     )
             }else{
@@ -1026,10 +1033,271 @@ fun DialogDeleteGroup(
         }
     }
 }
+@Composable
+fun DialogDeleteStudent(
+    groupInfo: String,
+    setShowDialog : (Boolean)-> Unit,
+    onClickDelete : (Int)-> Unit,
+    groupViewModel : GroupForTeacherViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+    val studentsState  = groupViewModel.studentListState
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .size(width = 580.dp, height = 658.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+                .padding(vertical = 22.dp)
+//                .padding(horizontal = 40.dp, vertical = 25.dp),
+            ,
+        ) {
+
+                Text(
+                    text = groupInfo,
+                    color = PrimaryBlack,
+                    modifier = Modifier.padding(start= 22.dp ),
+                    style = NoteLassTheme.Typography.twenty_700_pretendard
+                )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 110.dp, end = 131.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                Text(
+                    text = "번호",
+                    style = NoteLassTheme.Typography.twelve_600_pretendard,
+                    color = PrimaryGray
+                )
+
+                Text(
+                    text = "이름",
+                    style = NoteLassTheme.Typography.twelve_600_pretendard,
+                    color = PrimaryGray
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            androidx.compose.material3.Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 50.dp),
+                thickness = 1.dp,
+                color = PrimaryGray
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ){
+               itemsIndexed(studentsState.value.studentList) {
+                   index, student ->
+                   Row(
+                       modifier = Modifier
+                           .fillMaxWidth()
+                           .padding(start = 108.dp, end = 77.dp),
+                       horizontalArrangement = Arrangement.SpaceBetween,
+                   ) {
+                       Text(text = (index+1).toString(),color = PrimarayBlue,style = NoteLassTheme.Typography.twelve_600_pretendard)
+
+                       Row(modifier = Modifier.wrapContentWidth()){
+                           Text(
+                               text= student.name,color = PrimaryBlack, style = NoteLassTheme.Typography.twelve_600_pretendard
+                           )
+                           Spacer(modifier = Modifier.width(41.dp))
+                           Text(text = "삭제",
+                               color = PrimaryGray,
+                               style = NoteLassTheme.Typography.twelve_600_pretendard,
+                               textDecoration = TextDecoration.Underline,
+                               modifier = Modifier.clickable {
+                                   onClickDelete(student.id)
+                                   setShowDialog(false)
+                               }
+                           )
+                       }
+                   }
+               }
+
+            }
+        }
+    }
+}
+
+@Composable
+fun DialogDeleteConfirm(
+    setShowDialog : (Boolean)-> Unit,
+    studentId : Int,
+    groupViewModel: GroupForTeacherViewModel = hiltViewModel()
+) {
+
+//    if(showDeleteDialog.value) {
+//        Log.e("그룹 삭제","그룹 삭제 Dialog")
+//        DialogDeleteGroup(
+//            setShowDialog = {
+//                showDeleteDialog.value = it
+//            }
+//        )
+//    }
+    val context = LocalContext.current
+    if(groupViewModel.deleteStudentState.value.isSuccess){
+        Toast.makeText(context,"삭제되었습니다.",Toast.LENGTH_SHORT).show()
+        setShowDialog(false)
+    }
+    if(groupViewModel.deleteStudentState.value.isError){
+        Toast.makeText(context,"오류가 발생했습니다.",Toast.LENGTH_SHORT).show()
+
+    }
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Box(
+            modifier = Modifier
+                .size(width = 480.dp, height = 288.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+        ){
+            Icon(
+                painter= painterResource(id = R.drawable.group_filedelete_small),
+                tint =Color(0xFF26282B),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(24.dp)
+                    .clickable {
+                        setShowDialog(false)
+                    }
+            )
+
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 70.dp, bottom = 40.dp, start = 16.dp, end = 15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text(
+                    text= "삭제하시면 해당 학생 데이터가 사라집니다.\n정말 삭제하시겠습니까?",
+                    style = NoteLassTheme.Typography.twenty_700_pretendard,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    color = PrimaryBlack
+                )
+
+                Spacer(modifier = Modifier.height(64.dp))
+
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(58.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ){
+                    Box(modifier = Modifier.weight(1f)){
+                        RectangleUnableButton(
+                            text ="계속 이용하기"
+                        ) {
+                            setShowDialog(false)
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Box(modifier = Modifier.weight(1f)){
+                        RectangleEnabledButton(
+                            text ="삭제하기"
+                        ) {
+                            groupViewModel.deleteStudent(studentId.toLong())
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
 
 
+@Composable
+fun DialogModifyMemo(
+    setShowDialog : (Boolean)-> Unit,
+    memoId : Int,
+    memoContent : String,
+    onClickModify : (String) -> Unit,
+    groupViewModel: GroupViewModel = hiltViewModel()
+) {
+    val content = remember{
+        mutableStateOf(memoContent)
+    }
 
+//    if(showDeleteDialog.value) {
+//        Log.e("그룹 삭제","그룹 삭제 Dialog")
+//        DialogDeleteGroup(
+//            setShowDialog = {
+//                showDeleteDialog.value = it
+//            }
+//        )
+//    }
 
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .size(width = 600.dp, height = 388.dp)
+                .padding(horizontal = 20.dp, vertical = 25.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+        ){
+
+            OutlinedTextField(
+                value = content.value,
+                onValueChange = {
+                    content.value = it
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 25.dp)
+                    .weight(4.5f),
+                shape= RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = PrimaryGray,
+                    unfocusedBorderColor = PrimaryGray,
+                    backgroundColor = Color.White
+                )
+            )
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Row(
+                    modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(bottom = 15.dp,end = 15.dp)
+                    .align(Alignment.End)
+                    .weight(1f),
+                ){
+                    Box(modifier = Modifier.width(80.dp)){
+                        RectangleUnableButton(
+                            text ="취소"
+                        ) {
+                            setShowDialog(false)
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Box(modifier = Modifier.width(100.dp)){
+                        RectangleEnabledButton(
+                            text ="저장하기"
+                        ) {
+                            onClickModify(content.value)
+                        }
+                    }
+                }
+            }
+
+        }
+    }
 
 
 

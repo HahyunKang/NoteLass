@@ -31,6 +31,7 @@ fun HandBookListScreen(
     handBooks : List<HandBook>,
     studentId: Long,
     isDelete : (Long) -> Unit,
+    isModify : (String,Long) -> Unit,
     studentMemoViewModel: StudentMemoViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
@@ -64,6 +65,9 @@ fun HandBookListScreen(
                 },
                 isDelete = {
                     isDelete(handbook.id.toLong())
+                },
+                isModify = {
+                    isModify(handbook.content, handbook.id.toLong())
                 }
             )
             Spacer(modifier = Modifier.height(5.dp))

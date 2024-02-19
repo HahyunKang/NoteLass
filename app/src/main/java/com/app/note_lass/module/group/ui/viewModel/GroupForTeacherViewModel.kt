@@ -18,6 +18,7 @@ import com.app.note_lass.module.group.domain.repository.ApproveAllGroupUseCase
 import com.app.note_lass.module.group.domain.repository.ApproveGroupUseCase
 import com.app.note_lass.module.group.domain.repository.CreateGroupUseCase
 import com.app.note_lass.module.group.domain.repository.DeleteGroupUseCase
+import com.app.note_lass.module.group.domain.repository.DeleteStudentUseCase
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.group.domain.repository.GetJoinStudentListUseCase
 import com.app.note_lass.module.group.domain.repository.GetStudentListUseCase
@@ -36,6 +37,7 @@ class GroupForTeacherViewModel @Inject constructor(
     val rejectGroupUseCase: RejectGroupUseCase,
     val joinStudentListUseCase: GetJoinStudentListUseCase,
     val deleteGroupUseCase: DeleteGroupUseCase,
+    val deleteStudentUseCase: DeleteStudentUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(){
 
@@ -51,6 +53,8 @@ class GroupForTeacherViewModel @Inject constructor(
     private val _deleteGroupState = mutableStateOf(RequestState<Nothing>())
     val deleteGroupState = _deleteGroupState
 
+    private val _deleteStudent = mutableStateOf(RequestState<Nothing>())
+    val deleteStudentState= _deleteStudent
 
     private val groupId = mutableStateOf(0)
 
@@ -242,5 +246,33 @@ class GroupForTeacherViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun deleteStudent(userId : Long){
+        deleteStudentUseCase(groupId.value.toLong(),userId).onEach {
+                result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _deleteStudent.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+                is Resource.Success  ->{
+                    _deleteStudent.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                    )
+                    Log.e("success in reject",result.code.toString())
 
+                }
+                is Resource.Error -> {
+                    _deleteStudent.value = RequestState(
+                        isError =  true,
+                        isSuccess = false,
+                    )
+                }
+            }
+
+
+        }.launchIn(viewModelScope)
+    }
 }

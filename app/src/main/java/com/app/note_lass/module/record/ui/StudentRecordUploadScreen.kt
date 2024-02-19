@@ -2,6 +2,7 @@ package com.app.note_lass.module.record.ui
 
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import com.app.note_lass.module.student.data.HandBook
 import com.app.note_lass.module.student.ui.HandBookListScreen
 import com.app.note_lass.ui.component.AppBarForNoGroup
 import com.app.note_lass.ui.component.DialogInRecord
+import com.app.note_lass.ui.component.DialogModifyMemo
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -66,6 +68,15 @@ fun StudentRecordUploadScreen(
     }
     val isSecondDialogShow = remember {
         mutableStateOf(false)
+    }
+    val isDialogModifyMemo = remember {
+        mutableStateOf(false)
+    }
+    val modifyId = remember{
+        mutableStateOf(0)
+    }
+    val modifyContent = remember{
+        mutableStateOf("")
     }
     val isMemoActive = remember {
         mutableStateOf(false)
@@ -120,7 +131,26 @@ fun StudentRecordUploadScreen(
                 isPrinted.value = true
             }
         }
+    if(isDialogModifyMemo.value){
+        DialogModifyMemo(
+            setShowDialog ={
+                           isDialogModifyMemo.value = it
+            } ,
+            memoId = modifyId.value,
+            memoContent = modifyContent.value,
+            onClickModify ={
+                recordViewModel.modifyHandBook(modifyId.value.toLong(),it)
+            }
+        )
+    }
+    val modifyState = recordViewModel.handBookModifyState
+    LaunchedEffect(key1 = modifyState.value) {
+        if (modifyState.value.isSuccess) {
+            Toast.makeText(context,"수정이 완료되었습니다.",Toast.LENGTH_SHORT).show()
+            isDialogModifyMemo.value = false
 
+        }
+    }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -202,6 +232,12 @@ fun StudentRecordUploadScreen(
                             isDelete = {
                                 recordViewModel.deleteHandBook(it)
                             },
+                            isModify ={
+                                content,id ->
+                                modifyContent.value = content
+                                modifyId.value = id.toInt()
+                                isDialogModifyMemo.value = true
+                            }
                         )
                     }
 

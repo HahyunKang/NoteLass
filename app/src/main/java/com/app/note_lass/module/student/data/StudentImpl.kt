@@ -43,4 +43,12 @@ class StudentImpl @Inject constructor(
         return studentApi.deleteHandBook(accessToken, handbookContentId)
     }
 
+    override suspend fun modifyHandBook(
+        accessToken: String,
+        handbookContentId: Long,
+        content: String
+    ): NoteResponseBody<Nothing> {
+        return studentApi.modifyHandBook(accessToken, handbookContentId, content)
+    }
+
 }

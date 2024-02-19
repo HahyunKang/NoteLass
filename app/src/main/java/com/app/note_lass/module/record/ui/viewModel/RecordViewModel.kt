@@ -24,6 +24,7 @@ import com.app.note_lass.module.record.domain.usecase.PostExcelUseCase
 import com.app.note_lass.module.record.domain.usecase.PostRecordUseCase
 import com.app.note_lass.module.student.data.HandBookListState
 import com.app.note_lass.module.student.domain.usecase.DeleteHandBookUseCase
+import com.app.note_lass.module.student.domain.usecase.ModifyHandBookUseCase
 import com.app.note_lass.module.student.domain.usecase.getHandBookListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -43,6 +44,7 @@ class RecordViewModel @Inject constructor(
     val getRecordScoreUseCase: GetRecordScoreUseCase,
     val getGuidelineUseCase: GetGuidelineUseCase,
     val deleteHandBookUseCase: DeleteHandBookUseCase,
+    val modifyHandBookUseCase: ModifyHandBookUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), DownloadStatusListener {
 
@@ -70,9 +72,12 @@ class RecordViewModel @Inject constructor(
     private val _handBookDeleteState = mutableStateOf(RequestState<Nothing>())
     val handBookDeleteState = _handBookDeleteState
 
+    private val _handBookModifyState = mutableStateOf(RequestState<Nothing>())
+    val handBookModifyState = _handBookModifyState
 
     private val _getScoreState = mutableStateOf(GetScoreState())
     val getScoreState = _getScoreState
+
     private var _downloadStatus = mutableStateOf("")
     val downloadStatus = _downloadStatus
 
@@ -350,6 +355,31 @@ class RecordViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     _handBookDeleteState.value = RequestState(
+                        isError = true,
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+    fun modifyHandBook(id: Long,content : String) {
+        modifyHandBookUseCase(id,content).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _handBookModifyState.value = RequestState(
+                        isLoading = true,
+                    )
+                }
+
+                is Resource.Success -> {
+                    _handBookModifyState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                    )
+                    getStudentHandBookList()
+                }
+
+                is Resource.Error -> {
+                    _handBookModifyState.value = RequestState(
                         isError = true,
                     )
                 }

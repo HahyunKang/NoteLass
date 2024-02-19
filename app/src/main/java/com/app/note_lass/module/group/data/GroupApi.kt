@@ -102,4 +102,12 @@ interface GroupApi {
         @Path(value = "groupId") groupId: Long
     ) : NoteResponseBody<Nothing>
 
+    @DELETE("api/group/{groupId}/{userId}")
+    suspend fun deleteStudent(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId: Long,
+        @Path(value = "userId") userId: Long,
+        ) : NoteResponseBody<Nothing>
+
+
 }

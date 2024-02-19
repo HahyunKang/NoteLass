@@ -33,5 +33,9 @@ interface StudentRepository {
         accessToken: String,
         handbookContentId: Long
     ) : Response<Unit>
-
+    suspend fun modifyHandBook(
+        accessToken: String,
+        handbookContentId: Long,
+        content : String
+    ) : NoteResponseBody<Nothing>
 }
