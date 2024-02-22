@@ -1,6 +1,7 @@
 package com.app.note_lass.module.group.ui.component
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -82,27 +85,29 @@ fun NoticeDetailInfo(
 //            fileSize = fileManager.getFileSize(context, pdfUri!!)
 
         if (file?.isNotEmpty() == true) {
-            Box(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                FileUpload(
-                    title = file[0].originalFileName,
-                    fileSize = (file[0].size.toFloat() / 1000000.0).toString(),
-                    onClick = {
-
-                            val fileUrl = "https://notelass.site/api/file/" + file[0].id
+                    .wrapContentHeight(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+                itemsIndexed(file){
+                    index, item ->
+                    FileUpload(
+                        title = item.originalFileName,
+                        fileSize = String.format("%.2f", item.size.toFloat() / 1000000.0),
+                        onClick = {
+                            val fileUrl = "https://notelass.site/api/file/" + item.id
                             val downloader =
-                                AndroidDownLoader(context, file!![0].originalFileName, token!!)
+                                AndroidDownLoader(context, item.originalFileName, token!!)
                             downloader.downloadFile(fileUrl)
-                           Log.e("download file", file?.get(0)?.id.toString())
-
-                    },
-                    onDelete = {
-                        //    fileUrl = null
-                    }
-                )
+                            //    Log.e("download file", it.id.toString())
+                        },
+                        onDelete = {
+                            //    fileUrl = null
+                        }
+                    )
+                }
             }
 
         }

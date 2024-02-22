@@ -1,4 +1,4 @@
-package com.app.note_lass.module.upload.data.viewmodel
+package com.app.note_lass.module.upload.ui.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf

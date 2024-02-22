@@ -33,6 +33,7 @@ import com.app.note_lass.module.group.ui.component.JoinDialog
 import com.app.note_lass.module.group.ui.viewModel.GroupForTeacherViewModel
 import com.app.note_lass.ui.component.AppBar
 import com.app.note_lass.ui.component.AppBarForTeacherInGroup
+import com.app.note_lass.ui.component.DialogCreateSelfEvaluation
 import com.app.note_lass.ui.component.DialogDeleteConfirm
 import com.app.note_lass.ui.component.DialogDeleteGroup
 import com.app.note_lass.ui.component.DialogDeleteStudent
@@ -64,6 +65,9 @@ fun GroupTeacherScreen(
         mutableStateOf(false)
     }
     val isStudentDeleteDialog = remember{
+        mutableStateOf(false)
+    }
+    val isSelfEvaluationDialog = remember{
         mutableStateOf(false)
     }
     val context=  LocalContext.current
@@ -153,6 +157,14 @@ fun GroupTeacherScreen(
         )
     }
 
+    if(isSelfEvaluationDialog.value){
+        DialogCreateSelfEvaluation(
+            setShowDialog = {
+                isSelfEvaluationDialog.value = it
+            },
+        )
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -165,6 +177,9 @@ fun GroupTeacherScreen(
                 },
                 onGroupInfoClick = {
                     isGroupInfoDialog.value = true
+                },
+                onSelfEvaluationClick = {
+                    isSelfEvaluationDialog.value = true
                 }
             )
 

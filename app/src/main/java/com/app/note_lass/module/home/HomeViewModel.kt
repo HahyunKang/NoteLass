@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
+import com.app.note_lass.module.group.data.groupList.GroupListState
+import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.home.material.MaterialFile
 import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.note.domain.GetFileUsecase
@@ -21,8 +23,9 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     val getLatestUploadMaterialUsecase: GetLatestUploadMaterialUsecase,
     val getLatestNoteUsecase: GetLatestNoteUsecase,
-    val getMaterialFile : GetFileUsecase
-) : ViewModel(){
+    val getMaterialFile : GetFileUsecase,
+    val getGroupUseCase: GetGroupUseCase,
+    ) : ViewModel(){
 
     private val _getLatestUploadMaterialState = mutableStateOf(RequestState<List<Material>>())
     val getLatestUploadMaterialState = _getLatestUploadMaterialState
@@ -30,8 +33,11 @@ class HomeViewModel @Inject constructor(
     val getMaterialFileState = _getMaterialFileState
     private val _getLatestNoteState = mutableStateOf(RequestState<List<Note>>())
     val getLatestNoteState= _getLatestNoteState
+    private val _groupListState = mutableStateOf(GroupListState())
+    val groupListState = _groupListState
    init {
        Log.e("viewModel LifeCycle","Test")
+       getGroupList()
    }
     fun getLatestMaterial() {
         getLatestUploadMaterialUsecase().onEach { result ->
@@ -122,4 +128,34 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
     }
+
+    fun getGroupList(){
+        getGroupUseCase().onEach{
+                result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _groupListState.value = GroupListState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+                is Resource.Success  ->{
+                    _groupListState.value = GroupListState(
+                        isSuccess = true,
+                        isError = false,
+                        groupList = result.data!!
+                    )
+                    Log.e("groupListData",result.toString())
+                }
+                is Resource.Error -> {
+                    _groupListState.value = GroupListState(
+                        isError = true,
+                    )
+                }
+            }
+
+
+        }.launchIn(viewModelScope)
+    }
+
 }

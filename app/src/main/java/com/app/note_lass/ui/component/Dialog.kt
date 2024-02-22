@@ -31,6 +31,8 @@ import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,6 +60,8 @@ import com.app.note_lass.module.group.data.applicationList.ApplicationStudent
 import com.app.note_lass.module.group.ui.component.ApplicationStudent
 import com.app.note_lass.module.group.ui.viewModel.GroupForTeacherViewModel
 import com.app.note_lass.module.group.ui.viewModel.GroupViewModel
+import com.app.note_lass.module.record.data.EvaluationQuestion
+import com.app.note_lass.module.record.ui.viewModel.SelfEvaluationViewModel
 import com.app.note_lass.module.student.data.HandBookRequest
 import com.app.note_lass.module.student.ui.viewmodel.StudentMemoViewModel
 import com.app.note_lass.ui.theme.Gray50
@@ -1273,10 +1277,10 @@ fun DialogModifyMemo(
 
                 Row(
                     modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(bottom = 15.dp,end = 15.dp)
-                    .align(Alignment.End)
-                    .weight(1f),
+                        .wrapContentWidth()
+                        .padding(bottom = 15.dp, end = 15.dp)
+                        .align(Alignment.End)
+                        .weight(1f),
                 ){
                     Box(modifier = Modifier.width(80.dp)){
                         RectangleUnableButton(
@@ -1300,7 +1304,160 @@ fun DialogModifyMemo(
     }
 
 
+@Composable
+fun DialogCreateSelfEvaluation(
+    setShowDialog : (Boolean)-> Unit,
+    selfEvaluationViewModel: SelfEvaluationViewModel = hiltViewModel()
+) {
+    val questions = remember {
+        mutableStateListOf<String>()
+    }
 
+    val getQuestionState = selfEvaluationViewModel.getQuestionState
+    val allQuestionFilled = remember {
+        mutableStateOf(false)
+    }
+
+    allQuestionFilled.value = questions.all { it.isNotEmpty() }
+
+    LaunchedEffect(key1 = getQuestionState.value){
+        if(getQuestionState.value.isSuccess){
+            val getQuestions = getQuestionState.value.result
+            if(getQuestions?.isNotEmpty() == true){
+                getQuestions.forEach {
+                    Log.e("question",it.question)
+                    questions.add(it.question)
+                }
+            }else{
+                questions.add("")
+            }
+        }
+    }
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .size(width = 720.dp, height = 480.dp)
+                .padding(horizontal = 20.dp, vertical = 25.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+        ) {
+            Icon(
+                painter= painterResource(id = R.drawable.group_filedelete_small),
+                tint =Color(0xFF26282B),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(24.dp)
+                    .weight(1f)
+                    .clickable {
+                        setShowDialog(false)
+                    }
+            )
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .weight(4f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+                itemsIndexed(questions){
+                    index, question ->
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "질문",style= NoteLassTheme.Typography.sixteen_700_pretendard,color = Color.Black)
+                        Spacer(modifier = Modifier.height(5.dp))
+                        OutlinedTextField(
+                            value =question  ,
+                            onValueChange = {
+                                questions[index] = it
+                            },
+                            modifier = Modifier
+                                .height(53.dp)
+                                .fillMaxWidth(),
+                            placeholder = {
+                              Text(text = "질문을 입력하세요",color = PrimaryGray, style = NoteLassTheme.Typography.sixteem_600_pretendard)
+                            },
+                            colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = Color.White,
+                                focusedIndicatorColor =  PrimaryGray,
+                                unfocusedIndicatorColor = PrimaryGray
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+
+                    }
+
+                }
+            }
+            Box(
+                modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(bottom = 24.dp,end = 24.dp)
+            ){
+                Box(modifier = Modifier.align(Alignment.Center)){
+                    Box(modifier = Modifier
+                        .width(80.dp)
+                        .height(40.dp)) {
+                        RectangleEnabledButton(text = "문항 추가") {
+                            questions.add("")
+                        }
+                    }
+                }
+                Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+                    Box(modifier = Modifier
+                        .width(49.dp)
+                        .height(40.dp)) {
+
+                        RectangleUnableButton(text = "취소") {
+                            setShowDialog(false)
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Box(modifier = Modifier
+                        .width(73.dp)
+                        .height(40.dp)
+                    ) {
+
+                        if(!allQuestionFilled.value)RectangleUnableButton (text = "저장하기") {
+
+                    }else{
+                        RectangleEnabledButton(text = "저장하기") {
+                            if(getQuestionState.value.result?.isNotEmpty()==true){
+                                val modifyQuestions = getQuestionState.value.result?.mapIndexed {
+                                        index, evaluationQuestion ->
+                                    EvaluationQuestion(evaluationQuestion.id, questions[index])
+                                }
+                                selfEvaluationViewModel.modifyStudentRecord(modifyQuestions!!)
+                                selfEvaluationViewModel.postQuestions(
+                                    questions.subList(
+                                    getQuestionState.value.result?.size!!,
+                                    questions.size
+                                )
+                                )
+                            }else{
+                                selfEvaluationViewModel.postQuestions(questions)
+                            }
+                        }
+
+                        }
+                }
+
+                }
+
+
+            }
+
+
+
+        }
+    }
+}
 
 
 

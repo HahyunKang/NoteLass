@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -71,5 +72,26 @@ interface RecordApi {
         @Query(value = "keywords") keywords: String,
         @Query(value = "handbookIds") handbookIds: String,
         ) : NoteResponseBody<String>
+
+    @POST("api/self-eval-question/{groupId}")
+    suspend fun postQuestions(
+        @Header(value = "Authorization") accessToken: String,
+        @Path(value = "groupId") groupId: Long,
+        @Body questions : List<Question>
+    ) : NoteResponseBody<Nothing>
+
+    @GET("api/self-eval-question/{groupId}")
+    suspend fun getQuestions(
+        @Header(value = "Authorization") accessToken: String,
+        @Path(value = "groupId") groupId: Long,
+    ) : NoteResponseBody<List<EvaluationQuestion>>
+
+
+    @PUT("api/self-eval-question/{groupId}")
+    suspend fun modifyQuestions(
+        @Header(value = "Authorization") accessToken: String,
+        @Path(value = "groupId") groupId: Long,
+        @Body questions : List<EvaluationQuestion>
+    ) : NoteResponseBody<Nothing>
 
 }

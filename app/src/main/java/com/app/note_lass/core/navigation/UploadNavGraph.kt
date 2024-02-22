@@ -20,7 +20,7 @@ fun NavGraphBuilder.UploadNavGraph(navController: NavController) {
         composable(UploadScreen.CreateNotice.route) {
             AssignmentUploadScreen(goBackToGroup = { role,id,groupInfo ->
                 if(role== Role.STUDENT)
-                    navController.navigate(GroupScreen.GroupForStudent.passQuery(id.toInt())){
+                    navController.navigate(GroupScreen.GroupForStudent.passQuery(id.toInt(),groupInfo)){
                         launchSingleTop = true
                     }
                 else navController.navigate(GroupScreen.GroupForTeacher.passQuery(id.toInt(),groupInfo)){

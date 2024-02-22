@@ -307,36 +307,19 @@ fun StudentRecordScreen(
                         unfocusedIndicatorColor = Color.LightGray
                     )
                 )
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(10.dp)
-                ) {
-                    Text(
-                        "${content.value.length}/1500byte",
-                        style = NoteLassTheme.Typography.twelve_600_pretendard,
-                        color = Color.Gray
-                    )
-                }
+
             }
-            TextButton(
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .size(width = 130.dp, height = 22.dp)
-                        .align(Alignment.End),
-                    colors = ButtonDefaults.buttonColors(containerColor = BackgroundBlue),
-                    contentPadding = PaddingValues(3.dp),
-            onClick = {
-                excelLauncher.launch("application/octet-stream")
+            Column(
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(10.dp)
+            ) {
+                Text(
+                    "${content.value.length}/1500byte",
+                    style = NoteLassTheme.Typography.twelve_600_pretendard,
+                    color = Color.Gray
+                )
             }
-            )
-                {
-            Text(
-                "한셀에서 가져오기 >",
-                style = NoteLassTheme.Typography.twelve_600_pretendard,
-                color = PrimarayBlue, textAlign = TextAlign.Center
-            )
-                }
 
         }
         Column(

@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -54,6 +55,7 @@ import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.group.data.URI
 import com.app.note_lass.module.note.NoteActivity
+import com.app.note_lass.module.upload.ui.viewmodel.UploadViewModel
 import com.app.note_lass.ui.component.FileUpload
 import com.app.note_lass.ui.component.RectangleEnabledButton
 import com.app.note_lass.ui.component.RectangleEnabledWithBorderButton
@@ -73,7 +75,7 @@ import java.time.LocalDateTime
 
 @Composable
 fun CreateNoticeScreen(
-    createNotice: (String, String, List<MultipartBody.Part?>) -> Unit,
+    viewModel: UploadViewModel = hiltViewModel(),
     protoViewModel: ProtoViewModel = hiltViewModel(),
     goBackToGroup: (Role, Long, String) -> Unit
 ){
@@ -401,6 +403,11 @@ fun CreateNoticeScreen(
                 }
             }
         }
+
+        if(viewModel.uploadState.value.isSuccess){
+            Toast.makeText(context,"공지 생성이 완료되었습니다", Toast.LENGTH_SHORT).show()
+            goBackToGroup(role.value.role,groupInfo.value.groupId!!,groupInfo.value.groupName!!)
+        }
         Row(modifier = Modifier
             .align(Alignment.End)
             .weight(2f)
@@ -417,7 +424,8 @@ fun CreateNoticeScreen(
                 RectangleEnabledButton(text = "생성하기",
                     onClick = {
                         if(noticeTitle.value.isNotEmpty() && noticeContent.value.isNotEmpty()){
-                            createNotice(noticeTitle.value,noticeContent.value,requestFiles.value)
+                            viewModel.createNotice(groupInfo.value.groupId!!,noticeTitle.value, noticeContent.value, requestFiles.value)
+
                         }
 
                     })

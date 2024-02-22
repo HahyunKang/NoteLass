@@ -27,13 +27,12 @@ import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.group.ui.TabViewForTeacher
-import com.app.note_lass.module.upload.data.viewmodel.UploadViewModel
+import com.app.note_lass.module.upload.ui.viewmodel.UploadViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AssignmentUploadScreen(
     protoViewModel : ProtoViewModel = hiltViewModel(),
-    uploadViewModel: UploadViewModel = hiltViewModel(),
     goBackToGroup: (Role,Long,String) -> Unit
 ){
 
@@ -81,14 +80,11 @@ fun AssignmentUploadScreen(
                         }
                     )
                 }
+
                 Box(modifier = Modifier.weight(5f)) {
                     when (selectedTabIndex) {
                         0 -> {
                             CreateNoticeScreen(
-                                createNotice = {
-                                    title,content,fileList->
-                                    uploadViewModel.createNotice(groupInfo.value.groupId!!,title, content, fileList)
-                                },
                                 goBackToGroup = goBackToGroup
                             )
                         }

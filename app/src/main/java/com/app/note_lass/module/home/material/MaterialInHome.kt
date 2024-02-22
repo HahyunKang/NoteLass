@@ -50,9 +50,13 @@ fun MaterialInHome(
                 }
             }
             val intent = Intent(context, NoteActivity::class.java)
-            if(file.originalFileName.contains("pdf"))intent.putExtra("filePath", fileMaterial.absolutePath)
+            if(file.originalFileName.contains("pdf")) {
+                intent.putExtra("filePath", fileMaterial.absolutePath)
+                intent.putExtra("pdfTitle", title)
+            }
             else{
                 intent.putExtra("photoPath", fileMaterial.absolutePath)
+                intent.putExtra("pdfTitle",title)
             }
             context.startActivity(intent)
             Log.e("filePath",fileMaterial.absolutePath)

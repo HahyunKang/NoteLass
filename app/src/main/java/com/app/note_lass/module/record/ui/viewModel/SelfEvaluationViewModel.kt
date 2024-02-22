@@ -1,0 +1,125 @@
+package com.app.note_lass.module.record.ui.viewModel
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.app.note_lass.common.RequestState
+import com.app.note_lass.common.Resource
+import com.app.note_lass.module.record.data.EvaluationQuestion
+import com.app.note_lass.module.record.data.PostRecordContentState
+import com.app.note_lass.module.record.data.RecordBody
+import com.app.note_lass.module.record.domain.usecase.GetQuestionsUseCase
+import com.app.note_lass.module.record.domain.usecase.ModifyQuestionsUseCase
+import com.app.note_lass.module.record.domain.usecase.PostQuestionsUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
+
+@HiltViewModel
+class SelfEvaluationViewModel@Inject constructor (
+    val getQuestionsUseCase: GetQuestionsUseCase,
+    val postQuestionsUseCase: PostQuestionsUseCase,
+    val modifyQuestionsUseCase: ModifyQuestionsUseCase
+): ViewModel() {
+    private val _getQuestionsState = mutableStateOf(RequestState<List<EvaluationQuestion>>())
+    val getQuestionState  = _getQuestionsState
+
+    private val _postQuestionState = mutableStateOf(RequestState<Nothing>())
+    val postQuestionState = _postQuestionState
+
+    private val _modifyQuestionState = mutableStateOf(RequestState<Nothing>())
+    val modifyQuestionState = _modifyQuestionState
+
+    init {
+        getQuestions()
+    }
+
+    fun getQuestions() {
+        getQuestionsUseCase().onEach { result ->
+
+            when (result) {
+
+                is Resource.Loading -> {
+                    _getQuestionsState.value = RequestState(
+                        isLoading = true,
+                    )
+                }
+
+                is Resource.Success -> {
+                    _getQuestionsState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                        result = result.data
+                    )
+
+                }
+
+                is Resource.Error -> {
+                    _getQuestionsState.value = RequestState(
+                        isError = true,
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+
+    fun postQuestions(questions : List<String>) {
+        postQuestionsUseCase(questions).onEach { result ->
+
+            when (result) {
+
+                is Resource.Loading -> {
+                    _postQuestionState.value = RequestState(
+                        isLoading = true,
+                    )
+                }
+
+                is Resource.Success -> {
+                    _postQuestionState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                    )
+
+                }
+
+                is Resource.Error -> {
+                    _postQuestionState.value = RequestState(
+                        isError = true,
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+
+    fun modifyStudentRecord(questions : List<EvaluationQuestion>) {
+        modifyQuestionsUseCase(questions).onEach { result ->
+
+            when (result) {
+
+                is Resource.Loading -> {
+                    _modifyQuestionState.value = RequestState(
+                        isLoading = true,
+                    )
+                }
+
+                is Resource.Success -> {
+                    _modifyQuestionState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                    )
+
+                }
+
+                is Resource.Error -> {
+                    _modifyQuestionState.value = RequestState(
+                        isError = true,
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+}

@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,10 +31,10 @@ import com.app.note_lass.ui.theme.PrimarayBlue
 
 @Composable
 fun GroupHeader(
-    title : String,
-    teacherName : String,
+    title: String,
+    teacherName: String,
     subject: String,
-    onClick : () -> Unit = {}
+    onClick: () -> Unit = {}
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -73,7 +71,7 @@ fun GroupHeader(
 
 
 @Composable
-fun CircleIcon(title : String){
+fun CircleIcon(title: String){
 
     Box(
         modifier = Modifier

@@ -54,7 +54,7 @@ import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.module.note.data.NoteRequest
-import com.app.note_lass.module.upload.data.viewmodel.UploadViewModel
+import com.app.note_lass.module.upload.ui.viewmodel.UploadViewModel
 import com.app.note_lass.ui.component.FileUpload
 import com.app.note_lass.ui.component.RectangleEnabledButton
 import com.app.note_lass.ui.component.RectangleEnabledWithBorderButton

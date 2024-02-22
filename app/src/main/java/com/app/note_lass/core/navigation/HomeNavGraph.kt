@@ -26,6 +26,17 @@ fun NavGraphBuilder.HomeNavGraph(navController: NavController,outerNavController
                 }
 
             },
+                onClickGroup = {
+                    id, info ->
+                               if(role == Role.TEACHER){
+                                   navController.navigate(GroupScreen.GroupForTeacher.passQuery(id,info))
+                               }else{
+                                   navController.navigate(GroupScreen.GroupForStudent.passQuery(id,info))
+                               }
+                },
+                onClickGroupAll = {
+                    navController.navigate(GroupScreen.Home.route)
+                },
                 role = role
             )
         }

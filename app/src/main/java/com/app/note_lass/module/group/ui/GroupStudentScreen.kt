@@ -27,6 +27,7 @@ import com.app.note_lass.module.group.ui.component.AssignmentDoneStatus
 import com.app.note_lass.module.group.ui.component.AssignmentNotSubmit
 import com.app.note_lass.module.group.ui.viewModel.GroupForStudentViewModel
 import com.app.note_lass.module.student.ui.MaterialListScreen
+import com.app.note_lass.ui.component.AppBarForStudentInGroup
 import com.app.note_lass.ui.component.AppBarForTeacherInGroup
 import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.theme.NoteLassTheme
@@ -37,6 +38,7 @@ import okhttp3.internal.notifyAll
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GroupStudentScreen(
+    groupInfo : String,
     onTouchNoticeClick : (Long) -> Unit,
     onTouchNoticeListClick: () -> Unit,
     studentViewModel: GroupForStudentViewModel = hiltViewModel()
@@ -48,15 +50,10 @@ fun GroupStudentScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            AppBarForTeacherInGroup(
-                title = "그룹 정보",
+            AppBarForStudentInGroup(
+                title = groupInfo,
                 badgeCount = 12,
-                onGroupClick = {
-//                    isShowDialog.value = true
-//                    viewModel.getJoinStudentList()
-                }
             )
-
         },
         containerColor = Color(0xFFF5F5FC),
         contentColor = Color.Black,

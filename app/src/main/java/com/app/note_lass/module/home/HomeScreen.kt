@@ -1,11 +1,8 @@
 package com.app.note_lass.module.home
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,26 +14,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -45,23 +31,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.app.note_lass.R
-import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
-import com.app.note_lass.core.Proto.Token
-import com.app.note_lass.module.group.data.groupInfo
 import com.app.note_lass.module.home.assignment.Assignment
-import com.app.note_lass.module.home.assignment.ui.assignmentBox
 import com.app.note_lass.module.home.material.MaterialSection
 import com.app.note_lass.module.home.material.NoteSection
 import com.app.note_lass.module.home.tab.tabView
-import com.app.note_lass.module.main.MainActivity
 import com.app.note_lass.ui.component.AppBar
+import com.app.note_lass.ui.component.EmptyContent
 import com.app.note_lass.ui.component.GroupHeader
 import com.app.note_lass.ui.component.HorizontalCalendar
 import com.app.note_lass.ui.component.SectionHeader
+import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryBlack
+import com.app.note_lass.ui.theme.PrimaryGray
 import com.app.note_lass.ui.theme.PrimaryGreen
 import com.app.note_lass.ui.theme.PrimaryPink
 import com.app.note_lass.ui.theme.PrimaryPurple
@@ -76,11 +59,14 @@ import com.app.note_lass.ui.theme.arcYellow
 fun HomeScreen(
     navController: NavController,
     onClickLogout : () -> Unit,
+    onClickGroup : (Int,String) -> Unit,
+    onClickGroupAll : () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
     role : Role,
 ){
 
     val materialState = homeViewModel.getLatestUploadMaterialState
+    val groupState = homeViewModel.groupListState
     val noteState = homeViewModel.getLatestNoteState
     LaunchedEffect(true) {
         if(role == Role.TEACHER){
@@ -88,7 +74,6 @@ fun HomeScreen(
         }else{
             homeViewModel.getLatestNote()
         }
-
     }
 
     Scaffold(
@@ -145,7 +130,18 @@ fun HomeScreen(
                         Column(
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            SectionHeader(title = "과제")
+                            Text(
+                                "과제",
+                                style = TextStyle(
+                                    fontSize = 20.sp,
+                                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                                    fontWeight = FontWeight(700),
+                                    color = PrimaryBlack,
+                                ),
+                                modifier = Modifier.weight(1f)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+
                             val assignmentList = listOf<Assignment>(
                                 Assignment("영어", "수능특강 분석", 24, arcPink, PrimaryPink),
                                 Assignment("문학", "레포트 작성", 17, arcGreen, PrimaryGreen),
@@ -154,31 +150,56 @@ fun HomeScreen(
 
                                 )
                             val studentNum = 30
-
-                            LazyVerticalGrid(
-                                modifier = Modifier.fillMaxSize(),
-                                columns = GridCells.Fixed(2),
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            Box(
+                                modifier = Modifier
+                                    .shadow(
+                                        elevation = 7.dp,
+                                        shape = RoundedCornerShape(size = 8.dp),
+                                        ambientColor = Color(0x0A26282B),
+                                        spotColor = Color(0x3D26282B)
+                                    )
+                                    .background(
+                                        color = Color(0xFFFFFFFF),
+                                    )
+                                    .fillMaxWidth()
+                                    .weight(5f)
                             ) {
 
-                                items(assignmentList.size) {
-                                    assignmentBox(
-                                        title = assignmentList[it].title,
-                                        subject = assignmentList[it].subject,
-                                        num = assignmentList[it].num,
-                                        backGroundColor = assignmentList[it].backgroundColor,
-                                        contentColor = assignmentList[it].contentColor,
-                                        ratio = assignmentList[it].num.toFloat() / 30
-                                    )
+                                Text(
+                                    text = "준비 중입니다.",
+                                    color = PrimaryGray,
+                                    modifier = Modifier.align(
+                                        Alignment.Center
+                                    ),
+                                    style = NoteLassTheme.Typography.sixteem_600_pretendard
+                                )
+//                            LazyVerticalGrid(
+//                                modifier = Modifier.fillMaxSize(),
+//                                columns = GridCells.Fixed(2),
+//                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+//                                verticalArrangement = Arrangement.spacedBy(8.dp)
+//                            ) {
+//
+//                                items(assignmentList.size) {
+//                                    assignmentBox(
+//                                        title = assignmentList[it].title,
+//                                        subject = assignmentList[it].subject,
+//                                        num = assignmentList[it].num,
+//                                        backGroundColor = assignmentList[it].backgroundColor,
+//                                        contentColor = assignmentList[it].contentColor,
+//                                        ratio = assignmentList[it].num.toFloat() / 30
+//                                    )
+//
+//                                }
+//                            }
 
-                                }
                             }
                         }
                     }
                     Spacer(modifier = Modifier.height(15.dp))
                     Box(
                         modifier = Modifier.weight(3f)
+                            .fillMaxWidth()
                     ) {
                         Box(
                             modifier = Modifier
@@ -193,11 +214,21 @@ fun HomeScreen(
                                 )
                                 .fillMaxSize()
                         ) {
-                            if(materialState.value.isSuccess) MaterialSection(
-                                materials =materialState.value.result!!,
 
-                            )
-                            if(noteState.value.isSuccess) NoteSection(notes =noteState.value.result!!)
+                            if (materialState.value.isSuccess) {
+                                if(materialState.value.result!!.isNotEmpty())
+                                MaterialSection(
+                                    materials = materialState.value.result!!,
+                                )else EmptyContent(title = "최근에 열어본 학습자료가 없습니다\n", content =
+                                "학습자료를 확인해 주세요")
+                            }
+                        
+                            if (noteState.value.isSuccess) {
+                                if(materialState.value.result!!.isNotEmpty()) {
+                                    NoteSection(notes = noteState.value.result!!)
+                                }else EmptyContent(title = "최근에 열어본 학습자료가 없습니다\n", content =
+                                "학습자료를 확인해 주세요")
+                            }
                         }
                     }
                 }
@@ -225,14 +256,9 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    val groupList = listOf<groupInfo>(
-                        groupInfo("노트고등학교 3학년 1반 문학", "김태연 선생님", "문"),
-                        groupInfo("노트고등학교 3학년 1반 영어", "티파니 선생님", "영"),
-                        groupInfo("노트고등학교 3학년 1반 확률과 통계", "이승규 선생님", "확")
 
-                    )
 
-                    Box(
+                    Column(
                         modifier = Modifier
                             .shadow(
                                 elevation = 7.dp,
@@ -245,30 +271,51 @@ fun HomeScreen(
                             )
                             .weight(2f)
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 15.dp)
+                                .weight(1f)
+                        ) {
+                            SectionHeader(title = "내가 속한 그룹", onTouchIcon = onClickGroupAll)
+                        }
 
                         Column(
                             modifier = Modifier
-                                .fillMaxHeight(),
-                            verticalArrangement = Arrangement.SpaceEvenly
+                                .fillMaxHeight()
+                                .weight(3f),
+                            verticalArrangement = Arrangement.Top
                         ) {
-                            Box(
-                                modifier = Modifier.padding(horizontal = 15.dp)
-                            ) {
-                                SectionHeader(title = "내가 속한 그룹")
-                            }
 
-                            groupList.forEachIndexed { index, groupInfo ->
-                                GroupHeader(
-                                    title = groupInfo.title,
-                                    teacherName = groupInfo.name,
-                                    subject = groupInfo.subject
-                                )
+                            if (groupState.value.isSuccess) {
+
+                              if(groupState.value.groupList.isEmpty()){
+                                EmptyContent(title = "내가 속한 그룹이 없습니다.", content = "그룹을 추가해주세요")
+                              }else{
+                                  val groupList = groupState.value.groupList
+
+                                  groupList.forEachIndexed { index, groupInfo ->
+                                      if(index < 3)  GroupHeader(
+                                          title = "${groupInfo.school} ${groupInfo.grade}학년 ${groupInfo.classNum}반 ${groupInfo.subject}",
+                                          teacherName = groupInfo.teacher + " 선생님",
+                                          subject = groupInfo.subject!![0].toString(),
+                                          onClick = {
+                                              onClickGroup(
+                                                  groupInfo.id.toInt(),
+                                                  "${groupInfo.school} ${groupInfo.grade}학년 ${groupInfo.classNum}반 ${groupInfo.subject}"
+                                              )
+                                          }
+                                      )
+                                  }
+
+                              }
+
                             }
 
                         }
                     }
-                }
-            }
+                            }
+                        }
+
         })
 }
 

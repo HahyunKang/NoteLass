@@ -16,13 +16,20 @@ class AndroidDownLoader(
     private val downloadManager = context.getSystemService(DownloadManager :: class.java)
     override fun downloadFile(url: String): Long {
 
-        val request = DownloadManager.Request(Uri.parse(url))
-            .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+        val request = if(token!=null) DownloadManager
+            .Request(Uri.parse(url)).setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setTitle(Uri.parse(url).path)
             .addRequestHeader("authorization", "Bearer $token")
             .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,subpath)
-       if(Uri.parse(url)!=null ) Log.e("url", Uri.parse(url).toString())
+
+        else
+            DownloadManager
+                .Request(Uri.parse(url)).setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setTitle(Uri.parse(url).path)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,subpath)
+        if(Uri.parse(url)!=null ) Log.e("url", Uri.parse(url).toString())
         return downloadManager.enqueue(request)
     }
 

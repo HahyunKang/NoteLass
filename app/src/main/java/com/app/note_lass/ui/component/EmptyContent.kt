@@ -1,6 +1,7 @@
 package com.app.note_lass.ui.component
 
 import android.graphics.drawable.Icon
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,9 +24,10 @@ fun EmptyContent(
 ){
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Icon(painter = painterResource(id = R.drawable.empty_icon_small), contentDescription = null)
+        Icon(painter = painterResource(id = R.drawable.empty_icon_small), contentDescription = null,tint = Color.Unspecified)
         Spacer(modifier = Modifier.height(8.dp))
         Text(text=  title,color = Color(0xFFC9CDD2), style = NoteLassTheme.Typography.fourteen_600_pretendard)
         Spacer(modifier = Modifier.height(5.dp))

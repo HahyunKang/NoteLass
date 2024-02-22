@@ -23,7 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.group.ui.component.NoticeDetailInfo
-import com.app.note_lass.module.upload.data.viewmodel.NoticeDetailViewModel
+import com.app.note_lass.module.upload.ui.viewmodel.NoticeDetailViewModel
 import com.app.note_lass.ui.component.AppBarForNotice
 
 @RequiresApi(Build.VERSION_CODES.O)

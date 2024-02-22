@@ -55,5 +55,28 @@ class RecordImpl @Inject constructor(
         return recordApi.getGuideline(token,groudId,userId, keywords, handbookIds)
     }
 
+    override suspend fun getQuestions(
+        token: String,
+        groupId: Long
+    ): NoteResponseBody<List<EvaluationQuestion>> {
+       return recordApi.getQuestions(token,groupId)
+    }
+
+    override suspend fun postQuestions(
+        token: String,
+        groupId: Long,
+        questions: List<Question>
+    ): NoteResponseBody<Nothing> {
+        return recordApi.postQuestions(token,groupId,questions)
+    }
+
+    override suspend fun modifyQuestions(
+        token: String,
+        groupId: Long,
+        questions: List<EvaluationQuestion>
+    ): NoteResponseBody<Nothing> {
+        return recordApi.modifyQuestions(token,groupId,questions)
+    }
+
 
 }

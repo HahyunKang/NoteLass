@@ -32,7 +32,7 @@ fun MaterialSection(
         SectionHeader(title = "최근 업로드한 강의자료")
         Spacer(modifier = Modifier.height(12.dp))
         LazyRow(
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.Start,
             modifier = Modifier.fillMaxWidth()
         ){
             val fiveLatestMaterials = materials.subList(0,5)

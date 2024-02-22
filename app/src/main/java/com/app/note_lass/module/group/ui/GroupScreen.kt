@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -18,7 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,18 +25,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.datastore.core.DataStore
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
-import com.app.note_lass.core.navigation.MainNavGraph
 import com.app.note_lass.module.group.data.InfoForCreate
-import com.app.note_lass.module.group.data.groupInfo
 import com.app.note_lass.module.group.ui.viewModel.GroupViewModel
-import com.app.note_lass.module.main.ui.items
 import com.app.note_lass.ui.component.AppBar
 import com.app.note_lass.ui.component.CreateGroup
 import com.app.note_lass.ui.component.DialogEnterGroup
@@ -46,13 +40,11 @@ import com.app.note_lass.ui.component.DialogEnterGroupAccept
 import com.app.note_lass.ui.component.DialogGroupCode
 import com.app.note_lass.ui.component.GroupHeader
 import com.app.note_lass.ui.theme.NoteLassTheme
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.supervisorScope
 
 @Composable
 fun GroupScreen(
      onClickTeacherGroup : (Int, String) -> Unit,
-     onClickStudentGroup : (Int) -> Unit,
+     onClickStudentGroup : (Int,String) -> Unit,
      onClickLogout : () -> Unit,
      viewModel: GroupViewModel = hiltViewModel(),
      protoViewModel : ProtoViewModel = hiltViewModel()
@@ -198,24 +190,27 @@ fun GroupScreen(
                         GroupHeader(
                             title = "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}",
                             teacherName = groupList[it].teacher,
-                            subject = groupList[it].subject?.get(0).toString(),
-                            onClick ={
+                            subject = groupList[it].subject?.get(0).toString()
+                        ) {
 
-                                protoViewModel.updateGroupInfo(
-                                    GroupInfo(
-                                        "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}",
-                                        groupList[it].teacher,
-                                        groupList[it].id
-                                    )
+                            protoViewModel.updateGroupInfo(
+                                GroupInfo(
+                                    "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}",
+                                    groupList[it].teacher,
+                                    groupList[it].id
                                 )
+                            )
 
-                                if(role.value.role == Role.TEACHER)
-                                    onClickTeacherGroup(groupList[it].id.toInt(), "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}"
+                            if (role.value.role == Role.TEACHER)
+                                onClickTeacherGroup(
+                                    groupList[it].id.toInt(),
+                                    "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}"
                                 )
-                                else onClickStudentGroup(groupList[it].id.toInt())
-                            }
-                        )
-                    }
+                            else onClickStudentGroup(groupList[it].id.toInt(),
+                                "${groupList[it].school} ${groupList[it].grade}학년 ${groupList[it].classNum}반 ${groupList[it].subject}"
+                            )
+                        }
+                }
                 }else{
                    //그룹 비어있을 때
                     Column(

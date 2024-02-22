@@ -27,7 +27,8 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
              navController.navigate(GroupScreen.GroupForTeacher.passQuery(id,info))
          },
              onClickStudentGroup = {
-             navController.navigate(GroupScreen.GroupForStudent.passQuery(it))
+                 id,info ->
+             navController.navigate(GroupScreen.GroupForStudent.passQuery(id,info))
          },
              onClickLogout = {
              outerNavController.navigate(AUTH_ROUTE){
@@ -65,17 +66,25 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
 
         composable(
             route = GroupScreen.GroupForStudent.route,
-            arguments = listOf(navArgument(name = "groupId") { type = NavType.IntType }
+            arguments =
+            listOf(
+                navArgument(name = "groupId") { type = NavType.IntType },
+                navArgument(name = "groupInfo") { type = NavType.StringType}
             )
         ) {
-            GroupStudentScreen(
-                onTouchNoticeClick = {
-                    navController.navigate(UploadScreen.NoticeDetail.passQuery(it))
-                },
-                onTouchNoticeListClick = {
-                    navController.navigate(GroupScreen.NoticeForStudent.route)
-                }
-            )
+            val groupInfo = it.arguments?.getString("groupInfo")
+            if (groupInfo != null) {
+
+                GroupStudentScreen(
+                    groupInfo = groupInfo,
+                    onTouchNoticeClick = {
+                        navController.navigate(UploadScreen.NoticeDetail.passQuery(it))
+                    },
+                    onTouchNoticeListClick = {
+                        navController.navigate(GroupScreen.NoticeForStudent.route)
+                    }
+                )
+            }
         }
 
         composable(
@@ -89,4 +98,5 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
         }
     }
 }
+
 

@@ -35,9 +35,9 @@ sealed class GroupScreen(val route : String){
             return "group/teacher/${groupId}/${groupInfo}"
         }
     }
-    object GroupForStudent : GroupScreen("group/student/{groupId}"){
-        fun passQuery(groupId : Int) : String {
-            return "group/student/${groupId}"
+    object GroupForStudent : GroupScreen("group/student/{groupId}/{groupInfo}"){
+        fun passQuery(groupId : Int, groupInfo : String) : String {
+            return "group/student/${groupId}/${groupInfo}"
         }
     }
 

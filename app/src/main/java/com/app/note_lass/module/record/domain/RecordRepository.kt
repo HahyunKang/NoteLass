@@ -1,7 +1,9 @@
 package com.app.note_lass.module.record.domain
 
 import com.app.note_lass.common.NoteResponseBody
+import com.app.note_lass.module.record.data.EvaluationQuestion
 import com.app.note_lass.module.record.data.File
+import com.app.note_lass.module.record.data.Question
 import com.app.note_lass.module.record.data.RecordBody
 import com.app.note_lass.module.record.data.RecordScore
 import okhttp3.MultipartBody
@@ -17,5 +19,15 @@ interface RecordRepository {
     suspend fun getGuideline(
         token: String, groudId: Long, userId: Long, keywords: String, handbookIds: String
     ) : NoteResponseBody<String>
+    suspend fun getQuestions(
+        token: String,groupId: Long
+    ) : NoteResponseBody<List<EvaluationQuestion>>
 
+    suspend fun postQuestions(
+        token: String,groupId: Long,questions : List<Question>
+    ) : NoteResponseBody<Nothing>
+
+    suspend fun modifyQuestions(
+        token: String,groupId: Long,questions : List<EvaluationQuestion>
+    ) : NoteResponseBody<Nothing>
 }
