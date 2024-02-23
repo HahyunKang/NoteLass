@@ -9,6 +9,7 @@ import com.app.note_lass.common.DownloadStatusListener
 import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.record.data.DeleteExcelState
+import com.app.note_lass.module.record.data.Evaluations
 import com.app.note_lass.module.record.data.GetExcelState
 import com.app.note_lass.module.record.data.GetGuidelineState
 import com.app.note_lass.module.record.data.GetRecordContentState
@@ -20,6 +21,7 @@ import com.app.note_lass.module.record.domain.usecase.GetExcelFileUseCase
 import com.app.note_lass.module.record.domain.usecase.GetGuidelineUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordScoreUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordUseCase
+import com.app.note_lass.module.record.domain.usecase.GetStudentEvaluationsUseCase
 import com.app.note_lass.module.record.domain.usecase.PostExcelUseCase
 import com.app.note_lass.module.record.domain.usecase.PostRecordUseCase
 import com.app.note_lass.module.student.data.HandBookListState
@@ -45,6 +47,7 @@ class RecordViewModel @Inject constructor(
     val getGuidelineUseCase: GetGuidelineUseCase,
     val deleteHandBookUseCase: DeleteHandBookUseCase,
     val modifyHandBookUseCase: ModifyHandBookUseCase,
+    val getStudentEvaluationsUseCase: GetStudentEvaluationsUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), DownloadStatusListener {
 
@@ -80,6 +83,9 @@ class RecordViewModel @Inject constructor(
 
     private var _downloadStatus = mutableStateOf("")
     val downloadStatus = _downloadStatus
+
+    private val _getEvaluationsState  = mutableStateOf(RequestState<List<Evaluations>>())
+    val getEvaluationState = _getEvaluationsState
 
     init {
         userId = savedStateHandle.get<Long>("userId")!!
@@ -384,6 +390,35 @@ class RecordViewModel @Inject constructor(
                     )
                 }
             }
+        }.launchIn(viewModelScope)
+    }
+
+    fun getEvaluations(){
+        getStudentEvaluationsUseCase(userId).onEach {
+                result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _getEvaluationsState.value = RequestState(
+                        isLoading = true,
+                    )
+                }
+                is Resource.Success  ->{
+                    _getEvaluationsState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                        result =result.data
+                    )
+
+
+                }
+                is Resource.Error -> {
+                    _getEvaluationsState.value = RequestState(
+                        isError = true,
+                    )
+                }
+            }
+
+
         }.launchIn(viewModelScope)
     }
 }

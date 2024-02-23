@@ -23,6 +23,8 @@ import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.group.domain.repository.GetJoinStudentListUseCase
 import com.app.note_lass.module.group.domain.repository.GetStudentListUseCase
 import com.app.note_lass.module.group.domain.repository.RejectGroupUseCase
+import com.app.note_lass.module.record.data.Evaluations
+import com.app.note_lass.module.record.domain.usecase.GetStudentEvaluationsUseCase
 import dagger.hilt.android.flags.HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -38,6 +40,7 @@ class GroupForTeacherViewModel @Inject constructor(
     val joinStudentListUseCase: GetJoinStudentListUseCase,
     val deleteGroupUseCase: DeleteGroupUseCase,
     val deleteStudentUseCase: DeleteStudentUseCase,
+    val getStudentEvaluationsUseCase: GetStudentEvaluationsUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(){
 
@@ -55,6 +58,9 @@ class GroupForTeacherViewModel @Inject constructor(
 
     private val _deleteStudent = mutableStateOf(RequestState<Nothing>())
     val deleteStudentState= _deleteStudent
+
+    private val _getEvaluationsState  = mutableStateOf(RequestState<List<Evaluations>>())
+    val getEvaluationState = _getEvaluationsState
 
     private val groupId = mutableStateOf(0)
 
@@ -275,4 +281,6 @@ class GroupForTeacherViewModel @Inject constructor(
 
         }.launchIn(viewModelScope)
     }
+
+
 }

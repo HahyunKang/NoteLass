@@ -101,5 +101,13 @@ class RecordImpl @Inject constructor(
         return recordApi.modifyAnswers(token,groupId,questions)
     }
 
+    override suspend fun getStudentEvaluations(
+        token: String,
+        groupId: Long,
+        userId: Long
+    ): NoteResponseBody<List<Evaluations>> {
+        return recordApi.getStudentEvaluations(token,groupId, userId)
+    }
+
 
 }

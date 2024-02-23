@@ -116,4 +116,10 @@ interface RecordApi {
         @Body answers: List<EvaluationAnswer>
     ) : NoteResponseBody<Nothing>
 
+    @GET("api/self-eval-answer/{groupId}/{userId}")
+    suspend fun getStudentEvaluations(
+        @Header(value = "Authorization") accessToken: String,
+        @Path(value = "groupId") groupId: Long,
+        @Path(value = "userId") userId : Long
+    ) : NoteResponseBody<List<Evaluations>>
 }

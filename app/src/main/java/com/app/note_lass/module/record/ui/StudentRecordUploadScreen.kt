@@ -35,8 +35,10 @@ import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
 import com.app.note_lass.module.student.data.HandBook
 import com.app.note_lass.module.student.ui.HandBookListScreen
 import com.app.note_lass.ui.component.AppBarForNoGroup
+import com.app.note_lass.ui.component.DialogEvaluationForTeacher
 import com.app.note_lass.ui.component.DialogInRecord
 import com.app.note_lass.ui.component.DialogModifyMemo
+import com.app.note_lass.ui.component.DialogSelfEvaluationForStudent
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -72,6 +74,9 @@ fun StudentRecordUploadScreen(
     val isDialogModifyMemo = remember {
         mutableStateOf(false)
     }
+    val isDialogEvaluation= remember {
+        mutableStateOf(false)
+    }
     val modifyId = remember{
         mutableStateOf(0)
     }
@@ -90,6 +95,7 @@ fun StudentRecordUploadScreen(
     }
 
     val context = LocalContext.current
+    val evaluationState = recordViewModel.getEvaluationState
 
     val downloadStatus = recordViewModel.downloadStatus
     Log.e("다운로드",downloadStatus.value)
@@ -143,6 +149,15 @@ fun StudentRecordUploadScreen(
             }
         )
     }
+    if(isDialogEvaluation.value && evaluationState.value.isSuccess){
+        DialogEvaluationForTeacher(
+            setShowDialog = {
+                isDialogEvaluation.value = it
+            },
+            evaluations = evaluationState.value.result!!
+        )
+    }
+
     val modifyState = recordViewModel.handBookModifyState
     LaunchedEffect(key1 = modifyState.value) {
         if (modifyState.value.isSuccess) {
@@ -237,6 +252,10 @@ fun StudentRecordUploadScreen(
                                 modifyContent.value = content
                                 modifyId.value = id.toInt()
                                 isDialogModifyMemo.value = true
+                            },
+                            isClickEvaluation = {
+                                isDialogEvaluation.value = true
+                                recordViewModel.getEvaluations()
                             }
                         )
                     }

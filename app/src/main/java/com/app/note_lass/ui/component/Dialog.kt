@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -1553,7 +1554,7 @@ fun DialogSelfEvaluationForStudent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(bottom = 24.dp, end = 24.dp,top=24.dp)
+                    .padding(bottom = 24.dp, end = 24.dp, top = 24.dp)
             ){
 
                 Row(modifier = Modifier.align(Alignment.CenterEnd)) {
@@ -1601,7 +1602,83 @@ fun DialogSelfEvaluationForStudent(
     }
 }
 
+@Composable
+fun DialogEvaluationForTeacher(
+    setShowDialog : (Boolean)-> Unit ={},
+    evaluations : List<Evaluations>,
+    studentMemoViewModel: StudentMemoViewModel = hiltViewModel()
 
+) {
+
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .width(720.dp)
+                .height(580.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+                .padding(horizontal = 40.dp, vertical = 30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Text(
+                    text = "자기 평가서",
+                    style = NoteLassTheme.Typography.twenty_700_pretendard,
+                    color = PrimaryBlack
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.group_filedelete_small),
+                    tint = Color(0xFF26282B),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable {
+                            setShowDialog(false)
+                        }
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                itemsIndexed(evaluations) { index, item ->
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(text = (index+1).toString() + "." + item.question)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(117.dp)
+                                .border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
+                                .wrapContentHeight()
+                        ) {
+                            Text(
+                                text = item.answer!!,
+                                style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(vertical = 15.dp, horizontal = 10.dp)
+                            )
+                        }
+                    }
+                }
+
+            }
+
+
+        }
+    }
+}
 @Preview
 @Composable
 fun DialogPreview(){
