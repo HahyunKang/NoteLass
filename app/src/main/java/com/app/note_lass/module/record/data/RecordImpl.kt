@@ -78,5 +78,28 @@ class RecordImpl @Inject constructor(
         return recordApi.modifyQuestions(token,groupId,questions)
     }
 
+    override suspend fun getAnswers(
+        token: String,
+        groupId: Long
+    ): NoteResponseBody<List<Evaluations>> {
+        return recordApi.getAnswers(token,groupId)
+    }
+
+    override suspend fun postAnswers(
+        token: String,
+        groupId: Long,
+        questions: List<EvaluationAnswer>
+    ): NoteResponseBody<Nothing> {
+      return recordApi.postAnswers(token,groupId,questions)
+    }
+
+    override suspend fun modifyAnswers(
+        token: String,
+        groupId: Long,
+        questions: List<EvaluationAnswer>
+    ): NoteResponseBody<Nothing> {
+        return recordApi.modifyAnswers(token,groupId,questions)
+    }
+
 
 }

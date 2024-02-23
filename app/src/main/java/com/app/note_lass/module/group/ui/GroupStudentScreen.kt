@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -29,6 +31,7 @@ import com.app.note_lass.module.group.ui.viewModel.GroupForStudentViewModel
 import com.app.note_lass.module.student.ui.MaterialListScreen
 import com.app.note_lass.ui.component.AppBarForStudentInGroup
 import com.app.note_lass.ui.component.AppBarForTeacherInGroup
+import com.app.note_lass.ui.component.DialogSelfEvaluationForStudent
 import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryBlack
@@ -46,6 +49,13 @@ fun GroupStudentScreen(
 
     val noticeState = studentViewModel.studentNoticeState
     val materialState = studentViewModel.studentMaterialState
+    val isDialogSelfEvaluation = remember{
+        mutableStateOf(false)
+    }
+
+    if(isDialogSelfEvaluation.value){
+        DialogSelfEvaluationForStudent(setShowDialog = {isDialogSelfEvaluation.value = it})
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -53,6 +63,9 @@ fun GroupStudentScreen(
             AppBarForStudentInGroup(
                 title = groupInfo,
                 badgeCount = 12,
+                onSelfEvaluationClick = {
+                    isDialogSelfEvaluation.value = true
+                }
             )
         },
         containerColor = Color(0xFFF5F5FC),

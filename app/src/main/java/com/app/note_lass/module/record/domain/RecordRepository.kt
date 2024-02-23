@@ -1,7 +1,9 @@
 package com.app.note_lass.module.record.domain
 
 import com.app.note_lass.common.NoteResponseBody
+import com.app.note_lass.module.record.data.EvaluationAnswer
 import com.app.note_lass.module.record.data.EvaluationQuestion
+import com.app.note_lass.module.record.data.Evaluations
 import com.app.note_lass.module.record.data.File
 import com.app.note_lass.module.record.data.Question
 import com.app.note_lass.module.record.data.RecordBody
@@ -29,5 +31,17 @@ interface RecordRepository {
 
     suspend fun modifyQuestions(
         token: String,groupId: Long,questions : List<EvaluationQuestion>
+    ) : NoteResponseBody<Nothing>
+
+    suspend fun getAnswers(
+        token: String,groupId: Long
+    ) : NoteResponseBody<List<Evaluations>>
+
+    suspend fun postAnswers(
+        token: String,groupId: Long,questions : List<EvaluationAnswer>
+    ) : NoteResponseBody<Nothing>
+
+    suspend fun modifyAnswers(
+        token: String,groupId: Long,questions : List<EvaluationAnswer>
     ) : NoteResponseBody<Nothing>
 }

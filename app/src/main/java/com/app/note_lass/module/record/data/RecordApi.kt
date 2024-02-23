@@ -94,4 +94,26 @@ interface RecordApi {
         @Body questions : List<EvaluationQuestion>
     ) : NoteResponseBody<Nothing>
 
+
+    @POST("api/self-eval-answer/{groupId}")
+    suspend fun postAnswers(
+        @Header(value = "Authorization") accessToken: String,
+        @Path(value = "groupId") groupId: Long,
+        @Body questions : List<EvaluationAnswer>
+    ) : NoteResponseBody<Nothing>
+
+    @GET("api/self-eval-answer/{groupId}")
+    suspend fun getAnswers(
+        @Header(value = "Authorization") accessToken: String,
+        @Path(value = "groupId") groupId: Long,
+    ) : NoteResponseBody<List<Evaluations>>
+
+
+    @PUT("api/self-eval-answer/{groupId}")
+    suspend fun modifyAnswers(
+        @Header(value = "Authorization") accessToken: String,
+        @Path(value = "groupId") groupId: Long,
+        @Body answers: List<EvaluationAnswer>
+    ) : NoteResponseBody<Nothing>
+
 }

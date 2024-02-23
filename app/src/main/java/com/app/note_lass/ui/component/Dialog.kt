@@ -60,7 +60,10 @@ import com.app.note_lass.module.group.data.applicationList.ApplicationStudent
 import com.app.note_lass.module.group.ui.component.ApplicationStudent
 import com.app.note_lass.module.group.ui.viewModel.GroupForTeacherViewModel
 import com.app.note_lass.module.group.ui.viewModel.GroupViewModel
+import com.app.note_lass.module.record.data.EvaluationAnswer
+import com.app.note_lass.module.record.data.EvaluationForSubmit
 import com.app.note_lass.module.record.data.EvaluationQuestion
+import com.app.note_lass.module.record.data.Evaluations
 import com.app.note_lass.module.record.ui.viewModel.SelfEvaluationViewModel
 import com.app.note_lass.module.student.data.HandBookRequest
 import com.app.note_lass.module.student.ui.viewmodel.StudentMemoViewModel
@@ -1396,9 +1399,9 @@ fun DialogCreateSelfEvaluation(
             }
             Box(
                 modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(bottom = 24.dp,end = 24.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(bottom = 24.dp, end = 24.dp)
             ){
                 Box(modifier = Modifier.align(Alignment.Center)){
                     Box(modifier = Modifier
@@ -1459,6 +1462,144 @@ fun DialogCreateSelfEvaluation(
     }
 }
 
+@Composable
+fun DialogSelfEvaluationForStudent(
+    setShowDialog : (Boolean)-> Unit,
+    selfEvaluationViewModel: SelfEvaluationViewModel = hiltViewModel()
+) {
+    val evaluations  = remember {
+        mutableStateOf(mutableListOf<EvaluationForSubmit>())
+    }
+
+    val getQuestionState = selfEvaluationViewModel.getQuestionState
+    val getAnswerState = selfEvaluationViewModel.getAnswersState
+
+    LaunchedEffect(key1 = getAnswerState.value,key2 = getQuestionState.value){
+        if(getAnswerState.value.isSuccess && getQuestionState.value.isSuccess){
+            val getAnswers = getAnswerState.value.result
+            val getQuestions = getQuestionState.value.result
+
+                getQuestions?.forEachIndexed  {
+                    index, questions ->
+                    getAnswers?.forEach {
+                        if(questions.id == it.questionId){
+                            if(it.answer==null)evaluations.value = (evaluations.value + EvaluationForSubmit(it.questionId,it.question,it.answerId,mutableStateOf( ""),true)).toMutableList()
+                            else evaluations.value = (evaluations.value + EvaluationForSubmit(it.questionId,it.question,it.answerId,mutableStateOf(it.answer ?: ""),false)).toMutableList()
+                        }
+
+                    }
+
+                }
+
+        }
+    }
+
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .size(width = 720.dp, height = 480.dp)
+                .padding(horizontal = 20.dp, vertical = 25.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+        ) {
+          Text(
+              text = "자기 평가서",
+              style = NoteLassTheme.Typography.twenty_700_pretendard,
+              color = PrimaryBlack,
+              modifier = Modifier.padding(32.dp)
+          )
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
+                    .weight(4f),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
+            ){
+                itemsIndexed(evaluations.value){
+                        index, evaluation ->
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = (index+1).toString() +"."+ evaluation.question,style= NoteLassTheme.Typography.sixteen_700_pretendard,color = Color.Black)
+                        Spacer(modifier = Modifier.height(5.dp))
+                        OutlinedTextField(
+                            value = evaluation.answer.value ?: "" ,
+                            onValueChange = {
+                                evaluation.answer.value = it
+                            },
+                            modifier = Modifier
+                                .height(117.dp)
+                                .fillMaxWidth(),
+                            placeholder = {
+                                Text(text = "음슴체로 작성해주세요",color = PrimaryGray, style = NoteLassTheme.Typography.sixteem_600_pretendard)
+                            },
+                            colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = Color.White,
+                                focusedIndicatorColor =  PrimaryGray,
+                                unfocusedIndicatorColor = PrimaryGray
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+
+                    }
+
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(bottom = 24.dp, end = 24.dp,top=24.dp)
+            ){
+
+                Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+                    Box(modifier = Modifier
+                        .width(49.dp)
+                        .height(40.dp)) {
+
+                        RectangleUnableButton(text = "취소") {
+                            setShowDialog(false)
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Box(modifier = Modifier
+                        .width(73.dp)
+                        .height(40.dp)
+                    ) {
+
+                            RectangleEnabledButton(text = "저장하기") {
+                                val modifyAnswers = emptyList<EvaluationAnswer>().toMutableList()
+                                val postAnswers = emptyList<EvaluationAnswer>().toMutableList()
+                                evaluations.value.forEach {
+                                    if(it.first){
+                                        postAnswers.add(
+                                            EvaluationAnswer(it.questionId,
+                                               it.answer.value.toString()
+                                            )
+                                        )
+                                    }else{
+                                        modifyAnswers.add(EvaluationAnswer(it.answerId!!, it.answer.value.toString()))
+                                    }
+                                }
+                                if(postAnswers.isNotEmpty())selfEvaluationViewModel.postAnswers(postAnswers)
+                                if(modifyAnswers.isNotEmpty())selfEvaluationViewModel.modifyAnswers(modifyAnswers)
+                        }
+                    }
+
+                }
+
+
+            }
+
+
+
+        }
+    }
+}
 
 
 @Preview
