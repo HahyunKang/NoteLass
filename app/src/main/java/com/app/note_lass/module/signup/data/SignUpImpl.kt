@@ -21,4 +21,12 @@ class SignUpImpl @Inject constructor(
         return api.emailValidate(email, authCode)
     }
 
+    override suspend fun postPassword(email: String): NoteResponseBody<Nothing> {
+        return api.postPassword(email)
+    }
+
+    override suspend fun resetPassword(passwordRequest: ResetPasswordRequest): NoteResponseBody<Nothing> {
+       return api.resetPassword(passwordRequest)
+    }
+
 }

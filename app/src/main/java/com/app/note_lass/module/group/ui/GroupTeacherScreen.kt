@@ -1,5 +1,6 @@
 package com.app.note_lass.module.group.ui
 
+import android.widget.Space
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,10 +17,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposeCompilerApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -41,7 +44,9 @@ import com.app.note_lass.ui.component.DialogGroupInfo
 import com.app.note_lass.ui.component.IconAndText
 import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.component.SectionHeaderWithCreate
+import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
+import com.app.note_lass.ui.theme.PrimaryGray
 import com.app.note_lass.ui.theme.PrimaryPurple
 
 @Composable
@@ -310,6 +315,20 @@ fun GroupTeacherScreen(
                     ) {
 
                         if (studentListState.value.isSuccess) {
+                            if(studentListState.value.studentList.isEmpty()){
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.padding(vertical = 80.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    Text(text ="학생 목록이 없어요",color = PrimaryGray,style = NoteLassTheme.Typography.sixteen_700_pretendard)
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    Text(text ="학생을 등록해 주세요",color = PrimaryGray,style = NoteLassTheme.Typography.fourteen_600_pretendard)
+
+                                }
+                            }
                             studentListState.value.studentList.forEachIndexed() { index, student->
                                 val id = index + 1
                                 IconAndText(

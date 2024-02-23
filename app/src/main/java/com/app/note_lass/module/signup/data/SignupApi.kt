@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 
@@ -24,4 +25,13 @@ interface SignupApi {
         @Query(value = "email") email : String,
         @Query(value = "authCode") authCode : String
     ) : NoteResponseBody<Boolean>
+    @POST("api/auth/password/email")
+    suspend fun postPassword(
+        @Query(value = "email") email : String,
+        ) : NoteResponseBody<Nothing>
+
+    @PUT("api/auth/password/reset")
+    suspend fun resetPassword(
+        @Body passwordRequest : ResetPasswordRequest
+    ): NoteResponseBody<Nothing>
 }

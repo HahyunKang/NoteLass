@@ -1661,7 +1661,7 @@ fun DialogEvaluationForTeacher(
                                 .wrapContentHeight()
                         ) {
                             Text(
-                                text = item.answer!!,
+                                text = item.answer ?: "",
                                 style = NoteLassTheme.Typography.fourteen_600_pretendard,
                                 color = Color.Black,
                                 textAlign = TextAlign.Center,
@@ -1676,6 +1676,61 @@ fun DialogEvaluationForTeacher(
             }
 
 
+        }
+    }
+}
+
+@Composable
+fun DialogResetPassword(
+    setShowDialog : (Boolean)-> Unit,
+    onAccept : () -> Unit
+) {
+
+    Dialog(
+        onDismissRequest = { setShowDialog(false) }
+    ) {
+
+        Column(
+            modifier = Modifier
+                .size(width = 480.dp, height = 288.dp)
+                .padding(horizontal = 40.dp, vertical = 25.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp)),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.group_filedelete_small),
+                tint = Color(0xFF26282B),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(15.dp)
+                    .clickable {
+                        setShowDialog(false)
+                    }
+            )
+
+            Spacer(modifier = Modifier.height(80.dp))
+
+            Text(
+                text = "비밀번호가 재설정되었습니다.",
+                style = NoteLassTheme.Typography.twenty_700_pretendard,
+                color = PrimaryBlack,
+            )
+            Spacer(modifier = Modifier.height(88.dp))
+
+            Box(
+                modifier = Modifier
+                    .height(56.dp)
+                    .width(200.dp)
+            ) {
+                RectangleEnabledButton(
+                    text = "확인",
+                    onClick = {
+                        onAccept()
+                    },
+                )
+
+            }
         }
     }
 }

@@ -18,6 +18,7 @@ import com.app.note_lass.common.StringToDate
 import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.upload.data.Material.Material
 import com.app.note_lass.ui.component.SectionHeader
+import java.lang.Integer.max
 import java.lang.Integer.min
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -35,7 +36,7 @@ fun MaterialSection(
             horizontalArrangement = Arrangement.Start,
             modifier = Modifier.fillMaxWidth()
         ){
-            val fiveLatestMaterials = materials.subList(0,5)
+            val fiveLatestMaterials = materials.subList(0,max(materials.size, 6))
             items(fiveLatestMaterials.size){
                 if(materials[it].files?.isNotEmpty() == true){
                     materials[it].files?.get(0)

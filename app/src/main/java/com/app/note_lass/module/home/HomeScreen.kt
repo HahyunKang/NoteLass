@@ -224,7 +224,7 @@ fun HomeScreen(
                             }
                         
                             if (noteState.value.isSuccess) {
-                                if(materialState.value.result!!.isNotEmpty()) {
+                                if(materialState.value.result?.isNotEmpty() == true) {
                                     NoteSection(notes = noteState.value.result!!)
                                 }else EmptyContent(title = "최근에 열어본 학습자료가 없습니다\n", content =
                                 "학습자료를 확인해 주세요")
