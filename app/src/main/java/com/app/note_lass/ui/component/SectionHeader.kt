@@ -3,9 +3,11 @@ package com.app.note_lass.ui.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -69,12 +71,15 @@ fun SectionHeader(
 @Composable
 fun SectionHeaderWithCreate(
     title : String,
-    onTouchWachAll : ()-> Unit = {},
+    onTouchWatchAll : ()-> Unit = {},
     onTouchCreate : () -> Unit = {}
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+        modifier = Modifier
+            .wrapContentHeight()
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
     ) {
         Text(
             title,
@@ -96,14 +101,17 @@ fun SectionHeaderWithCreate(
                     fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                     fontWeight = FontWeight(600),
                     color = Color(0xFF9EA4AA),
-                )
+                ),
+                modifier = Modifier.clickable {
+                    onTouchWatchAll()
+                }
             )
             Modifier.width(20.dp)
             Icon(
                 painter = painterResource(id = R.drawable.home_assignment_arrow),
                 contentDescription = null, tint = Color(0xFF9EA4AA)
             )
-            Modifier.width(16.dp)
+            Modifier.width(25.dp)
 
             Text(
                 "생성하기 +",

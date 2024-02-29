@@ -7,10 +7,12 @@ import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.group.data.groupList.GroupHashState
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
+import com.app.note_lass.module.home.material.MaterialFile
 import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.note.data.NoteAccessedDto
 import com.app.note_lass.module.note.data.NoteRequest
 import com.app.note_lass.module.note.domain.AccessNoteUsecase
+import com.app.note_lass.module.note.domain.GetFileUsecase
 import com.app.note_lass.module.note.domain.GetLatestNoteUsecase
 import com.app.note_lass.module.note.domain.GetMaterialToNoteUseCase
 import com.app.note_lass.module.note.domain.GetNoteListUseCase
@@ -30,6 +32,7 @@ class NoteViewModel @Inject constructor(
     val  makeMaterialUseCase: PostMaterialUseCase,
     val getMaterialToNoteUseCase: GetMaterialToNoteUseCase,
     val getLatestNoteUsecase: GetLatestNoteUsecase,
+    val getMaterialFile : GetFileUsecase,
     val accessNoteUsecase: AccessNoteUsecase
     ): ViewModel() {
 
@@ -50,6 +53,9 @@ class NoteViewModel @Inject constructor(
 
     private val _accessNoteState = mutableStateOf(RequestState<NoteAccessedDto>())
     val accessNoteState  = _accessNoteState
+
+    private val _getMaterialFileState = mutableStateOf(RequestState<MaterialFile>())
+    val getMaterialFileState = _getMaterialFileState
 
 
     init {
@@ -213,4 +219,36 @@ class NoteViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
     }
+
+    fun getFile(fileId : Long) {
+        getMaterialFile(fileId).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _getMaterialFileState.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+
+                is Resource.Success -> {
+                    _getMaterialFileState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                        result = MaterialFile(fileId = fileId, stream =result.data!!)
+                    )
+                }
+
+                is Resource.Error -> {
+
+                    _getMaterialFileState.value = RequestState(
+                        isError = true,
+                    )
+                }
+
+
+            }
+        }.launchIn(viewModelScope)
+
+    }
+
 }

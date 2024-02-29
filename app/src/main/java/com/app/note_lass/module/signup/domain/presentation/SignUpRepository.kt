@@ -17,4 +17,6 @@ interface  SignUpRepository {
     suspend fun postPassword(email : String) : NoteResponseBody<Nothing>
 
     suspend fun resetPassword(passwordRequest : ResetPasswordRequest): NoteResponseBody<Nothing>
+    suspend fun passwordValidate(email:String,authCode: String) : NoteResponseBody<Boolean>
+
 }

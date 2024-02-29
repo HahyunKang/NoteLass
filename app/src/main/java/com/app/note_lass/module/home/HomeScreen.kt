@@ -32,6 +32,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.app.note_lass.R
+import com.app.note_lass.common.DashboardType
+import com.app.note_lass.core.Proto.GroupInfo
+import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.home.assignment.Assignment
 import com.app.note_lass.module.home.material.MaterialSection
@@ -61,13 +64,18 @@ fun HomeScreen(
     onClickLogout : () -> Unit,
     onClickGroup : (Int,String) -> Unit,
     onClickGroupAll : () -> Unit,
+    onGoToDetail : (DashboardType, Long)->Unit,
+    onGoToDashBoard : () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
+    protoViewModel: ProtoViewModel = hiltViewModel(),
     role : Role,
 ){
 
     val materialState = homeViewModel.getLatestUploadMaterialState
     val groupState = homeViewModel.groupListState
     val noteState = homeViewModel.getLatestNoteState
+    val dashBoardState = homeViewModel.previewDashBoardsState
+
     LaunchedEffect(true) {
         if(role == Role.TEACHER){
             homeViewModel.getLatestMaterial()
@@ -84,6 +92,7 @@ fun HomeScreen(
                 badgeCount = 12,
                 role = role,
                 isGroupButton = false,
+                onClickLogout = onClickLogout
             )
         },
        containerColor =  Color(0xFFF5F5FC),
@@ -118,8 +127,19 @@ fun HomeScreen(
                             .weight(2.3f)
                     ) {
 
-                        val list = listOf("학교 주요 공지", "시간표", "오늘의 급식")
-                        tabView(titleList = list, navController)
+                        val list = listOf("공지/강의자료")
+                        if (dashBoardState.value.isSuccess) {
+                            if(dashBoardState.value.result!=null){
+                            dashBoardState.value.result?.let { it1 ->
+                                tabView(
+                                    titleList = list,
+                                    noticeList = it1,
+                                    onGoToDashBoard = onGoToDashBoard,
+                                    onGoToDetail = onGoToDetail
+                                )
+                            }
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(15.dp))
@@ -198,7 +218,8 @@ fun HomeScreen(
                     }
                     Spacer(modifier = Modifier.height(15.dp))
                     Box(
-                        modifier = Modifier.weight(3f)
+                        modifier = Modifier
+                            .weight(3f)
                             .fillMaxWidth()
                     ) {
                         Box(
@@ -215,16 +236,16 @@ fun HomeScreen(
                                 .fillMaxSize()
                         ) {
 
-                            if (materialState.value.isSuccess) {
+                            if (role == Role.TEACHER && materialState.value.isSuccess) {
                                 if(materialState.value.result!!.isNotEmpty())
                                 MaterialSection(
                                     materials = materialState.value.result!!,
-                                )else EmptyContent(title = "최근에 열어본 학습자료가 없습니다\n", content =
+                                )else EmptyContent(title = "최근에 업로드한 학습자료가 없습니다\n", content =
                                 "학습자료를 확인해 주세요")
                             }
                         
-                            if (noteState.value.isSuccess) {
-                                if(materialState.value.result?.isNotEmpty() == true) {
+                            if (role == Role.STUDENT && noteState.value.isSuccess) {
+                                if(noteState.value.result?.isNotEmpty() == true) {
                                     NoteSection(notes = noteState.value.result!!)
                                 }else EmptyContent(title = "최근에 열어본 학습자료가 없습니다\n", content =
                                 "학습자료를 확인해 주세요")
@@ -302,6 +323,12 @@ fun HomeScreen(
                                               onClickGroup(
                                                   groupInfo.id.toInt(),
                                                   "${groupInfo.school} ${groupInfo.grade}학년 ${groupInfo.classNum}반 ${groupInfo.subject}"
+                                              )
+                                              protoViewModel.updateGroupInfo(GroupInfo(
+                                                  "${groupInfo.school} ${groupInfo.grade}학년 ${groupInfo.classNum}반 ${groupInfo.subject}",
+                                                  groupInfo.teacher,
+                                                  groupInfo.id
+                                              )
                                               )
                                           }
                                       )

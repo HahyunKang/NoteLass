@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -30,10 +31,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
+import com.app.note_lass.common.DashboardType
 import com.app.note_lass.common.DateFormatter
 import com.app.note_lass.common.Resources
 import com.app.note_lass.common.StringToDate
+import com.app.note_lass.core.Proto.ProtoViewModel
+import com.app.note_lass.module.home.tab.notice.DashBoard
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryGray
 
@@ -48,19 +53,24 @@ fun AcademicResources(
         modifier = Modifier
             .shadow(
                 elevation = 7.dp,
-                shape =RoundedCornerShape(size = 8.dp),
-                ambientColor = Color( 0x0A26282B),
+                shape = RoundedCornerShape(size = 8.dp),
+                ambientColor = Color(0x0A26282B),
                 spotColor = Color(0x3D26282B)
             )
             .fillMaxWidth()
             .height(141.dp)
-            .background(color= if(resources.unread)Color.White else Color(0xFFF5F5FC), shape = RoundedCornerShape(8.dp))
+            .background(
+                color = if (resources.unread) Color.White else Color(0xFFF5F5FC),
+                shape = RoundedCornerShape(8.dp)
+            )
     ){
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .clickable {
-                goToNoticeDetail()
-            }.padding(horizontal = 32.dp, vertical = 24.dp)
+                    goToNoticeDetail()
+                }
+                .padding(horizontal = 32.dp, vertical = 24.dp)
               ,
             horizontalArrangement = Arrangement.SpaceBetween,
         ){
@@ -137,6 +147,84 @@ fun AcademicResources(
                     style = NoteLassTheme.Typography.fourteen_600_pretendard,
                     color = PrimaryGray
                 )
+
+
+                Text(text = DateFormatter(StringToDate(resources.createdDate!!).localDateTime).formattedDate,
+                    style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                    color = PrimaryGray
+                )
+
+            }
+        }
+
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun DashBoardForTeacher(
+    resources : DashBoard,
+    goToDetail : () -> Unit,
+) {
+
+    Box(
+        modifier = Modifier
+            .shadow(
+                elevation = 7.dp,
+                shape = RoundedCornerShape(size = 8.dp),
+                ambientColor = Color(0x0A26282B),
+                spotColor = Color(0x3D26282B)
+            )
+            .fillMaxWidth()
+            .height(141.dp)
+            .background(color = Color.White)
+    ){
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    goToDetail()
+                }
+                .padding(horizontal = 32.dp, vertical = 24.dp)
+            ,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ){
+            Column(modifier = Modifier.fillMaxHeight(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                if(resources.noticeId!=null)Text(
+                    text= "[공지]"+resources.title,
+                    style = NoteLassTheme.Typography.sixteen_700_pretendard,
+                    color = Color.Black
+                )else{
+                    Text(
+                        text= "[강의자료]"+resources.title,
+                        style = NoteLassTheme.Typography.sixteen_700_pretendard,
+                        color = Color.Black
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text= resources.content,
+                    style = NoteLassTheme.Typography.sixteem_600_pretendard,
+                    maxLines = 3,
+                    color = Color.Black
+
+                )
+            }
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+            ) {
+
+                Spacer(modifier = Modifier.height(60.dp))
+                resources.teacherName?.let {
+                    Text(
+                        text = it + " 선생님",
+                        style = NoteLassTheme.Typography.fourteen_600_pretendard,
+                        color = PrimaryGray
+                    )
+                }
 
 
                 Text(text = DateFormatter(StringToDate(resources.createdDate!!).localDateTime).formattedDate,

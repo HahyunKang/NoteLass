@@ -17,13 +17,13 @@ fun MainNavGraph(navController: NavHostController,outerNavController: NavControl
 
         GroupNavGraph(navController = navController, outerNavController = outerNavController)
 
-        NoteNavGraph(navController = navController)
+        NoteNavGraph(navController = navController, outerNavController = outerNavController)
 
         SettingNavGraph(navController = navController)
 
         UploadNavGraph(navController = navController)
 
-        RecordNavGraph(navController = navController)
+        RecordNavGraph(navController = navController, outerNavController = outerNavController)
 
 
     }

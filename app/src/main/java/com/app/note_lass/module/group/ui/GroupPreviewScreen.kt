@@ -1,6 +1,7 @@
 package com.app.note_lass.module.group.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,15 +34,18 @@ fun NoticePreviewScreenForStudent(
             else R.drawable.notice_preview_read
             val iconColor : Color =  if(it.unread) PrimarayBlue
             else PrimaryGray
-
-            IconAndText(
-                icon = icon,
-                iconColor = iconColor,
-                text = it.title,
-                onClick = {
-                    onClick(it.id)
-                }
-            )
+            Box(
+                modifier = Modifier.weight(1f)
+            ) {
+                IconAndText(
+                    icon = icon,
+                    iconColor = iconColor,
+                    text = it.title,
+                    onClick = {
+                        onClick(it.id)
+                    },
+                )
+            }
             Spacer(modifier = Modifier.height(5.dp))
         }
     }

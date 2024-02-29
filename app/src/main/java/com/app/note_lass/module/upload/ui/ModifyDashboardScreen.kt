@@ -27,18 +27,20 @@ import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.group.ui.TabViewForTeacher
+import com.app.note_lass.module.upload.ui.viewmodel.NoticeDetailViewModel
 import com.app.note_lass.module.upload.ui.viewmodel.UploadViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AssignmentUploadScreen(
+fun ModifyDashboardScreen(
+    noticeDetailViewModel : NoticeDetailViewModel = hiltViewModel(),
     protoViewModel : ProtoViewModel = hiltViewModel(),
     goBackToGroup: (Role,Long,String) -> Unit
 ){
 
 
     val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",0))
-
+    val detailState = noticeDetailViewModel.noticeDetailState
     val titleList = listOf("공지","강의자료")
 
     var selectedTabIndex by remember{
@@ -84,9 +86,14 @@ fun AssignmentUploadScreen(
                 Box(modifier = Modifier.weight(5f)) {
                     when (selectedTabIndex) {
                         0 -> {
-                            CreateNoticeScreen(
-                                goBackToGroup = goBackToGroup
-                            )
+                            if(detailState.value.isSuccess) {
+                                ModifyNoticeScreen(
+                                    goBackToGroup = goBackToGroup,
+                                    title = detailState.value.noticeDetail.title,
+                                    content = detailState.value.noticeDetail.content,
+                                    file = detailState.value.noticeDetail.file!!
+                                )
+                            }
                         }
 //                        1 -> {
 //                            CreateAssignmentScreen()

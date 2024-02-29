@@ -37,7 +37,7 @@ import java.time.LocalDateTime
 fun Note(
     title : String,
     teacher : String,
-    fileUrl : String,
+    fileId : Long,
     onClickAccess:() -> Unit,
     onClickArrow : () -> Unit = {},
     onClickNote : (Boolean,String) -> Unit
@@ -52,13 +52,13 @@ fun Note(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
                 onClickAccess()
-                val intent1 = Intent(context, NoteActivity::class.java).apply {
-                    putExtra("pdfString", fileUrl)
-                    putExtra("pdfTitle",title)
-                }
-
-                context.startActivity(intent1)
-                onClickNote(true,fileUrl)
+//                val intent1 = Intent(context, NoteActivity::class.java).apply {
+//                    putExtra("pdfString", fileUrl)
+//                    putExtra("pdfTitle",title)
+//                }
+//
+//                context.startActivity(intent1)
+//                onClickNote(true,fileUrl)
 
             }
         ){

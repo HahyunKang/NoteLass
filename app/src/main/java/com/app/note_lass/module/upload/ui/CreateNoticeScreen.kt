@@ -438,8 +438,9 @@ fun CreateNoticeScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoticeInfo(
+fun DashBoardInfo(
     groupInfo: GroupInfo,
+    title : String ="공지"
    // createdTime: LocalDateTime
 ){
 

@@ -12,7 +12,16 @@ data class Notice(
     val files : List<File>?,
     val unread : Boolean,
 )
-
+data class Materials(
+    val id : Long,
+    val groupId : Long,
+    val title : String,
+    val content : String,
+    val teacher : String,
+    val createdDate : String?,
+    val files : List<File>?,
+    val unread : Boolean,
+)
 data class NoticePreview(
     val id : Long,
     val title : String,
@@ -25,10 +34,22 @@ data class NoticeDetail(
     val file: List<File>?,
     val createdDate: String?
 )
+
+
+data class MaterialDetail(
+    val title: String,
+    val content: String,
+    val file: List<File>?,
+    val createdDate: String?
+)
 fun Notice.toPreview(): NoticePreview {
     return NoticePreview(id, title, unread)
 }
 
 fun Notice.toDetail() : NoticeDetail {
     return NoticeDetail(title,content, files ,createdDate)
+}
+
+fun Materials.toDetail() : MaterialDetail {
+    return MaterialDetail(title,content, files ,createdDate)
 }

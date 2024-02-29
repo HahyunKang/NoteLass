@@ -44,6 +44,8 @@ fun GroupStudentScreen(
     groupInfo : String,
     onTouchNoticeClick : (Long) -> Unit,
     onTouchNoticeListClick: () -> Unit,
+    goBack : () -> Unit,
+    onClickLogout : () -> Unit,
     studentViewModel: GroupForStudentViewModel = hiltViewModel()
 ) {
 
@@ -65,7 +67,9 @@ fun GroupStudentScreen(
                 badgeCount = 12,
                 onSelfEvaluationClick = {
                     isDialogSelfEvaluation.value = true
-                }
+                },
+                onClickLogout = onClickLogout,
+                goBack= goBack
             )
         },
         containerColor = Color(0xFFF5F5FC),
@@ -107,7 +111,6 @@ fun GroupStudentScreen(
                                 onClick = onTouchNoticeClick
                             )
                         }
-
                     }
                     Spacer(modifier = Modifier.height(24.dp))
                     Column(

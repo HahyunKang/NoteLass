@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.group.data.groupList.GroupListState
+import com.app.note_lass.module.group.domain.repository.GetDashBoardsInHomeUseCase
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.home.material.MaterialFile
+import com.app.note_lass.module.home.tab.notice.DashBoard
 import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.note.domain.GetFileUsecase
 import com.app.note_lass.module.note.domain.GetLatestNoteUsecase
@@ -25,6 +27,7 @@ class HomeViewModel @Inject constructor(
     val getLatestNoteUsecase: GetLatestNoteUsecase,
     val getMaterialFile : GetFileUsecase,
     val getGroupUseCase: GetGroupUseCase,
+    val getDashBoardsInHomeUseCase: GetDashBoardsInHomeUseCase
     ) : ViewModel(){
 
     private val _getLatestUploadMaterialState = mutableStateOf(RequestState<List<Material>>())
@@ -35,9 +38,14 @@ class HomeViewModel @Inject constructor(
     val getLatestNoteState= _getLatestNoteState
     private val _groupListState = mutableStateOf(GroupListState())
     val groupListState = _groupListState
+    private val _previewDashBoardsState = mutableStateOf(RequestState<List<DashBoard>>())
+    val previewDashBoardsState = _previewDashBoardsState
+    private val _dashBoardsState = mutableStateOf(RequestState<List<DashBoard>>())
+    val dashBoardState = _dashBoardsState
    init {
        Log.e("viewModel LifeCycle","Test")
        getGroupList()
+       getDashboards()
    }
     fun getLatestMaterial() {
         getLatestUploadMaterialUsecase().onEach { result ->
@@ -149,6 +157,48 @@ class HomeViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     _groupListState.value = GroupListState(
+                        isError = true,
+                    )
+                }
+            }
+
+
+        }.launchIn(viewModelScope)
+    }
+    private fun getDashboards(){
+        getDashBoardsInHomeUseCase().onEach{
+                result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _previewDashBoardsState.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                    _dashBoardsState.value= RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+                is Resource.Success  ->{
+                    val previewDashBoards =result.data?.take(2)?.toList()
+
+                    _previewDashBoardsState.value = RequestState(
+                        isSuccess = true,
+                        isError = false,
+                        result = previewDashBoards
+                    )
+                    _dashBoardsState.value= RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                        result = result.data
+                    )
+                    Log.e("groupListData",result.toString())
+                }
+                is Resource.Error -> {
+                    _previewDashBoardsState.value = RequestState(
+                        isError = true,
+                    )
+                    _dashBoardsState.value = RequestState(
                         isError = true,
                     )
                 }

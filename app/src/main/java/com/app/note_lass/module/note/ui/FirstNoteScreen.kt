@@ -18,22 +18,24 @@ import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.ui.component.AppBarForNoGroup
+import com.app.note_lass.ui.component.AppBarForNote
+import com.app.note_lass.ui.component.AppBarForNotice
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FirstNoteScreen(
-    protoViewModel : ProtoViewModel = hiltViewModel()
+    protoViewModel : ProtoViewModel = hiltViewModel(),
+    onClickLogout : () -> Unit
 ){
     val role  = protoViewModel.token.collectAsState(initial = Token("", Role.STUDENT))
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            AppBarForNoGroup(
+            AppBarForNote(
                 title = "노트",
                 badgeCount = 12,
-                onClick = {
-                }
+                onClickLogout = onClickLogout
             )
         },
         containerColor = Color(0xFFF5F5FC),
@@ -45,7 +47,7 @@ fun FirstNoteScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        top = it.calculateTopPadding(),
+                        top = it.calculateTopPadding() + 30.dp,
                         bottom = 20.dp,
                         start = 30.dp,
                         end = 30.dp)

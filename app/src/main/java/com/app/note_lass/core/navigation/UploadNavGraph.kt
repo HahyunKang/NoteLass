@@ -10,6 +10,9 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.upload.ui.AssignmentUploadScreen
+import com.app.note_lass.module.upload.ui.MaterialDetailScreen
+import com.app.note_lass.module.upload.ui.ModifyDashboardScreen
+import com.app.note_lass.module.upload.ui.ModifyNoticeScreen
 import com.app.note_lass.module.upload.ui.NoticeDetailScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -28,11 +31,48 @@ fun NavGraphBuilder.UploadNavGraph(navController: NavController) {
                 }
             })
         }
+
+        composable(UploadScreen.ModifyNotice.route,
+            arguments = listOf(navArgument(name = "noticeId") { type = NavType.LongType })
+            ) {
+            ModifyDashboardScreen(goBackToGroup = { role,id,groupInfo ->
+                if(role== Role.STUDENT)
+                    navController.navigate(GroupScreen.GroupForStudent.passQuery(id.toInt(),groupInfo)){
+                        launchSingleTop = true
+                    }
+                else navController.navigate(GroupScreen.GroupForTeacher.passQuery(id.toInt(),groupInfo)){
+                    launchSingleTop = true
+                }
+            })
+        }
         composable(route = UploadScreen.NoticeDetail.route,
             arguments = listOf(navArgument(name = "noticeId") { type = NavType.LongType }
             )
         ) {
-            NoticeDetailScreen()
+            val noticeId = it.arguments?.getLong("noticeId")
+
+            NoticeDetailScreen(
+                goBack = {
+                    navController.popBackStack()
+                },
+                goToModify = {
+                    navController.navigate(UploadScreen.ModifyNotice.passQuery(noticeId!!)){
+                        launchSingleTop = true
+                    }
+                },
+
+            )
+        }
+
+        composable(route = UploadScreen.MaterialDetail.route,
+            arguments = listOf(navArgument(name = "materialId") { type = NavType.LongType }
+            )
+        ) {
+            MaterialDetailScreen(
+                goBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 

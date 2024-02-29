@@ -5,6 +5,7 @@ import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.join.JoinDto
 import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
+import com.app.note_lass.module.home.tab.notice.DashBoard
 import com.app.note_lass.module.upload.data.notice.Notice
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -108,6 +109,18 @@ interface GroupApi {
         @Path(value = "groupId") groupId: Long,
         @Path(value = "userId") userId: Long,
         ) : NoteResponseBody<Nothing>
+
+    @GET("api/dashboard")
+    suspend fun getDashboardsInHome(
+        @Header(value = "Authorization") accessToken : String,
+        ) : NoteResponseBody<List<DashBoard>>
+
+    @GET("api/dashboard/{groupId}")
+    suspend fun getDashboardsInGroup(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "groupId") groupId: Long,
+        ) : NoteResponseBody<List<DashBoard>>
+
 
 
 }

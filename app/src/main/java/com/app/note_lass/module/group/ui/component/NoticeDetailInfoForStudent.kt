@@ -4,11 +4,15 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
@@ -18,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -30,14 +35,17 @@ import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.ui.component.Divider
 import com.app.note_lass.ui.component.FileUpload
+import com.app.note_lass.ui.component.RectangleEnabledButton
+import com.app.note_lass.ui.component.RectangleUnableButton
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryBlack
 
 @Composable
-fun NoticeDetailInfo(
+fun NoticeDetailInfoForTeacher(
     title: String,
     content: String,
     file: List<File>?,
+    goToModify : ()->Unit,
     protoViewModel: ProtoViewModel = hiltViewModel(),
 ) {
 
@@ -46,6 +54,9 @@ fun NoticeDetailInfo(
 //    }
 
     val token = protoViewModel.token.collectAsState(Token("", Role.NONE)).value.accessToken
+    var fileName by remember { mutableStateOf<String?>(null) }
+    var fileSize by remember { mutableStateOf<Long?>(null) }
+    val fileManager = FileManager()
     val context = LocalContext.current
 
     Column(
@@ -103,6 +114,30 @@ fun NoticeDetailInfo(
                 }
             }
 
+        }
+        Spacer(modifier = Modifier.height(60.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp),
+        ){
+            Row(modifier = Modifier.align(Alignment.CenterEnd)
+                .wrapContentWidth()
+            ){
+                Box(modifier = Modifier.width(49.dp)) {
+                    RectangleUnableButton(text = "취소") {
+
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+                Box(modifier = Modifier.width(73.dp)) {
+                    RectangleEnabledButton(text = "수정하기") {
+                        goToModify()
+                    }
+                }
+            }
         }
     }
     }

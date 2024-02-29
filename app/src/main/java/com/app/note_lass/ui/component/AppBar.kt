@@ -144,7 +144,8 @@ fun AppBarForTeacherInGroup(
     onGroupInfoClick : () -> Unit= {},
     onGroupClick : () -> Unit  = {},
     onSelfEvaluationClick: () -> Unit = {},
-    onClickLogout : () -> Unit = {}
+    onClickLogout : () -> Unit = {},
+    goBack: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -155,7 +156,9 @@ fun AppBarForTeacherInGroup(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
-        Icon(painter = painterResource(id = R.drawable.arrow_left_small), contentDescription = null)
+        Icon(painter = painterResource(id = R.drawable.arrow_left_small), contentDescription = null,modifier=Modifier.clickable {
+            goBack()
+        })
 
         Spacer(modifier = Modifier.width(16.dp))
 
@@ -245,7 +248,8 @@ fun AppBarForStudentInGroup(
     title : String,
     badgeCount : Int,
     onSelfEvaluationClick : () -> Unit= {},
-    onClickLogout : () -> Unit = {}
+    onClickLogout : () -> Unit = {},
+    goBack : () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -261,7 +265,10 @@ fun AppBarForStudentInGroup(
             ) {
             Icon(
                 painter = painterResource(id = R.drawable.arrow_left_small),
-                contentDescription = null
+                contentDescription = null,
+                modifier = Modifier.clickable {
+                    goBack()
+                }
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -272,13 +279,14 @@ fun AppBarForStudentInGroup(
                 fontWeight = FontWeight(700),
                 color = Color(0xFF26282B)
             )
+            Spacer(modifier = Modifier.width(12.dp))
 
             Box(
                 modifier = Modifier
-                    .width(133.dp)
+                    .width(76.dp)
                     .height(40.dp)
             ) {
-                RectangleEnabledButton(text = "자기평가서") {
+                RectangleEnabledButton(text = "자기평가") {
                     onSelfEvaluationClick()
                 }
             }
@@ -354,6 +362,7 @@ fun AppBarForNotice(
                 onClickBack()
             }
         )
+        Spacer(modifier = Modifier.width(16.dp))
 
         Text(
             title,
@@ -373,6 +382,7 @@ fun AppBarForNotice(
 fun AppBarForNoGroup(
     title : String,
     badgeCount : Int,
+    goBack: () -> Unit={},
     onClick : () -> Unit  = {},
     onClickLogout : () -> Unit={}
 ) {
@@ -387,7 +397,8 @@ fun AppBarForNoGroup(
     ){
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(painter = painterResource(id = R.drawable.arrow_left_small), contentDescription = null)
+            Icon(painter = painterResource(id = R.drawable.arrow_left_small), contentDescription = null,
+                modifier = Modifier.clickable { goBack() })
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 title, fontSize = 20.sp,
@@ -456,7 +467,82 @@ fun AppBarForNoGroup(
 
 
 }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppBarForNote(
+    title : String,
+    badgeCount : Int,
+    onClickLogout : () -> Unit={}
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(start = 30.dp, end = 48.dp, top = 40.dp)
+            .background(color = Color.Transparent),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ){
 
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                title, fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                fontWeight = FontWeight(700),
+                color = Color(0xFF26282B)
+            )
+        }
+
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ){
+
+
+            Box(modifier = Modifier
+                .width(224.dp)
+            ){
+                SearchBar(hintText = "노트, 학습자료")
+            }
+            Spacer(modifier = Modifier.width(20.dp))
+
+            Box(
+                modifier = Modifier.size(36.dp) // 아이콘과 뱃지의 크기를 조절합니다.
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.appbar_bell_small),
+                    contentDescription = null,
+                    tint = Color(0xFF26282B),
+                    modifier = Modifier
+                        .fillMaxSize() // 아이콘이 Box 내부를 가득 채우도록 합니다.
+                )
+
+                Badge(
+                    modifier = Modifier
+                        .offset(16.dp, -5.dp) // 뱃지의 위치를 조절하여 겹치도록 합니다.
+                ) {
+                    Text(
+                        text = badgeCount.toString(),
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                            fontWeight = FontWeight(600),
+                            color = Color(0xFFFFFFFF),
+                            textAlign = TextAlign.Center,
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(20.dp))
+            Icon(painter = painterResource(id = R.drawable.appbar_person_circle_small), contentDescription = null)
+            Spacer(modifier = Modifier.width(20.dp))
+            AppBarDropDown(onClickLogout = onClickLogout)
+        }
+    }
+
+
+}
 
 @Composable
 @Preview

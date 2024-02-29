@@ -19,10 +19,12 @@ import com.app.note_lass.module.group.domain.repository.ApproveGroupUseCase
 import com.app.note_lass.module.group.domain.repository.CreateGroupUseCase
 import com.app.note_lass.module.group.domain.repository.DeleteGroupUseCase
 import com.app.note_lass.module.group.domain.repository.DeleteStudentUseCase
+import com.app.note_lass.module.group.domain.repository.GetDashBoardsInGroupUseCase
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.group.domain.repository.GetJoinStudentListUseCase
 import com.app.note_lass.module.group.domain.repository.GetStudentListUseCase
 import com.app.note_lass.module.group.domain.repository.RejectGroupUseCase
+import com.app.note_lass.module.home.tab.notice.DashBoard
 import com.app.note_lass.module.record.data.Evaluations
 import com.app.note_lass.module.record.domain.usecase.GetStudentEvaluationsUseCase
 import dagger.hilt.android.flags.HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule
@@ -40,6 +42,7 @@ class GroupForTeacherViewModel @Inject constructor(
     val joinStudentListUseCase: GetJoinStudentListUseCase,
     val deleteGroupUseCase: DeleteGroupUseCase,
     val deleteStudentUseCase: DeleteStudentUseCase,
+    val getDashBoardsInGroupUseCase: GetDashBoardsInGroupUseCase,
     val getStudentEvaluationsUseCase: GetStudentEvaluationsUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(){
@@ -62,12 +65,16 @@ class GroupForTeacherViewModel @Inject constructor(
     private val _getEvaluationsState  = mutableStateOf(RequestState<List<Evaluations>>())
     val getEvaluationState = _getEvaluationsState
 
+    private val _dashBoardsState = mutableStateOf(RequestState<List<DashBoard>>())
+    val dashBoardState = _dashBoardsState
+
     private val groupId = mutableStateOf(0)
 
     init{
         groupId.value = savedStateHandle.get<Int>("groupId")!!
 
         getStudentList(groupId.value)
+        getDashboards()
     }
 
     fun getStudentList( id : Int){
@@ -274,6 +281,37 @@ class GroupForTeacherViewModel @Inject constructor(
                     _deleteStudent.value = RequestState(
                         isError =  true,
                         isSuccess = false,
+                    )
+                }
+            }
+
+
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getDashboards(){
+        getDashBoardsInGroupUseCase(groupId.value.toLong()).onEach{
+                result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _dashBoardsState.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+                is Resource.Success  ->{
+                    val previewDashBoards =result.data?.take(3)?.toList()
+
+                    _dashBoardsState.value = RequestState(
+                        isSuccess = true,
+                        isError = false,
+                        result = previewDashBoards
+                    )
+                    Log.e("groupListData",result.toString())
+                }
+                is Resource.Error -> {
+                    _dashBoardsState.value = RequestState(
+                        isError = true,
                     )
                 }
             }

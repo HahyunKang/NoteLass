@@ -74,15 +74,19 @@ import kotlinx.coroutines.launch
 )
 @Composable
 fun UpdatePasswordScreen(
-    resetPasswordViewModel: ResetPasswordViewModel,
+    resetPasswordViewModel: ResetPasswordViewModel = hiltViewModel(),
     onBack : () -> Unit,
     GotoLogin : () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
+    BackHandler(onBack = {
+        onBack()
+    }
+    )
     val state = resetPasswordViewModel.state
 
-    val signupState = resetPasswordViewModel.signupState
+  //  val signupState = resetPasswordViewModel.signupState
     val validateSuccess = resetPasswordViewModel.emailValidateState
     val emailValue = remember {
         mutableStateOf("")
@@ -487,9 +491,10 @@ fun UpdatePasswordScreen(
                     .height(50.dp)
             ) {
                 RectangleButtonWithStatus(
-                    text = "회원가입",
+                    text = "재설정",
                     onClick = {
                         showDialog = true
+                        resetPasswordViewModel.resetPassWord(emailValue.value,emailValidationValue.value.toInt(),password)
                     },
                     isEnabled = buttonFilled
                 )
@@ -504,23 +509,8 @@ fun UpdatePasswordScreen(
     )
 
 
-    if (showDialog) {
-        DialogResetPassword(
-            setShowDialog = {
-                showDialog = it
-            },
-            onAccept = {
-                Log.e("signUp API",signupState.value.email)
-
-                resetPasswordViewModel.resetPassWord(emailValue.value,emailValidationValue.value.toInt(),password)
-                showDialog = false
-            }
-        )
-
-
-    }
-    if (resetPasswordViewModel.signUpApiState.value.isSuccess) {
-        Toast.makeText(context,"회원가입이 완료되었습니다",Toast.LENGTH_SHORT).show()
+    if (resetPasswordViewModel.resetPasswordState.value.isSuccess) {
+        Toast.makeText(context,"비밀번호가 재설정되었습니다.",Toast.LENGTH_SHORT).show()
         GotoLogin()
     }
 

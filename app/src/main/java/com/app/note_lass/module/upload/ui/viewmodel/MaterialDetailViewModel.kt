@@ -1,7 +1,6 @@
 package com.app.note_lass.module.upload.ui.viewmodel
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -9,11 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
+import com.app.note_lass.module.group.domain.repository.GetMaterialDetailUseCase
 import com.app.note_lass.module.upload.data.notice.NoticeDetailState
 import com.app.note_lass.module.upload.data.notice.toDetail
 import com.app.note_lass.module.group.domain.repository.GetNoticeDetailUseCase
 import com.app.note_lass.module.home.material.MaterialFile
 import com.app.note_lass.module.note.domain.GetFileUsecase
+import com.app.note_lass.module.upload.data.notice.MaterialDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -21,50 +22,49 @@ import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
-class NoticeDetailViewModel @Inject constructor(
-   val noticeDetailUseCase: GetNoticeDetailUseCase,
+class MaterialDetailViewModel @Inject constructor(
+    val getMaterialDetailUseCase: GetMaterialDetailUseCase,
    val getMaterialFile : GetFileUsecase,
    savedStateHandle: SavedStateHandle
 ) : ViewModel(){
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private var _noticeDetailState = mutableStateOf(NoticeDetailState())
+    private var _materialDetailState = mutableStateOf(RequestState<MaterialDetail>())
     @RequiresApi(Build.VERSION_CODES.O)
-    val noticeDetailState = _noticeDetailState
+    val materialDetailState = _materialDetailState
     private val _getMaterialFileState = mutableStateOf(RequestState<MaterialFile>())
     val getMaterialFileState = _getMaterialFileState
     init {
-        val noticeId= savedStateHandle.get<Long>("noticeId")
-        noticeId?.let {
-            Log.e("noticeId",it.toString())
-            getNoticeDetail(noticeId)
+        val materialId= savedStateHandle.get<Long>("materialId")
+        materialId?.let {
+            getMaterialDetail(materialId)
         }
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getNoticeDetail(noticeId : Long){
-        noticeDetailUseCase(noticeId).onEach {
+    fun getMaterialDetail(materialId : Long){
+        getMaterialDetailUseCase(materialId).onEach {
 
             result ->
             when(result){
 
                 is Resource.Success -> {
-                    _noticeDetailState.value = NoticeDetailState(
+                    _materialDetailState.value = RequestState(
                         isSuccess = true,
                         isLoading = false,
-                        noticeDetail = result.data!!.toDetail()
+                        result = result.data!!.toDetail()
                     )
 
                 }
                 is Resource.Loading -> {
-                    _noticeDetailState.value = NoticeDetailState(
+                    _materialDetailState.value = RequestState(
                         isSuccess = false,
                         isLoading = true
                     )
                 }
                 is Resource.Error -> {
-                _noticeDetailState.value = NoticeDetailState(
+                    _materialDetailState.value = RequestState(
                    isError = true
                 )
             }

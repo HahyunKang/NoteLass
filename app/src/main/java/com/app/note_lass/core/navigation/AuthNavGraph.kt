@@ -16,6 +16,8 @@ import com.app.note_lass.module.signup.ui.AuthSharedViewModel
 import com.app.note_lass.module.signup.ui.SchoolInfoScreen
 import com.app.note_lass.module.signup.ui.SignUpScreen
 import com.app.note_lass.module.signup.ui.StudentInfoScreen
+import com.app.note_lass.module.signup.ui.UpdatePasswordScreen
+import com.app.note_lass.module.student.ui.NoticeListScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.AuthNavGraph(navController: NavController) {
@@ -37,6 +39,9 @@ fun NavGraphBuilder.AuthNavGraph(navController: NavController) {
                         launchSingleTop = true
                     }
 
+                },
+                onGoToReset = {
+                    navController.navigate(AuthScreen.Reset.route)
                 }
             )
         }
@@ -76,6 +81,18 @@ fun NavGraphBuilder.AuthNavGraph(navController: NavController) {
 
                 }
             )
+        }
+
+        composable(
+            route = AuthScreen.Reset.route,
+        ) {
+          UpdatePasswordScreen(onBack = {
+              navController.popBackStack()
+          }
+          ) {
+              navController.navigate(AuthScreen.Login.route)
+
+          }
         }
     }
 }

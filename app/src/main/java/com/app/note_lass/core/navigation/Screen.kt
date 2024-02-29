@@ -19,6 +19,7 @@ sealed class AuthScreen(val route : String){
     object StudentInfo : AuthScreen("auth/student/info")
 
     object SignUp : AuthScreen("auth/signup")
+    object Reset: AuthScreen("auth/reset")
 
 }
 
@@ -26,6 +27,7 @@ sealed class HomeScreen(val route : String){
     object Home : HomeScreen("home/home")
 
     object Notice : HomeScreen("home/notice")
+    object DashBoard : HomeScreen("home/dashboard")
 }
 
 sealed class GroupScreen(val route : String){
@@ -43,6 +45,7 @@ sealed class GroupScreen(val route : String){
 
     object NoticeForStudent : GroupScreen("group/student/notice")
 
+    object DashBoardForTeacher : GroupScreen("group/teacher/dashboard")
 
 
 }
@@ -57,9 +60,19 @@ sealed class SettingScreen(val route : String){
 
 sealed class UploadScreen(val route:String){
     object CreateNotice : GroupScreen("upload/create")
+    object ModifyNotice :UploadScreen("upload/modify/{noticeId}"){
+        fun passQuery(noticeId: Long) : String {
+            return "upload/modify/${noticeId}"
+        }
+    }
     object NoticeDetail : UploadScreen("upload/detail/notice/{noticeId}"){
         fun passQuery(noticeId : Long) : String {
             return "upload/detail/notice/${noticeId}"
+        }
+    }
+    object MaterialDetail : UploadScreen("upload/detail/material/{materialId}"){
+        fun passQuery(materialId : Long) : String {
+            return "upload/detail/material/${materialId}"
         }
     }
 }

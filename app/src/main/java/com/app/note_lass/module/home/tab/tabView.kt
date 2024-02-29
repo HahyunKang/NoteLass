@@ -1,5 +1,7 @@
 package com.app.note_lass.module.home.tab
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.Interaction
@@ -41,8 +43,10 @@ import androidx.compose.ui.unit.sp
 import androidx.leanback.widget.Row
 import androidx.navigation.NavController
 import com.app.note_lass.R
+import com.app.note_lass.common.DashboardType
 import com.app.note_lass.core.navigation.HomeScreen
 import com.app.note_lass.module.home.tab.cafeteria.ui.previewCafeteria
+import com.app.note_lass.module.home.tab.notice.DashBoard
 import com.app.note_lass.module.home.tab.notice.data.previewNotice
 import com.app.note_lass.module.home.tab.notice.ui.PreviewNotice
 import com.app.note_lass.module.home.tab.schedule.ui.TableScreen
@@ -54,11 +58,15 @@ import com.app.note_lass.ui.theme.PrimaryGray
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun tabView(
     titleList : List<String>,
-    navController: NavController
-    ){
+    noticeList : List<DashBoard>,
+   onGoToDashBoard : () -> Unit,
+    onGoToDetail : (DashboardType,Long)->Unit
+
+){
     val coroutineScope = rememberCoroutineScope()
 
     var selectedTabIndex by remember{
@@ -78,7 +86,7 @@ fun tabView(
             ) {
                 TabRow(selectedTabIndex = selectedTabIndex, indicator = {}, divider = {},
                     modifier = Modifier
-                        .width(280.dp)
+                        .width(108.dp),
 
                 ) {
                     titleList.forEachIndexed { index, item ->
@@ -156,7 +164,7 @@ fun tabView(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable {
-                        navController.navigate(HomeScreen.Notice.route)
+                        onGoToDashBoard()
                     }
                 ){
                     Text("전체보기",
@@ -175,20 +183,21 @@ fun tabView(
             val lunchList = listOf("등심돈까스" ,"우동국"," 마카로니 콘샐러드", "쌀밥", "단무지", "배추김치")
             val dinnerList = listOf("닭고기 김치덮밥" ,"미역국","유채나물", "깍두기")
 
-            val noticeList =  listOf<previewNotice>(previewNotice("일정 공유드립니다","2023.3.4",false),previewNotice("2학기 설문조사 요청 드립니다","2023.3.4",true))
               Box(modifier = Modifier.weight(2f)){
                   when(selectedTabIndex){
                       0 -> {
-                          PreviewNotice(noticeList =  noticeList)
+                          PreviewNotice(noticeList =  noticeList,
+                              onGoToDetail = onGoToDetail
+                          )
                       }
-                      1-> {
-                              TableScreen()
-
-                      }
-                      2->{
-                          previewCafeteria(lunchList = lunchList, dinnerList = dinnerList)
-
-                      }
+//                      1-> {
+//                              TableScreen()
+//
+//                      }
+//                      2->{
+//                          previewCafeteria(lunchList = lunchList, dinnerList = dinnerList)
+//
+//                      }
                   }
 
 

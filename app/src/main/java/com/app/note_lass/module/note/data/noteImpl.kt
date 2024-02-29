@@ -3,6 +3,7 @@ package com.app.note_lass.module.note.data
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.module.note.domain.NoteRepository
 import com.app.note_lass.module.upload.data.Material.Material
+import com.app.note_lass.module.upload.data.notice.Materials
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.Response
@@ -50,6 +51,13 @@ class NoteImpl @Inject constructor(
 
     override suspend fun getFile(accessToken: String, fileId: Long): ResponseBody{
         return noteApi.getFile(accessToken, fileId)
+    }
+
+    override suspend fun getMaterialDetail(
+        accessToken: String,
+        materialId: Long
+    ): NoteResponseBody<Materials> {
+        return noteApi.getMaterialDetail(accessToken, materialId)
     }
 
 

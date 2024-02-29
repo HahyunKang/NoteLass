@@ -12,7 +12,7 @@ data class NoticeListState(
     val isMessage : String = ""
 )
 
-data class NoticeDetailState @RequiresApi(Build.VERSION_CODES.O) constructor(
+data class NoticeDetailState (
     val isLoading : Boolean = false,
     val isSuccess : Boolean = false,
     val isError : Boolean = false,

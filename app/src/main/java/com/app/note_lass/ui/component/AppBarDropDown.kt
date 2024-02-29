@@ -128,6 +128,7 @@ fun AppBarDropDown(
 
                     }else{
                         loginViewModel.logout(tokenViewModel = protoViewModel)
+                        protoViewModel.resetGroupInfo()
                     }
 
                 }
@@ -150,7 +151,6 @@ fun MaterialDropDown(
 ) {
 
 
-    val protoViewModel : ProtoViewModel =  hiltViewModel()
     val noteViewModel : NoteViewModel = hiltViewModel()
     val groupForStudentViewModel : GroupForStudentViewModel = hiltViewModel()
 
@@ -262,30 +262,18 @@ fun MaterialDropDown(
                             }
                             context.startActivity(intent)
 
-//                        val intent = Intent(context, NoteActivity::class.java)
-//                        if(material.files?.get(0)?.originalFileName?.contains("pdf") == true) {
-//                            intent.putExtra("filePath", fileMaterial.absolutePath)
-//                            intent.putExtra("pdfTitle",material.files[0].originalFileName )
-//                        }
-//                        else{
-//                            intent.putExtra("photoPath", fileMaterial.absolutePath)
-//                            intent.putExtra("pdfTitle", material.files?.get(0)?.originalFileName)
-//                        }
-//                        context.startActivity(intent)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
                     }
                 }
             }
-
-
         }
-        if(materialToNote.value.isError) {
-            Toast.makeText(context,"노트 탭 업로드에 실패하였습니다.",Toast.LENGTH_SHORT).show()
-        }
+
     }
-
+    if(materialToNote.value.isError) {
+        Toast.makeText(context,"노트 탭 업로드에 실패하였습니다.",Toast.LENGTH_SHORT).show()
+    }
 //    if(fileState.value.isSuccess &&
 //        material.files?.isNotEmpty() == true &&
 //        fileState.value.result!!.fileId == material.files[0].id
@@ -336,13 +324,12 @@ fun MaterialDropDown(
                     pressIndex.value = index
                    when(index){
                        0 ->{
-
                         if(material.files!!.isNotEmpty())
                             groupForStudentViewModel.getFile(material.files[0].id)
 
                            }
                        1 ->{
-                           noteViewModel.makeMaterialToNote(materialId = material.id)
+                           material.files?.get(0)?.let { noteViewModel.makeMaterialToNote(materialId = it.id) }
                        }
                        2-> {
 //                           val intent = Intent(context, NoteActivity::class.java).apply {

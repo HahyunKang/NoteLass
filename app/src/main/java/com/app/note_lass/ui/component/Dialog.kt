@@ -148,8 +148,8 @@ fun CreateGroup(
     onClickNext : () -> Unit
 ) {
     val gradeList = listOf("1","2","3")
-    val classList = listOf("1","2","3","4","5")
-    val subjectList = listOf("국어","수학","영어","과학","사회","음악","체육")
+    val classList = listOf("1","2","3","4","5","6","7","8","9","10","11","12","13","14","15")
+    val subjectList = listOf("국어","수학","영어","과학","사회","음악","체육","미술")
 
     val gradeInfo = remember {
         mutableStateOf("1")
@@ -741,7 +741,13 @@ fun DialogStudentMemo(
                     )
                 },
                 textStyle = NoteLassTheme.Typography.sixteem_600_pretendard,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    unfocusedIndicatorColor = PrimaryGray,
+                    focusedIndicatorColor = PrimaryGray,
+                    cursorColor = Color.Black,
+                    backgroundColor = Color.White
+                )
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -991,7 +997,8 @@ fun DialogDeleteGroup(
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor =  Color.White,
                     unfocusedIndicatorColor = PrimaryGray,
-                    focusedIndicatorColor = PrimarayBlue
+                    focusedIndicatorColor = PrimarayBlue,
+                    cursorColor = Color.Black
                 )
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -1274,7 +1281,8 @@ fun DialogModifyMemo(
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = PrimaryGray,
                     unfocusedBorderColor = PrimaryGray,
-                    backgroundColor = Color.White
+                    backgroundColor = Color.White,
+                    cursorColor = Color.Black
                 )
             )
                 Spacer(modifier = Modifier.height(14.dp))
@@ -1321,9 +1329,16 @@ fun DialogCreateSelfEvaluation(
     val allQuestionFilled = remember {
         mutableStateOf(false)
     }
-
+    val opened = remember{
+        mutableStateOf(true)
+    }
     allQuestionFilled.value = questions.all { it.isNotEmpty() }
-
+    LaunchedEffect(Unit){
+        if(opened.value){
+            selfEvaluationViewModel.getQuestions()
+        }
+        opened.value= false
+    }
     LaunchedEffect(key1 = getQuestionState.value){
         if(getQuestionState.value.isSuccess){
             val getQuestions = getQuestionState.value.result
@@ -1389,7 +1404,8 @@ fun DialogCreateSelfEvaluation(
                             colors = TextFieldDefaults.textFieldColors(
                                 backgroundColor = Color.White,
                                 focusedIndicatorColor =  PrimaryGray,
-                                unfocusedIndicatorColor = PrimaryGray
+                                unfocusedIndicatorColor = PrimaryGray,
+                                cursorColor = Color.Black
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -1447,6 +1463,8 @@ fun DialogCreateSelfEvaluation(
                             }else{
                                 selfEvaluationViewModel.postQuestions(questions)
                             }
+                            setShowDialog(false)
+                            opened.value = true
                         }
 
                         }
@@ -1470,6 +1488,15 @@ fun DialogSelfEvaluationForStudent(
 ) {
     val evaluations  = remember {
         mutableStateOf(mutableListOf<EvaluationForSubmit>())
+    }
+    val opened = remember{
+        mutableStateOf(true)
+    }
+    LaunchedEffect(Unit){
+        if(opened.value){
+            selfEvaluationViewModel.getAnswers()
+        }
+        opened.value= false
     }
 
     val getQuestionState = selfEvaluationViewModel.getQuestionState
@@ -1517,7 +1544,7 @@ fun DialogSelfEvaluationForStudent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp)
-                    .weight(4f),
+                    .weight(3.5f),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ){
                 itemsIndexed(evaluations.value){
@@ -1541,7 +1568,8 @@ fun DialogSelfEvaluationForStudent(
                             colors = TextFieldDefaults.textFieldColors(
                                 backgroundColor = Color.White,
                                 focusedIndicatorColor =  PrimaryGray,
-                                unfocusedIndicatorColor = PrimaryGray
+                                unfocusedIndicatorColor = PrimaryGray,
+                                cursorColor = Color.Black
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -1554,7 +1582,7 @@ fun DialogSelfEvaluationForStudent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(bottom = 24.dp, end = 24.dp, top = 24.dp)
+                    .padding(bottom = 24.dp, end = 24.dp, top = 16.dp)
             ){
 
                 Row(modifier = Modifier.align(Alignment.CenterEnd)) {
@@ -1588,6 +1616,10 @@ fun DialogSelfEvaluationForStudent(
                                 }
                                 if(postAnswers.isNotEmpty())selfEvaluationViewModel.postAnswers(postAnswers)
                                 if(modifyAnswers.isNotEmpty())selfEvaluationViewModel.modifyAnswers(modifyAnswers)
+                                opened.value= true
+                                setShowDialog(false)
+
+
                         }
                     }
 

@@ -45,6 +45,8 @@ import com.app.note_lass.ui.component.DialogSelfEvaluationForStudent
 fun StudentRecordUploadScreen(
     studentId : Long,
     studentName : String,
+    goBack : () -> Unit,
+    onClickLogout : ()->Unit,
     protoViewModel : ProtoViewModel = hiltViewModel(),
     recordViewModel: RecordViewModel = hiltViewModel(),
 ) {
@@ -174,7 +176,9 @@ fun StudentRecordUploadScreen(
                     badgeCount = 12,
                     onClick = {
                         isFirstDialogShow.value = true
-                    }
+                    },
+                    goBack = goBack,
+                    onClickLogout = onClickLogout
                 )
             },
             containerColor = Color(0xFFF5F5FC),

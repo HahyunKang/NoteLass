@@ -1,6 +1,7 @@
 package com.app.note_lass.module.login.ui
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,16 +27,19 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,6 +59,7 @@ import com.app.note_lass.ui.theme.PrimaryGray
 fun LoginScreen(
     onGoToSignUp : () -> Unit,
     onGoTOHome : () -> Unit ,
+    onGoToReset : ()-> Unit,
     loginViewModel: LoginViewModel =  hiltViewModel(),
     tokenViewModel: ProtoViewModel = hiltViewModel()
 ){
@@ -65,11 +70,18 @@ fun LoginScreen(
     val passwordText =  remember {
         mutableStateOf("")
     }
-
+    val context = LocalContext.current
     val loginState =  loginViewModel.loginState
+
+    LaunchedEffect(key1 = loginState.value){
+        if(loginState.value.isError){
+            Toast.makeText(context, "아이디와 비밀번호를 다시 확인해주세요",Toast.LENGTH_SHORT).show()
+        }
+    }
     //Log.e("passwordText",passwordText.value)
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -137,6 +149,7 @@ fun LoginScreen(
             onValueChange = { it ->
                 passwordText.value=  it
             },
+            visualTransformation = PasswordVisualTransformation(),
             textStyle = NoteLassTheme.Typography.twenty_600_pretendard,
             modifier = Modifier
                 .border(1.dp, color = Color(0x80C9CDD2), shape = RoundedCornerShape(8.dp))
@@ -147,7 +160,7 @@ fun LoginScreen(
                 innerTextField = it,
                 singleLine = true,
                 enabled = true,
-                visualTransformation = VisualTransformation.None,
+                visualTransformation =  VisualTransformation.None,
                 interactionSource = interactionSource,
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.White,
@@ -226,6 +239,24 @@ fun LoginScreen(
                     onGoToSignUp()
                 }
             )
+//            Text(
+//                text = "|",
+//                style = TextStyle(
+//                    fontSize = 16.sp,
+//                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+//                    fontWeight = FontWeight(600),
+//                    color = Color(0xFF9EA4AA),
+//                )
+//            )
+//            Text(
+//                text = "아이디 찾기",
+//                style = TextStyle(
+//                    fontSize = 16.sp,
+//                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+//                    fontWeight = FontWeight(600),
+//                    color = Color(0xFF9EA4AA),
+//                )
+//            )
             Text(
                 text = "|",
                 style = TextStyle(
@@ -236,31 +267,16 @@ fun LoginScreen(
                 )
             )
             Text(
-                text = "아이디 찾기",
+                text = "비밀번호 재설정",
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.pretendard_regular)),
                     fontWeight = FontWeight(600),
                     color = Color(0xFF9EA4AA),
-                )
-            )
-            Text(
-                text = "|",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                    fontWeight = FontWeight(600),
-                    color = Color(0xFF9EA4AA),
-                )
-            )
-            Text(
-                text = "비밀번호 찾기",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                    fontWeight = FontWeight(600),
-                    color = Color(0xFF9EA4AA),
-                )
+                ),
+                modifier = Modifier.clickable {
+                    onGoToReset()
+                }
             )
 
 

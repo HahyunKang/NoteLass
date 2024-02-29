@@ -57,13 +57,7 @@ val items = listOf(
         "note/home",
         R.drawable.nav_active_note_small,
         R.drawable.nav_inactive_note_small,
-    ),
-    NavigationItem(
-        "환경설정",
-        "setting/home",
-        R.drawable.nav_inactive_setting_small,
-        R.drawable.nav_inactive_setting_small,
-    ),
+    )
 )
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

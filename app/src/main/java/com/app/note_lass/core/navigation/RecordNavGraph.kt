@@ -10,7 +10,7 @@ import androidx.navigation.navArgument
 import com.app.note_lass.module.record.ui.StudentRecordUploadScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun NavGraphBuilder.RecordNavGraph(navController: NavController) {
+fun NavGraphBuilder.RecordNavGraph(navController: NavController,outerNavController: NavController) {
 
 
     composable(
@@ -24,7 +24,15 @@ fun NavGraphBuilder.RecordNavGraph(navController: NavController) {
         val studentId = it.arguments?.getLong("studentId")
         val studentName = it.arguments?.getString("name")
 
-        StudentRecordUploadScreen(studentId = studentId!!, studentName = studentName!!)
+        StudentRecordUploadScreen(studentId = studentId!!, studentName = studentName!!,
+            goBack = {
+                navController.popBackStack()
+                },
+            onClickLogout = {
+                outerNavController.navigate(AUTH_ROUTE){
+                    launchSingleTop = true
+                }
+            })
     }
 
 

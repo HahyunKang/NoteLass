@@ -34,4 +34,10 @@ interface SignupApi {
     suspend fun resetPassword(
         @Body passwordRequest : ResetPasswordRequest
     ): NoteResponseBody<Nothing>
+
+    @GET("api/auth/password/reset")
+    suspend fun passwordValidate(
+        @Query(value = "email") email : String,
+        @Query(value = "code") code : String
+    ): NoteResponseBody<Boolean>
 }

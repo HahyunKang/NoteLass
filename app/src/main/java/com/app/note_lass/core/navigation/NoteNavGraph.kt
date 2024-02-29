@@ -12,12 +12,18 @@ import com.app.note_lass.module.note.ui.FirstNoteScreen
 import com.app.note_lass.module.upload.ui.AssignmentUploadScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun NavGraphBuilder.NoteNavGraph(navController: NavController) {
+fun NavGraphBuilder.NoteNavGraph(navController: NavController, outerNavController:NavController) {
 
 
     navigation(startDestination = NoteScreen.Home.route, route = NOTE_ROUTE) {
         composable(NoteScreen.Home.route) {
-            FirstNoteScreen()
+            FirstNoteScreen(
+                onClickLogout = {
+                    outerNavController.navigate(AUTH_ROUTE){
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
     }
 }

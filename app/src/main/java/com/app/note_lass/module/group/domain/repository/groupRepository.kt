@@ -6,6 +6,7 @@ import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.join.JoinDto
 import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
+import com.app.note_lass.module.home.tab.notice.DashBoard
 import com.app.note_lass.module.upload.data.notice.Notice
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -33,5 +34,7 @@ interface GroupRepository {
     suspend fun approveAllGroup(accessToken: String, groupId: Long) : NoteResponseBody<Nothing>
     suspend fun deleteGroup(accessToken: String, groupId: Long): NoteResponseBody<Nothing>
     suspend fun deleteStudent(accessToken: String, groupId: Long,userId: Long): NoteResponseBody<Nothing>
+    suspend fun getDashboardsInHome(accessToken: String) : NoteResponseBody<List<DashBoard>>
+    suspend fun getDashboardsInGroup(accessToken: String,groupId: Long) : NoteResponseBody<List<DashBoard>>
 
 }

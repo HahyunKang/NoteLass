@@ -7,6 +7,7 @@ import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
 import com.app.note_lass.module.upload.data.notice.Notice
 import com.app.note_lass.module.group.domain.repository.GroupRepository
+import com.app.note_lass.module.home.tab.notice.DashBoard
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -102,6 +103,17 @@ class GroupImpl @Inject constructor(
         userId: Long
     ): NoteResponseBody<Nothing> {
         return groupApi.deleteStudent(accessToken, groupId, userId)
+    }
+
+    override suspend fun getDashboardsInHome(accessToken: String): NoteResponseBody<List<DashBoard>> {
+        return groupApi.getDashboardsInHome(accessToken)
+    }
+
+    override suspend fun getDashboardsInGroup(
+        accessToken: String,
+        groupId: Long
+    ): NoteResponseBody<List<DashBoard>> {
+        return groupApi.getDashboardsInGroup(accessToken, groupId)
     }
 
 }

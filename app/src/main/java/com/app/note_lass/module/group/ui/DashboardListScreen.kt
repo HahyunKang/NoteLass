@@ -1,4 +1,4 @@
-package com.app.note_lass.module.student.ui
+package com.app.note_lass.module.group.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,11 +31,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
+import com.app.note_lass.common.DashboardType
 import com.app.note_lass.common.Resources
+import com.app.note_lass.module.home.tab.notice.DashBoard
 import com.app.note_lass.module.student.ui.viewmodel.DashBoardListViewModel
 import com.app.note_lass.ui.component.AcademicResources
 import com.app.note_lass.ui.component.AppBar
 import com.app.note_lass.ui.component.AppBarForNotice
+import com.app.note_lass.ui.component.DashBoardForTeacher
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryBlack
@@ -43,14 +47,14 @@ import org.w3c.dom.Text
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoticeListScreen(
+fun DashBoardListScreen(
     viewModel : DashBoardListViewModel = hiltViewModel(),
-    goToDetailScreen : (Long)-> Unit,
-    onClickLogout : () ->Unit,
+    goToDetailScreen : (DashboardType,Long)-> Unit,
+    onClickLogout : () ->Unit={},
     goBack : ()-> Unit
 ){
 
-    val state =viewModel.noticeListState
+    val state =viewModel.dashBoardState
     val isRead = remember{
         mutableStateOf(false)
     }
@@ -58,7 +62,7 @@ fun NoticeListScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            AppBarForNotice(title = "공지", onClickBack = goBack)
+            AppBarForNotice(title = "공지/강의자료", onClickBack = goBack)
 
         },
         containerColor =  Color(0xFFF5F5FC),
@@ -107,37 +111,28 @@ fun NoticeListScreen(
 
                 Spacer(modifier = Modifier.height(27.dp))
 
-                Row(){
-                    Icon(
-                        painter = painterResource(id = R.drawable.handbook_check_small),
-                        tint = if(!isRead.value) PrimaryGray else PrimarayBlue,
-                        contentDescription = "noticeRead",
-                        modifier = Modifier.clickable {
-                            isRead.value = !isRead.value
-                        }
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "안읽음",style = NoteLassTheme.Typography.fourteen_600_pretendard,color = PrimaryGray)
-                }
-
                 Spacer(modifier = Modifier.height(27.dp))
 
-                var noticeList=  emptyList<Resources>()
                 if(state.value.isSuccess)
-                    noticeList = if(isRead.value) state.value.result!!.reversed().filter { it.unread }
-                    else {
-                        state.value.result!!.reversed()
-                    }
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ){
-                    items(noticeList.size){
-                        AcademicResources(resources = noticeList[it], goToNoticeDetail = {
-                            goToDetailScreen(noticeList[it].id)
-                        })
-                    }
-                }
+                    ) {
 
+                        if (state.value.result != null) {
+                            itemsIndexed(state.value.result!!) { index, item ->
+                                DashBoardForTeacher(resources = item) {
+                                    if (item.noticeId != null) goToDetailScreen(
+                                        DashboardType.NOTICE,
+                                        item.noticeId
+                                    )
+                                    if (item.lectureMaterialId != null) goToDetailScreen(
+                                        DashboardType.MATERIAL,
+                                        item.lectureMaterialId
+                                    )
+                                }
+                            }
+                        }
+                    }
             }
             
         })

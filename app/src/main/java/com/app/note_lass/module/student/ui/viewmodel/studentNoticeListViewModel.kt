@@ -11,8 +11,11 @@ import com.app.note_lass.module.group.data.groupList.GroupHashState
 import com.app.note_lass.module.group.data.groupList.GroupListState
 import com.app.note_lass.module.group.data.groupList.StudentHashState
 import com.app.note_lass.module.group.data.studentList.StudentListState
+import com.app.note_lass.module.group.domain.repository.GetDashBoardsInGroupUseCase
+import com.app.note_lass.module.group.domain.repository.GetDashBoardsInHomeUseCase
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.group.domain.repository.GetStudentListUseCase
+import com.app.note_lass.module.home.tab.notice.DashBoard
 import com.app.note_lass.module.login.domain.LoginUseCase
 import com.app.note_lass.module.student.data.HandBookRequest
 import com.app.note_lass.module.student.data.HandBookSubmitState
@@ -27,18 +30,20 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class StudentNoticeListViewModel @Inject constructor(
+class DashBoardListViewModel @Inject constructor(
     val getNoticeListUseCase: GetNoticeListUseCase,
-
+    val getDashBoardsInGroupUseCase: GetDashBoardsInGroupUseCase,
     ) : ViewModel() {
 
     private val _noticeListState= mutableStateOf(RequestState<List<Resources>>())
     val noticeListState = _noticeListState
-
+    private val _dashBoardsState = mutableStateOf(RequestState<List<DashBoard>>())
+    val dashBoardState = _dashBoardsState
 
 
     init {
         getNoticeList()
+        getDashboards()
     }
 
     fun getNoticeList(){
@@ -70,5 +75,33 @@ class StudentNoticeListViewModel @Inject constructor(
 
 
     }
+    private fun getDashboards(){
+        getDashBoardsInGroupUseCase().onEach{
+                result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _dashBoardsState.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+                is Resource.Success  ->{
 
+                    _dashBoardsState.value = RequestState(
+                        isSuccess = true,
+                        isError = false,
+                        result = result.data
+                    )
+                    Log.e("groupListData",result.toString())
+                }
+                is Resource.Error -> {
+                    _dashBoardsState.value = RequestState(
+                        isError = true,
+                    )
+                }
+            }
+
+
+        }.launchIn(viewModelScope)
+    }
 }

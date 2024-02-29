@@ -10,6 +10,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.app.note_lass.common.DashboardType
+import com.app.note_lass.module.group.ui.DashBoardListScreen
 import com.app.note_lass.module.group.ui.GroupScreen
 import com.app.note_lass.module.group.ui.GroupStudentScreen
 import com.app.note_lass.module.group.ui.GroupTeacherScreen
@@ -59,6 +61,25 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
                     goBackToGroup = {
                         navController.navigate(GroupScreen.Home.route)
                         Toast.makeText(context,"삭제되었습니다.",Toast.LENGTH_SHORT).show()
+                    },
+                    goBack = {
+                        navController.popBackStack()
+                    },
+                    onClickLogout = {
+                        outerNavController.navigate(AUTH_ROUTE){
+                            launchSingleTop = true
+                        }
+                    },
+                    onClickDetail = {
+                            dashboardType, id ->
+                        if(dashboardType== DashboardType.NOTICE) {
+                            navController.navigate(UploadScreen.NoticeDetail.passQuery(id))
+                        }else{
+                            navController.navigate(UploadScreen.MaterialDetail.passQuery(id))
+                        }
+                    },
+                    onTouchWatchAll = {
+                        navController.navigate(GroupScreen.DashBoardForTeacher.route)
                     }
                 )
             }
@@ -82,6 +103,14 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
                     },
                     onTouchNoticeListClick = {
                         navController.navigate(GroupScreen.NoticeForStudent.route)
+                    },
+                    goBack = {
+                        navController.popBackStack()
+                    },
+                    onClickLogout = {
+                        outerNavController.navigate(AUTH_ROUTE){
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -93,6 +122,38 @@ fun NavGraphBuilder.GroupNavGraph(navController: NavController, outerNavControll
             NoticeListScreen(
                 goToDetailScreen = {
                     navController.navigate(UploadScreen.NoticeDetail.passQuery(it))
+                },
+                goBack = {
+                    navController.popBackStack()
+                },
+                onClickLogout = {
+                    outerNavController.navigate(AUTH_ROUTE){
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+
+        composable(
+            route = GroupScreen.DashBoardForTeacher.route,
+        ) {
+            DashBoardListScreen(
+                goToDetailScreen = {
+                        dashboardType, id ->
+                    if(dashboardType==DashboardType.NOTICE) {
+                        navController.navigate(UploadScreen.NoticeDetail.passQuery(id))
+                    }else{
+                        navController.navigate(UploadScreen.MaterialDetail.passQuery(id))
+                    }
+                },
+                goBack = {
+                    navController.popBackStack()
+                },
+                onClickLogout = {
+                    outerNavController.navigate(AUTH_ROUTE){
+                        launchSingleTop = true
+                    }
                 }
             )
         }

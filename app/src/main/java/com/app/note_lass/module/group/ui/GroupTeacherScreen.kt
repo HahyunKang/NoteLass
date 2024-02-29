@@ -3,6 +3,7 @@ package com.app.note_lass.module.group.ui
 import android.widget.Space
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,10 +28,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
+import com.app.note_lass.common.DashboardType
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.group.ui.component.JoinDialog
 import com.app.note_lass.module.group.ui.viewModel.GroupForTeacherViewModel
@@ -46,6 +53,7 @@ import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.component.SectionHeaderWithCreate
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
+import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
 import com.app.note_lass.ui.theme.PrimaryPurple
 
@@ -53,8 +61,12 @@ import com.app.note_lass.ui.theme.PrimaryPurple
 fun GroupTeacherScreen(
     groupInfo : String,
     onTouchCreateNotice : () -> Unit,
+    onTouchWatchAll : () -> Unit,
     onClickStudentRecord : (Long,Long,String) -> Unit,
     goBackToGroup : () -> Unit,
+    goBack : ()->Unit,
+    onClickLogout : () -> Unit,
+    onClickDetail : (DashboardType,Long) -> Unit,
     viewModel : GroupForTeacherViewModel = hiltViewModel()
 ){
     val isShowDialog = remember{
@@ -78,6 +90,7 @@ fun GroupTeacherScreen(
     val context=  LocalContext.current
 
     val joinStudentListState = viewModel.joinStudentListState
+    val dashBoardState = viewModel.dashBoardState
 
     if(isShowDialog.value && joinStudentListState.value.isSuccess){
         JoinDialog(
@@ -185,7 +198,9 @@ fun GroupTeacherScreen(
                 },
                 onSelfEvaluationClick = {
                     isSelfEvaluationDialog.value = true
-                }
+                },
+                onClickLogout = onClickLogout,
+                goBack = goBack
             )
 
         },
@@ -210,7 +225,7 @@ fun GroupTeacherScreen(
                 Column(
                     modifier = Modifier.weight(2f)
                 ) {
-                    Box(
+                    Column(
                         modifier = Modifier
                             .weight(1f)
                             .shadow(
@@ -222,11 +237,43 @@ fun GroupTeacherScreen(
                             .background(
                                 color = Color(0xFFFFFFFF)
                             )
-                            .padding(horizontal = 24.dp)
+                            .padding(horizontal = 24.dp),
+                        verticalArrangement = Arrangement.Top
                     ) {
 
-                        SectionHeaderWithCreate(title = "공지/과제/강의자료", onTouchCreate = onTouchCreateNotice )
+                        SectionHeaderWithCreate(
+                                title = "공지/학습자료",
+                                onTouchCreate = onTouchCreateNotice,
+                                onTouchWatchAll = onTouchWatchAll
+                            )
 
+
+                        if(dashBoardState.value.isSuccess){
+                            if(dashBoardState.value.result!=null){
+                                dashBoardState.value.result!!.onEachIndexed {
+                                    index,it->
+                                    if(index < 3) {
+                                        IconAndText(
+                                            icon = R.drawable.group_notice_read,
+                                            iconColor = PrimarayBlue,
+                                            text = it.title,
+                                            onClick = {
+                                                if (it.noticeId != null) onClickDetail(
+                                                    DashboardType.NOTICE,
+                                                    it.noticeId
+                                                )
+                                                if (it.lectureMaterialId != null) onClickDetail(
+                                                    DashboardType.MATERIAL,
+                                                    it.lectureMaterialId
+                                                )
+                                            }
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                    }
+                                }
+                            }
+
+                        }
 
                     }
                     Spacer(modifier = Modifier.height(24.dp))
@@ -249,6 +296,7 @@ fun GroupTeacherScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         assignmentList.forEachIndexed { index: Int, assignment: String ->
+
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
@@ -304,7 +352,16 @@ fun GroupTeacherScreen(
                         .padding(start = 24.dp, end = 24.dp)
                 ) {
 
-                    SectionHeader(title = "생기부 관리")
+                    Text("생기부 관리",
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                            fontWeight = FontWeight(700),
+                            color = PrimaryBlack,
+                        ),
+                        modifier =Modifier.padding(vertical = 8.dp)
+                    )
+
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Column(
@@ -318,7 +375,8 @@ fun GroupTeacherScreen(
                             if(studentListState.value.studentList.isEmpty()){
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier.padding(vertical = 80.dp)
+                                    modifier = Modifier
+                                        .padding(vertical = 80.dp)
                                         .fillMaxWidth()
                                 ) {
                                     Text(text ="학생 목록이 없어요",color = PrimaryGray,style = NoteLassTheme.Typography.sixteen_700_pretendard)

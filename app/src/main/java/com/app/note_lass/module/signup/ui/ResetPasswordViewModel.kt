@@ -26,6 +26,7 @@ import com.app.note_lass.module.signup.domain.presentation.RegistrationFormEvent
 import com.app.note_lass.module.signup.domain.presentation.RegistrationFormState
 import com.app.note_lass.module.signup.domain.usecase.EmailRequestUseCase
 import com.app.note_lass.module.signup.domain.usecase.EmailValidateUseCase
+import com.app.note_lass.module.signup.domain.usecase.PasswordValidateUseCase
 import com.app.note_lass.module.signup.domain.usecase.PostPasswordUseCase
 import com.app.note_lass.module.signup.domain.usecase.ResetPasswordUseCase
 import com.app.note_lass.module.signup.domain.usecase.SignUpUseCase
@@ -47,21 +48,23 @@ class ResetPasswordViewModel @Inject constructor(
     private val validateRepeatedPassWord: ValidateRepeatedPassWord,
     private val postPasswordUseCase: PostPasswordUseCase,
     private val resetPasswordUseCase: ResetPasswordUseCase,
-    private val emailValidateUseCase: EmailValidateUseCase
+    private val passwordValidateUseCase: PasswordValidateUseCase
 ) :ViewModel() {
    //매번 새로운 객체 생성
     var state by mutableStateOf(RegistrationFormState())
 
    // var signupState by mutableStateOf(SignupInfo())
    @RequiresApi(Build.VERSION_CODES.O)
-   var signupState =
-        mutableStateOf(SignupInfo())
+   //var signupState =
+     ///   mutableStateOf(SignupInfo())
 
-
-    private val _signUpApiState = mutableStateOf(SignUpApiState())
-    val signUpApiState = _signUpApiState
+//
+//    private val _signUpApiState = mutableStateOf(SignUpApiState())
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    val signUpApiState = _signUpApiState
 
     private val _emailRequestState= mutableStateOf(EmailRequestState())
+    @RequiresApi(Build.VERSION_CODES.O)
     val emailRequestState = _emailRequestState
 
     private val _emailValidate = mutableStateOf(EmailValidateState())
@@ -111,6 +114,7 @@ class ResetPasswordViewModel @Inject constructor(
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun emailRequest(email:String, isToast :  () -> Unit ){
        postPasswordUseCase(email).onEach {
                 result ->
@@ -146,7 +150,7 @@ class ResetPasswordViewModel @Inject constructor(
     }
 
     fun emailValidate(email:String,authCode:String, isToast :  (String) -> Unit ={} ){
-        emailValidateUseCase(email,authCode).onEach {
+        passwordValidateUseCase(email,authCode).onEach {
                 result ->
 
             when(result)
@@ -195,12 +199,12 @@ class ResetPasswordViewModel @Inject constructor(
             {
                 is Resource.Success -> {
                     if(result.data?.code==200) {
-                        _emailValidate.value = EmailValidateState(
+                        _resetPasswordState.value = RequestState(
                             isSuccess = true,
                             isLoading = false
                         )
                     }else{
-                        _emailValidate.value = EmailValidateState(
+                        _resetPasswordState.value = RequestState(
                             isSuccess = false,
                             isLoading = false
                         )
@@ -210,7 +214,7 @@ class ResetPasswordViewModel @Inject constructor(
                 }
 
                 is Resource.Error-> {
-                    _emailValidate.value  = EmailValidateState(
+                    _resetPasswordState.value = RequestState(
                         isError = true
                     )
                     Log.e("signup Error Api", result.message.toString())
@@ -219,7 +223,7 @@ class ResetPasswordViewModel @Inject constructor(
                 }
                 is Resource.Loading -> {
                     Log.e("signup Loading Api", result.message.toString())
-                    _emailValidate.value  = EmailValidateState(
+                    _resetPasswordState.value = RequestState(
                         isSuccess = false,
                         isLoading = true
                     )

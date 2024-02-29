@@ -3,6 +3,7 @@ package com.app.note_lass.module.note.data
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.module.group.data.InfoForCreate
 import com.app.note_lass.module.upload.data.Material.Material
+import com.app.note_lass.module.upload.data.notice.Materials
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.Response
@@ -36,7 +37,7 @@ interface NoteApi {
     @POST("api/material")
     suspend fun getMaterialToNote(
         @Header(value = "Authorization") accessToken : String,
-        @Query(value = "materialId") id : Long
+        @Query(value = "fileId") id : Long
     ) : NoteResponseBody<Nothing>
 
     @GET("api/material/latest")
@@ -61,6 +62,10 @@ interface NoteApi {
         @Path("fileId") fileId: Long
     ) : ResponseBody
 
-
+    @GET("api/material/detail")
+    suspend fun getMaterialDetail(
+        @Header(value = "Authorization") accessToken : String,
+        @Query(value = "materialId") materialId : Long
+    ) : NoteResponseBody<Materials>
 
 }

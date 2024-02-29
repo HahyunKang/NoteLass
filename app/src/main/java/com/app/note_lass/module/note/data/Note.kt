@@ -4,7 +4,7 @@ data class Note(
     val id : Long,
     val title : String,
     val teacher : String,
-    val fileUrl : String,
+    val fileId : Long,
     val lastAccessed : String
 )
 
