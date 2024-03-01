@@ -32,8 +32,8 @@ fun NavGraphBuilder.UploadNavGraph(navController: NavController) {
             })
         }
 
-        composable(UploadScreen.ModifyNotice.route,
-            arguments = listOf(navArgument(name = "noticeId") { type = NavType.LongType })
+        composable(UploadScreen.ModifyDashboard.route,
+            arguments = listOf(navArgument(name = "dashboardId") { type = NavType.LongType })
             ) {
             ModifyDashboardScreen(goBackToGroup = { role,id,groupInfo ->
                 if(role== Role.STUDENT)
@@ -45,18 +45,19 @@ fun NavGraphBuilder.UploadNavGraph(navController: NavController) {
                 }
             })
         }
+
         composable(route = UploadScreen.NoticeDetail.route,
-            arguments = listOf(navArgument(name = "noticeId") { type = NavType.LongType }
+            arguments = listOf(navArgument(name = "dashboardId") { type = NavType.LongType }
             )
         ) {
-            val noticeId = it.arguments?.getLong("noticeId")
+            val noticeId = it.arguments?.getLong("dashboardId")
 
             NoticeDetailScreen(
                 goBack = {
                     navController.popBackStack()
                 },
                 goToModify = {
-                    navController.navigate(UploadScreen.ModifyNotice.passQuery(noticeId!!)){
+                    navController.navigate(UploadScreen.ModifyDashboard.passQuery("notice",noticeId!!)){
                         launchSingleTop = true
                     }
                 },
@@ -65,13 +66,20 @@ fun NavGraphBuilder.UploadNavGraph(navController: NavController) {
         }
 
         composable(route = UploadScreen.MaterialDetail.route,
-            arguments = listOf(navArgument(name = "materialId") { type = NavType.LongType }
+            arguments = listOf(navArgument(name = "dashboardId") { type = NavType.LongType }
             )
         ) {
+            val materialId = it.arguments?.getLong("dashboardId")
+
             MaterialDetailScreen(
                 goBack = {
                     navController.popBackStack()
-                }
+                },
+                goToModify = {
+                    navController.navigate(UploadScreen.ModifyDashboard.passQuery("material",materialId!!)){
+                        launchSingleTop = true
+                    }
+                },
             )
         }
     }

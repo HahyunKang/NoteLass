@@ -1,6 +1,7 @@
 package com.app.note_lass.module.upload.ui
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.group.ui.TabViewForTeacher
+import com.app.note_lass.module.upload.ui.viewmodel.MaterialDetailViewModel
 import com.app.note_lass.module.upload.ui.viewmodel.NoticeDetailViewModel
 import com.app.note_lass.module.upload.ui.viewmodel.UploadViewModel
 
@@ -34,13 +36,15 @@ import com.app.note_lass.module.upload.ui.viewmodel.UploadViewModel
 @Composable
 fun ModifyDashboardScreen(
     noticeDetailViewModel : NoticeDetailViewModel = hiltViewModel(),
+    materialDetailViewModel: MaterialDetailViewModel = hiltViewModel(),
     protoViewModel : ProtoViewModel = hiltViewModel(),
     goBackToGroup: (Role,Long,String) -> Unit
 ){
 
 
     val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",0))
-    val detailState = noticeDetailViewModel.noticeDetailState
+    val noticeDetailState = noticeDetailViewModel.noticeDetailState
+    val materialDetailState = materialDetailViewModel.materialDetailState
     val titleList = listOf("공지","강의자료")
 
     var selectedTabIndex by remember{
@@ -55,7 +59,7 @@ fun ModifyDashboardScreen(
             horizontal = 40.dp,
             vertical = 30.dp
         )
-    ){
+    ) {
         Box(
             Modifier
                 .weight(2f)
@@ -75,35 +79,47 @@ fun ModifyDashboardScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Box(modifier = Modifier.weight(1f)) {
-                    TabViewForTeacher(
-                        titleList = titleList,
-                        tabSelected = {
-                            selectedTabIndex = it
-                        }
-                    )
+                    if (noticeDetailState.value.isSuccess) {
+                        TabViewForTeacher(
+                            titleList = listOf("공지"),
+                            text = "공지 수정",
+                            tabSelected = {
+                                selectedTabIndex = it
+                            }
+                        )
+                    } else if (materialDetailState.value.isSuccess) {
+                        TabViewForTeacher(
+                            titleList = listOf("강의자료"),
+                            text = "강의자료 수정",
+                            tabSelected = {
+                                selectedTabIndex = it
+                            }
+                        )
+                    }
                 }
 
                 Box(modifier = Modifier.weight(5f)) {
                     when (selectedTabIndex) {
                         0 -> {
-                            if(detailState.value.isSuccess) {
+                            if (noticeDetailState.value.isSuccess) {
                                 ModifyNoticeScreen(
                                     goBackToGroup = goBackToGroup,
-                                    title = detailState.value.noticeDetail.title,
-                                    content = detailState.value.noticeDetail.content,
-                                    file = detailState.value.noticeDetail.file!!
+                                    title = noticeDetailState.value.noticeDetail.title,
+                                    content = noticeDetailState.value.noticeDetail.content,
+                                    file = noticeDetailState.value.noticeDetail.file!!
                                 )
                             }
-                        }
-//                        1 -> {
-//                            CreateAssignmentScreen()
-//                        }
+                            if (materialDetailState.value.isSuccess) {
+                                ModifyLectureNoteScreen(
+                                    title = materialDetailState.value.result!!.title,
+                                    content = materialDetailState.value.result!!.content,
+                                    file = materialDetailState.value.result!!.file,
+                                    goBackToGroup = goBackToGroup
+                                )
+                            }
 
-                        1 -> {
-                            CreateLectureNoteScreen(
-                                goBackToGroup = goBackToGroup
-                            )
                         }
+
                     }
                 }
             }
@@ -124,24 +140,27 @@ fun ModifyDashboardScreen(
                     color = Color(0xFFFFFFFF)
                 )
                 .fillMaxHeight()
-                .padding(horizontal = 24.dp, vertical = 15.dp)) {
+                .padding(horizontal = 24.dp, vertical = 15.dp)
+        ) {
 
 
-            when(selectedTabIndex) {
+            when (selectedTabIndex) {
                 0 -> {
-                   DashBoardInfo(groupInfo.value,"공지")
-                }
-                1-> {
-                    DashBoardInfo(groupInfo.value,"강의자료")
-                }
-        }
+                    if (noticeDetailState.value.isSuccess) {
+                        DashBoardInfo(groupInfo.value, "공지")
+                    }
+                    if (materialDetailState.value.isSuccess) {
+                        DashBoardInfo(groupInfo.value, "강의자료")
+                    }
 
+                }
+
+
+            }
 
 
         }
 
 
     }
-
-
 }

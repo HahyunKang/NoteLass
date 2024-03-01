@@ -2,15 +2,18 @@ package com.app.note_lass.module.upload.ui.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.upload.data.UploadState
 import com.app.note_lass.module.group.domain.repository.CreateNoticeUseCase
+import com.app.note_lass.module.group.domain.repository.ModifyNoticeUseCase
 import com.app.note_lass.module.home.material.MaterialFile
 import com.app.note_lass.module.note.data.NoteRequest
 import com.app.note_lass.module.note.domain.GetFileUsecase
+import com.app.note_lass.module.note.domain.ModifyMaterialUseCase
 import com.app.note_lass.module.upload.domain.PostMaterialUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -23,7 +26,9 @@ class UploadViewModel @Inject constructor(
     val createNoticeUseCase: CreateNoticeUseCase,
     val  makeMaterialUseCase: PostMaterialUseCase,
     val getMaterialFile : GetFileUsecase,
-
+    val modifyNoticeUseCase: ModifyNoticeUseCase,
+    val modifyMaterialUseCase: ModifyMaterialUseCase,
+    val savedStateHandle: SavedStateHandle
     ) : ViewModel(){
 
     private  val _uploadState = mutableStateOf(UploadState())
@@ -35,6 +40,14 @@ class UploadViewModel @Inject constructor(
     private val _getMaterialFileState = mutableStateOf(RequestState<MaterialFile>())
     val getMaterialFileState = _getMaterialFileState
 
+    private  val _modifyState = mutableStateOf(RequestState<Nothing>())
+    val modifyState = _modifyState
+
+    private var dashboardId  : Long = 0
+    init {
+        dashboardId= savedStateHandle.get<Long>("dashboardId") ?: 0
+
+    }
 
     fun createNotice(groupId: Long, title:String, content:String, fileList: List<MultipartBody.Part?>){
 
@@ -131,6 +144,70 @@ class UploadViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
     }
+    fun modifyNotice(groupId:Long,title:String,content:String,ids:List<Long>,fileList: List<MultipartBody.Part>) {
+        modifyNoticeUseCase(groupId,dashboardId,title,content,ids,fileList).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _modifyState.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
 
+                is Resource.Success -> {
+                    _modifyState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                    )
+                }
+
+                is Resource.Error -> {
+
+                    _modifyState.value = RequestState(
+                        isError = true,
+                    )
+                }
+
+
+            }
+        }.launchIn(viewModelScope)
+
+    }
+
+    fun modifyMaterial(
+        groupId:Long,
+        title:String,
+        content:String,
+        ids:List<Long>,
+        fileList: MultipartBody.Part?
+    ) {
+        modifyMaterialUseCase(groupId, dashboardId, title, content, ids, fileList).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _modifyState.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+
+                is Resource.Success -> {
+                    _modifyState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                    )
+                }
+
+                is Resource.Error -> {
+
+                    _modifyState.value = RequestState(
+                        isError = true,
+                    )
+                }
+
+
+            }
+        }.launchIn(viewModelScope)
+
+    }
 
 }

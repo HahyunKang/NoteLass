@@ -60,19 +60,19 @@ sealed class SettingScreen(val route : String){
 
 sealed class UploadScreen(val route:String){
     object CreateNotice : GroupScreen("upload/create")
-    object ModifyNotice :UploadScreen("upload/modify/{noticeId}"){
-        fun passQuery(noticeId: Long) : String {
-            return "upload/modify/${noticeId}"
+    object ModifyDashboard :UploadScreen("upload/modify/{type}/{dashboardId}"){
+        fun passQuery(type : String,dashboardId: Long) : String {
+            return "upload/modify/${type}/${dashboardId}"
         }
     }
-    object NoticeDetail : UploadScreen("upload/detail/notice/{noticeId}"){
-        fun passQuery(noticeId : Long) : String {
-            return "upload/detail/notice/${noticeId}"
+    object NoticeDetail : UploadScreen("upload/detail/notice/{dashboardId}"){
+        fun passQuery(dashboardId : Long) : String {
+            return "upload/detail/notice/${dashboardId}"
         }
     }
-    object MaterialDetail : UploadScreen("upload/detail/material/{materialId}"){
-        fun passQuery(materialId : Long) : String {
-            return "upload/detail/material/${materialId}"
+    object MaterialDetail : UploadScreen("upload/detail/material/{dashboardId}"){
+        fun passQuery(dashboardId : Long) : String {
+            return "upload/detail/material/${dashboardId}"
         }
     }
 }

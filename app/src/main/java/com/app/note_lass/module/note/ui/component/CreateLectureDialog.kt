@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
-import com.app.note_lass.common.UriToFile
 import com.app.note_lass.core.FilePicker.FileManager
 import com.app.note_lass.module.note.NoteActivity
 import com.app.note_lass.module.note.data.NoteRequest

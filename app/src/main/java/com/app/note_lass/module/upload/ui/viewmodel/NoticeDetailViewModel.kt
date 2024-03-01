@@ -34,10 +34,12 @@ class NoticeDetailViewModel @Inject constructor(
     private val _getMaterialFileState = mutableStateOf(RequestState<MaterialFile>())
     val getMaterialFileState = _getMaterialFileState
     init {
-        val noticeId= savedStateHandle.get<Long>("noticeId")
+        val noticeId= savedStateHandle.get<Long>("dashboardId")
+        val type = savedStateHandle.get<String?>("type")
+
         noticeId?.let {
-            Log.e("noticeId",it.toString())
-            getNoticeDetail(noticeId)
+            Log.e("dashboardId",it.toString())
+            if(type != "material")getNoticeDetail(noticeId)
         }
     }
 

@@ -62,6 +62,7 @@ fun PreviewNotice(
                         )
                     })
 
+
             }
         }
     }
@@ -80,7 +81,7 @@ fun PreviewNoticeComponent(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 15.dp)
+            .padding(horizontal = 15.dp, vertical =5.dp)
             .clickable { onGoToDetail() },
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

@@ -69,6 +69,17 @@ class GroupImpl @Inject constructor(
     ): NoteResponseBody<Nothing> {
         return groupApi.createNotice(accessToken,groupId,noticeContents,fileList)
     }
+
+    override suspend fun modifyNotice(
+        accessToken: String,
+        groupId: Long,
+        noticeId: Long,
+        noticeContents: RequestBody,
+        fileList: List<MultipartBody.Part?>
+    ): NoteResponseBody<Nothing> {
+        return groupApi.modifyNotice(accessToken, groupId, noticeId, noticeContents, fileList)
+    }
+
     override suspend fun getNoticeList(
         accessToken: String,
         groupId: Long

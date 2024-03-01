@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,14 +16,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,23 +32,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.app.note_lass.R
-import com.app.note_lass.common.DateFormatter
+import com.app.note_lass.common.File
 import com.app.note_lass.core.FilePicker.FileManager
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.note.NoteActivity
-import com.app.note_lass.module.note.data.NoteRequest
 import com.app.note_lass.module.upload.ui.viewmodel.UploadViewModel
 import com.app.note_lass.ui.component.FileUpload
 import com.app.note_lass.ui.component.RectangleEnabledButton
@@ -59,8 +48,6 @@ import com.app.note_lass.ui.component.RectangleEnabledWithBorderButton
 import com.app.note_lass.ui.component.RectangleUnableButton
 import com.app.note_lass.ui.theme.Gray50
 import com.app.note_lass.ui.theme.NoteLassTheme
-import com.app.note_lass.ui.theme.PrimarayBlue
-import com.app.note_lass.ui.theme.PrimaryBlack
 import com.app.note_lass.ui.theme.PrimaryGray
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
@@ -68,22 +55,39 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okio.BufferedSink
 import okio.source
-import java.time.LocalDateTime
+import java.io.FileOutputStream
+import java.io.IOException
 
 @Composable
-fun CreateLectureNoteScreen(
+fun ModifyLectureNoteScreen(
     viewModel: UploadViewModel = hiltViewModel(),
     protoViewModel: ProtoViewModel = hiltViewModel(),
-    goBackToGroup: (Role, Long,String) -> Unit
+    title:String,
+    content : String,
+    file : List<File>?,
+    goBackToGroup: (Role, Long, String) -> Unit
 ){
-    val groupInfo  = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",-1))
-    val role  = protoViewModel.token.collectAsState(initial = Token("",Role.NONE))
+    val context= LocalContext.current
 
-    val title = remember{
+    val groupInfo  = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",-1))
+    val role  = protoViewModel.token.collectAsState(initial = Token("", Role.NONE))
+    val fileState = viewModel.getMaterialFileState.value
+    val materialTitle = remember{
+        mutableStateOf(title)
+    }
+    val materialContent = remember{
+        mutableStateOf(content)
+    }
+    val originalFileName = remember{
         mutableStateOf("")
     }
-    val content = remember{
-        mutableStateOf("")
+
+    val fileIds =  remember {
+        mutableStateOf(mutableListOf<Long>())
+    }
+
+    val material  =  remember {
+        mutableStateOf(file)
     }
     val pdfUri = remember {
         mutableStateOf<Uri?>(null)
@@ -96,8 +100,10 @@ fun CreateLectureNoteScreen(
     val requestFile  = remember {
         mutableStateOf<MultipartBody.Part?>(null)
     }
-    val context= LocalContext.current
-
+    if(viewModel.modifyState.value.isSuccess){
+        goBackToGroup(Role.TEACHER,groupInfo.value.groupId!!,groupInfo.value.groupName!!)
+        Toast.makeText(context,"강의자료 수정이 완료되었습니다.",1).show()
+    }
 
     @SuppressLint("Range")
     fun Uri.asMultipart(name: String, contentResolver: ContentResolver): MultipartBody.Part? {
@@ -125,8 +131,8 @@ fun CreateLectureNoteScreen(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri :Uri? ->
             pdfUri.value = uri
-            val file = pdfUri.value!!.asMultipart("file",context.contentResolver)
-            requestFile.value= file
+            val newFile = pdfUri.value!!.asMultipart("file",context.contentResolver)
+            requestFile.value= newFile
             photoUri.value = null
         }
     )
@@ -135,11 +141,44 @@ fun CreateLectureNoteScreen(
         contract =  ActivityResultContracts.GetContent(),
         onResult = { uri :Uri? ->
             photoUri.value = uri
-            val file = photoUri.value!!.asMultipart("file",context.contentResolver)
-            requestFile.value= file
+            val newFile = photoUri.value!!.asMultipart("file",context.contentResolver)
+            requestFile.value= newFile
             pdfUri.value = null
         }
     )
+    LaunchedEffect(fileState) {
+        if(fileState.isSuccess) {
+
+            val fileMaterial = java.io.File(context.filesDir, "myFile")
+            try {
+                FileOutputStream(fileMaterial).use { outputStream ->
+                    val buffer = ByteArray(1024)
+                    var length: Int
+                    while (fileState.result!!.stream.read(buffer)
+                            .also { length = it } != -1
+                    ) {
+                        outputStream.write(buffer, 0, length)
+                    }
+                }
+                val intent = Intent(context, NoteActivity::class.java)
+                if (originalFileName.value.contains("pdf")) {
+                    intent.putExtra("filePath", fileMaterial.absolutePath)
+                    intent.putExtra("pdfTitle", originalFileName.value)
+                } else {
+                    intent.putExtra("photoPath", fileMaterial.absolutePath)
+                    intent.putExtra(
+                        "pdfTitle",
+                        originalFileName.value
+                    )
+                }
+                context.startActivity(intent)
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+
+    }
 
 
     var fileName by remember { mutableStateOf<String?>(null) }
@@ -156,9 +195,9 @@ fun CreateLectureNoteScreen(
           Text(text = "강의자료 제목")
           Spacer(modifier = Modifier.width(26.dp))
           OutlinedTextField(
-              value = title.value,
+              value = materialTitle.value,
               onValueChange = {
-                  title.value = it
+                  materialTitle.value = it
               },
               textStyle = NoteLassTheme.Typography.fourteen_600_pretendard,
               placeholder = {
@@ -189,9 +228,9 @@ fun CreateLectureNoteScreen(
           Text(text = "강의자료 설명")
           Spacer(modifier = Modifier.height(18.dp))
           OutlinedTextField(
-              value = content.value,
+              value = materialContent.value,
               onValueChange = {
-                  content.value = it
+                  materialContent.value = it
               },
               textStyle = NoteLassTheme.Typography.fourteen_600_pretendard,
               placeholder = {
@@ -250,6 +289,7 @@ fun CreateLectureNoteScreen(
       if (pdfUri.value != null) {
           fileName = fileManager.getFileName(context, pdfUri.value!!)
           fileSize = fileManager.getFileSize(context, pdfUri.value!!)
+
           Box(
               modifier = Modifier
                   .fillMaxWidth()
@@ -298,7 +338,30 @@ fun CreateLectureNoteScreen(
               )
           }
 
-      }else{
+      }else if(material.value!!.isNotEmpty()){
+          Box(
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .weight(2f)
+          ) {
+
+              FileUpload(
+                  title = material.value!![0].originalFileName,
+                  fileSize = material.value!![0].size.toString(),
+                  onClick = {
+
+                      originalFileName.value = material.value!![0].originalFileName
+                      viewModel.getFile(material.value!![0].id)
+
+                            },
+                  onDelete = {
+                      fileIds.value = (fileIds.value + material.value!![0].id).toMutableList()
+                      material.value = emptyList()
+                  }
+              )
+          }
+      }
+      else{
           Box(
               modifier = Modifier
                   .fillMaxWidth()
@@ -324,13 +387,17 @@ fun CreateLectureNoteScreen(
             Spacer(modifier = Modifier.width(16.dp))
 
             Box(modifier = Modifier.size(73.dp,40.dp)){
-                RectangleEnabledButton(text = "생성하기",
+                RectangleEnabledButton(text = "수정하기",
                     onClick = {
-                        if(title.value.isNotEmpty() && content.value.isNotEmpty() && requestFile.value!=null){
-                            viewModel.makeMaterial(groupId = groupInfo.value.groupId!!.toLong(),
-                                NoteRequest(title.value,content.value),
-                                requestFile.value!!
-                            )
+                        if(fileIds.value.isEmpty() && file!!.isNotEmpty()){
+                            fileIds.value = (fileIds.value +file[0].id).toMutableList()
+                        }
+                        if(materialTitle.value.isNotEmpty() && materialContent.value.isNotEmpty() && (
+                                photoUri.value!= null || pdfUri.value!=null || material.value!!.isNotEmpty()
+                                )
+                            ){
+                            viewModel.modifyMaterial(groupInfo.value.groupId!!,materialTitle.value,
+                                materialContent.value,fileIds.value,requestFile.value)
                         }
 
                     }
@@ -346,81 +413,4 @@ fun CreateLectureNoteScreen(
 
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun LectureNoteInfo(
-    groupInfo: GroupInfo,
-    // createdTime: LocalDateTime
-){
 
-
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        Text("강의자료  정보",
-            style = TextStyle(
-                fontSize = 20.sp,
-                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
-                fontWeight = FontWeight(700),
-                color = PrimaryBlack,
-            )
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(text = "작성자",
-            style =NoteLassTheme.Typography.sixteem_600_pretendard,
-            color = PrimaryBlack,
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-
-        groupInfo.teacherName?.let {
-            Text(text = "$it 선생님",
-                style =NoteLassTheme.Typography.sixteem_600_pretendard,
-                color = PrimarayBlue,
-                textDecoration = TextDecoration.Underline
-            )
-        }
-
-        Divider(modifier = Modifier.padding(vertical = 16.dp), thickness = 1.dp,color = Color(0xFFEDEDFF))
-
-
-        Text(text = "게시일",
-            style =NoteLassTheme.Typography.sixteem_600_pretendard,
-            color = PrimaryBlack
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-
-        val localDate = LocalDateTime.now()
-
-        Text(text =  DateFormatter(localDate).formattedDateTime,
-            style =NoteLassTheme.Typography.sixteem_600_pretendard,
-            color = PrimarayBlue,
-            textDecoration = TextDecoration.Underline
-
-        )
-
-        Divider(modifier = Modifier.padding(vertical = 16.dp), thickness = 1.dp,color = Color(0xFFEDEDFF))
-
-        Text(text = "할당된 그룹",
-            style =NoteLassTheme.Typography.sixteem_600_pretendard,
-            color = PrimaryBlack
-        )
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        groupInfo.groupName?.let {
-            Text(text = it,
-                style =NoteLassTheme.Typography.sixteem_600_pretendard,
-                color = PrimarayBlue,
-                textDecoration = TextDecoration.Underline
-
-            )
-        }
-    }
-
-
-
-
-
-}

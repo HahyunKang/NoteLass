@@ -449,7 +449,7 @@ fun DashBoardInfo(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        Text("공지 정보",
+        Text(title,
             style = TextStyle(
                 fontSize = 20.sp,
                 fontFamily = FontFamily(Font(R.font.pretendard_regular)),

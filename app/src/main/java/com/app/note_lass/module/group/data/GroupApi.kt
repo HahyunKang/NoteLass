@@ -15,6 +15,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -81,6 +82,16 @@ interface GroupApi {
     suspend fun createNotice(
         @Header(value = "Authorization") accessToken: String,
         @Path("groupId") groupId: Long,
+        @Part("noticeDto") noticeContents: RequestBody,
+        @Part fileList: List<MultipartBody.Part?>
+    ) : NoteResponseBody<Nothing>
+
+    @Multipart
+    @PUT("api/notice/{groupId}/{noticeId}")
+    suspend fun modifyNotice(
+        @Header(value = "Authorization") accessToken: String,
+        @Path("groupId") groupId: Long,
+        @Path("noticeId") noticeId: Long,
         @Part("noticeDto") noticeContents: RequestBody,
         @Part fileList: List<MultipartBody.Part?>
     ) : NoteResponseBody<Nothing>

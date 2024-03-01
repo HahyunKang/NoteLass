@@ -6,10 +6,7 @@ import com.app.note_lass.module.upload.data.Material.Material
 import com.app.note_lass.module.upload.data.notice.Materials
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.Response
 import okhttp3.ResponseBody
-import java.io.File
-import java.io.InputStream
 import javax.inject.Inject
 
 class NoteImpl @Inject constructor(
@@ -26,6 +23,16 @@ class NoteImpl @Inject constructor(
         fileList: MultipartBody.Part
     ): NoteResponseBody<Nothing> {
         return noteApi.makeMaterial(accessToken, groupId, noteRequest,fileList)
+    }
+
+    override suspend fun modifyMaterial(
+        accessToken: String,
+        groupId: Long,
+        materialId: Long,
+        noteRequest: RequestBody,
+        fileList: MultipartBody.Part?
+    ): NoteResponseBody<Nothing> {
+        return noteApi.modifyMaterial(accessToken,groupId,materialId,noteRequest,fileList)
     }
 
     override suspend fun getMaterialToNote(

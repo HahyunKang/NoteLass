@@ -47,7 +47,6 @@ import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.group.data.URI
 import com.app.note_lass.module.note.NoteActivity
-import com.app.note_lass.module.upload.ui.viewmodel.NoticeDetailViewModel
 import com.app.note_lass.module.upload.ui.viewmodel.UploadViewModel
 import com.app.note_lass.ui.component.FileUpload
 import com.app.note_lass.ui.component.RectangleEnabledButton
@@ -73,7 +72,6 @@ data class ModifyDto(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ModifyNoticeScreen(
-    noticeDetailViewModel : NoticeDetailViewModel = hiltViewModel(),
     viewModel: UploadViewModel = hiltViewModel(),
     protoViewModel: ProtoViewModel = hiltViewModel(),
     title:String,
@@ -82,7 +80,6 @@ fun ModifyNoticeScreen(
     goBackToGroup: (Role, Long, String) -> Unit
 ){
 
-    val noticeDetailState = noticeDetailViewModel.noticeDetailState
     val context= LocalContext.current
 
     val groupInfo  = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",-1))
@@ -117,7 +114,10 @@ fun ModifyNoticeScreen(
                  }
              }.toMutableList() ?: mutableListOf()
         }
-
+    if(viewModel.modifyState.value.isSuccess){
+        goBackToGroup(Role.TEACHER,groupInfo.value.groupId!!,groupInfo.value.groupName!!)
+        Toast.makeText(context,"공지 수정이 완료되었습니다.",Toast.LENGTH_SHORT).show()
+    }
     LaunchedEffect(fileState) {
         if(fileState.isSuccess) {
 
@@ -443,6 +443,7 @@ fun ModifyNoticeScreen(
                                     fileSize = item.file.size.toString(),
                                     onClick = {
                                         originalFileName.value = item.file!!.originalFileName
+
                                         viewModel.getFile(item.file.id)
                                     },
                                     onDelete = {
@@ -552,10 +553,11 @@ fun ModifyNoticeScreen(
                     RectangleEnabledButton(text = "수정하기",
                         onClick = {
                             if (noticeTitle.value.isNotEmpty() && noticeContent.value.isNotEmpty()) {
-                                viewModel.createNotice(
+                                viewModel.modifyNotice(
                                     groupInfo.value.groupId!!,
                                     noticeTitle.value,
                                     noticeContent.value,
+                                    fileIds.value,
                                     requestFiles.value
                                 )
 

@@ -1,6 +1,5 @@
 package com.app.note_lass.module.group.ui.component
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -46,6 +44,7 @@ fun NoticeDetailInfoForTeacher(
     content: String,
     file: List<File>?,
     goToModify : ()->Unit,
+    goBack : ()->Unit,
     protoViewModel: ProtoViewModel = hiltViewModel(),
 ) {
 
@@ -127,7 +126,7 @@ fun NoticeDetailInfoForTeacher(
             ){
                 Box(modifier = Modifier.width(49.dp)) {
                     RectangleUnableButton(text = "취소") {
-
+                        goBack()
                     }
                 }
 

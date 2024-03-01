@@ -75,6 +75,7 @@ fun AssignmentUploadScreen(
                 Box(modifier = Modifier.weight(1f)) {
                     TabViewForTeacher(
                         titleList = titleList,
+                        text= "공지/강의자료 생성",
                         tabSelected = {
                             selectedTabIndex = it
                         }

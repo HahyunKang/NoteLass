@@ -60,6 +60,7 @@ import kotlinx.coroutines.flow.emptyFlow
 @Composable
 fun TabViewForTeacher(
     titleList : List<String>,
+    text : String,
     tabSelected : (Int)->Unit
 ){
     val coroutineScope = rememberCoroutineScope()
@@ -79,7 +80,7 @@ fun TabViewForTeacher(
 
             ) {
 
-                Text(text= "공지/과제/강의자료 생성",
+                Text(text= text ,
                     style = NoteLassTheme.Typography.twenty_700_pretendard,
                     color = PrimaryBlack
                 )

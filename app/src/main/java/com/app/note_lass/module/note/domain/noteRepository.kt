@@ -7,10 +7,7 @@ import com.app.note_lass.module.upload.data.Material.Material
 import com.app.note_lass.module.upload.data.notice.Materials
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.Response
 import okhttp3.ResponseBody
-import java.io.File
-import java.io.InputStream
 
 interface NoteRepository {
     suspend fun getNoteList(accessToken : String) : NoteResponseBody<List<Note>>
@@ -21,4 +18,7 @@ interface NoteRepository {
     suspend fun getLatestNote(accessToken: String) : NoteResponseBody<List<Note>>
     suspend fun getFile(accessToken: String,fileId : Long) : ResponseBody
     suspend fun getMaterialDetail(accessToken: String,materialId: Long) : NoteResponseBody<Materials>
+    suspend fun modifyMaterial(accessToken: String, groupId: Long, materialId: Long, noteRequest: RequestBody, fileList: MultipartBody.Part?) : NoteResponseBody<Nothing>
+
+
 }
