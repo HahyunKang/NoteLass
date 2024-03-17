@@ -7,7 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.app.note_lass.module.record.ui.StudentRecordUploadScreen
+import com.app.note_lass.module.student.ui.StudentRecordUploadScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.RecordNavGraph(navController: NavController,outerNavController: NavController) {

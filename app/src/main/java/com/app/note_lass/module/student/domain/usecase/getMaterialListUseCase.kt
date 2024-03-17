@@ -5,7 +5,7 @@ import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.login.domain.repository.StudentRepository
-import com.app.note_lass.module.upload.data.Material.Material
+import com.app.note_lass.module.dashboard.data.Material.Material
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow

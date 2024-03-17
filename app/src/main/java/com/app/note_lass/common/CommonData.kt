@@ -1,7 +1,5 @@
 package com.app.note_lass.common
 
-import com.app.note_lass.module.student.data.HandBook
-
 data class StudentInfo(
     val userId : Int,
     val studentId : Int,

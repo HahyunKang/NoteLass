@@ -6,10 +6,6 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.app.note_lass.module.record.ui.viewModel.RecordViewModel
-import javax.inject.Inject
 
 class DownloadCompletedReceiver (
 ) : BroadcastReceiver() {

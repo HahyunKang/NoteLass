@@ -34,12 +34,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.note_lass.R
 import com.app.note_lass.common.StringToDate
-import com.app.note_lass.module.student.data.HandBook
+import com.app.note_lass.module.student.data.handbook.HandBook
 import com.app.note_lass.module.student.ui.viewmodel.StudentMemoViewModel
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryBlack
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

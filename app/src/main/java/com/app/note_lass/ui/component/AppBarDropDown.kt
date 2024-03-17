@@ -45,12 +45,9 @@ import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.group.ui.viewModel.GroupForStudentViewModel
 import com.app.note_lass.module.login.ui.LoginViewModel
 import com.app.note_lass.module.note.NoteActivity
-import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.note.ui.NoteViewModel
-import com.app.note_lass.module.upload.data.Material.Material
+import com.app.note_lass.module.dashboard.data.Material.Material
 import com.app.note_lass.ui.theme.PrimaryGray
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.FileOutputStream
 import java.io.IOException
 

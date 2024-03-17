@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.app.note_lass.common.DateFormatter
 import com.app.note_lass.common.StringToDate
 import com.app.note_lass.module.note.data.Note
-import com.app.note_lass.module.upload.data.Material.Material
+import com.app.note_lass.module.dashboard.data.Material.Material
 import com.app.note_lass.ui.component.SectionHeader
 import java.lang.Integer.max
 import java.lang.Integer.min

@@ -6,7 +6,7 @@ import com.app.note_lass.module.group.data.join.JoinDto
 import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
 import com.app.note_lass.module.home.tab.notice.DashBoard
-import com.app.note_lass.module.upload.data.notice.Notice
+import com.app.note_lass.module.dashboard.data.notice.Notice
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -75,38 +75,38 @@ interface GroupApi {
         @Path(value = "groupId") groupId: Long,
         @Path(value = "userId") userId: Long,
     ) : NoteResponseBody<Nothing>
-
-
-    @Multipart
-    @POST("api/notice/{groupId}")
-    suspend fun createNotice(
-        @Header(value = "Authorization") accessToken: String,
-        @Path("groupId") groupId: Long,
-        @Part("noticeDto") noticeContents: RequestBody,
-        @Part fileList: List<MultipartBody.Part?>
-    ) : NoteResponseBody<Nothing>
-
-    @Multipart
-    @PUT("api/notice/{groupId}/{noticeId}")
-    suspend fun modifyNotice(
-        @Header(value = "Authorization") accessToken: String,
-        @Path("groupId") groupId: Long,
-        @Path("noticeId") noticeId: Long,
-        @Part("noticeDto") noticeContents: RequestBody,
-        @Part fileList: List<MultipartBody.Part?>
-    ) : NoteResponseBody<Nothing>
-
-    @GET("api/notice/{groupId}")
-    suspend fun getNoticeList(
-        @Header(value = "Authorization") accessToken : String,
-        @Path(value = "groupId") groupId: Long,
-    ) : NoteResponseBody<List<Notice>>
-
-    @GET("api/notice/detail")
-    suspend fun getNoticeDetail(
-        @Header(value = "Authorization") accessToken : String,
-        @Query(value = "noticeId") noticeId : Long
-    ) : NoteResponseBody<Notice>
+//
+//
+//    @Multipart
+//    @POST("api/notice/{groupId}")
+//    suspend fun createNotice(
+//        @Header(value = "Authorization") accessToken: String,
+//        @Path("groupId") groupId: Long,
+//        @Part("noticeDto") noticeContents: RequestBody,
+//        @Part fileList: List<MultipartBody.Part?>
+//    ) : NoteResponseBody<Nothing>
+//
+//    @Multipart
+//    @PUT("api/notice/{groupId}/{noticeId}")
+//    suspend fun modifyNotice(
+//        @Header(value = "Authorization") accessToken: String,
+//        @Path("groupId") groupId: Long,
+//        @Path("noticeId") noticeId: Long,
+//        @Part("noticeDto") noticeContents: RequestBody,
+//        @Part fileList: List<MultipartBody.Part?>
+//    ) : NoteResponseBody<Nothing>
+//
+//    @GET("api/notice/{groupId}")
+//    suspend fun getNoticeList(
+//        @Header(value = "Authorization") accessToken : String,
+//        @Path(value = "groupId") groupId: Long,
+//    ) : NoteResponseBody<List<Notice>>
+//
+//    @GET("api/notice/detail")
+//    suspend fun getNoticeDetail(
+//        @Header(value = "Authorization") accessToken : String,
+//        @Query(value = "noticeId") noticeId : Long
+//    ) : NoteResponseBody<Notice>
 
     @DELETE("api/group/{groupId}")
     suspend fun deleteGroup(
@@ -120,17 +120,17 @@ interface GroupApi {
         @Path(value = "groupId") groupId: Long,
         @Path(value = "userId") userId: Long,
         ) : NoteResponseBody<Nothing>
-
-    @GET("api/dashboard")
-    suspend fun getDashboardsInHome(
-        @Header(value = "Authorization") accessToken : String,
-        ) : NoteResponseBody<List<DashBoard>>
-
-    @GET("api/dashboard/{groupId}")
-    suspend fun getDashboardsInGroup(
-        @Header(value = "Authorization") accessToken : String,
-        @Path(value = "groupId") groupId: Long,
-        ) : NoteResponseBody<List<DashBoard>>
+//
+//    @GET("api/dashboard")
+//    suspend fun getDashboardsInHome(
+//        @Header(value = "Authorization") accessToken : String,
+//        ) : NoteResponseBody<List<DashBoard>>
+//
+//    @GET("api/dashboard/{groupId}")
+//    suspend fun getDashboardsInGroup(
+//        @Header(value = "Authorization") accessToken : String,
+//        @Path(value = "groupId") groupId: Long,
+//        ) : NoteResponseBody<List<DashBoard>>
 
 
 

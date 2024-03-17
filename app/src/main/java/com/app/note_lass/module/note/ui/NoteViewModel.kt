@@ -2,7 +2,6 @@ package com.app.note_lass.module.note.ui
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.RequestState
@@ -19,8 +18,7 @@ import com.app.note_lass.module.note.domain.GetFileUsecase
 import com.app.note_lass.module.note.domain.GetLatestNoteUsecase
 import com.app.note_lass.module.note.domain.GetMaterialToNoteUseCase
 import com.app.note_lass.module.note.domain.GetNoteListUseCase
-import com.app.note_lass.module.upload.data.Material.Material
-import com.app.note_lass.module.upload.domain.PostMaterialUseCase
+import com.app.note_lass.module.dashboard.domain.material.PostMaterialUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

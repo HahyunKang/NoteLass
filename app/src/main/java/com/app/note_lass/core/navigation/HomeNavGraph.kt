@@ -11,7 +11,6 @@ import com.app.note_lass.core.Proto.Role
 import com.app.note_lass.module.group.ui.DashBoardListScreen
 import com.app.note_lass.module.home.DashBoardListInHomeScreen
 import com.app.note_lass.module.home.HomeScreen
-import com.app.note_lass.module.home.NoticeScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.HomeNavGraph(navController: NavController,outerNavController: NavController,role : Role) {
@@ -51,7 +50,7 @@ fun NavGraphBuilder.HomeNavGraph(navController: NavController,outerNavController
             )
         }
         composable(HomeScreen.Notice.route) {
-            NoticeScreen()
+           // NoticeScreen()
         }
         composable(
             route = HomeScreen.DashBoard.route,

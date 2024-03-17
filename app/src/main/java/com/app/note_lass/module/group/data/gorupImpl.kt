@@ -5,7 +5,7 @@ import com.app.note_lass.module.group.data.groupList.Group
 import com.app.note_lass.module.group.data.join.JoinDto
 import com.app.note_lass.module.group.data.join.JoinStudentListDto
 import com.app.note_lass.module.group.data.studentList.Student
-import com.app.note_lass.module.upload.data.notice.Notice
+import com.app.note_lass.module.dashboard.data.notice.Notice
 import com.app.note_lass.module.group.domain.repository.GroupRepository
 import com.app.note_lass.module.home.tab.notice.DashBoard
 import okhttp3.MultipartBody
@@ -61,38 +61,38 @@ class GroupImpl @Inject constructor(
         return  groupApi.getStudentJoinList(accessToken,groupId)
     }
 
-    override suspend fun createNotice(
-        accessToken: String,
-        groupId: Long,
-        noticeContents: RequestBody,
-        fileList: List<MultipartBody.Part?>
-    ): NoteResponseBody<Nothing> {
-        return groupApi.createNotice(accessToken,groupId,noticeContents,fileList)
-    }
+//    override suspend fun createNotice(
+//        accessToken: String,
+//        groupId: Long,
+//        noticeContents: RequestBody,
+//        fileList: List<MultipartBody.Part?>
+//    ): NoteResponseBody<Nothing> {
+//        return groupApi.createNotice(accessToken,groupId,noticeContents,fileList)
+//    }
 
-    override suspend fun modifyNotice(
-        accessToken: String,
-        groupId: Long,
-        noticeId: Long,
-        noticeContents: RequestBody,
-        fileList: List<MultipartBody.Part?>
-    ): NoteResponseBody<Nothing> {
-        return groupApi.modifyNotice(accessToken, groupId, noticeId, noticeContents, fileList)
-    }
-
-    override suspend fun getNoticeList(
-        accessToken: String,
-        groupId: Long
-    ): NoteResponseBody<List<Notice>> {
-        return groupApi.getNoticeList(accessToken, groupId)
-    }
-
-    override suspend fun getNoticeDetail(
-        accessToken: String,
-        noticeId: Long
-    ): NoteResponseBody<Notice> {
-        return groupApi.getNoticeDetail(accessToken, noticeId)
-    }
+//    override suspend fun modifyNotice(
+//        accessToken: String,
+//        groupId: Long,
+//        noticeId: Long,
+//        noticeContents: RequestBody,
+//        fileList: List<MultipartBody.Part?>
+//    ): NoteResponseBody<Nothing> {
+//        return groupApi.modifyNotice(accessToken, groupId, noticeId, noticeContents, fileList)
+//    }
+//
+//    override suspend fun getNoticeList(
+//        accessToken: String,
+//        groupId: Long
+//    ): NoteResponseBody<List<Notice>> {
+//        return groupApi.getNoticeList(accessToken, groupId)
+//    }
+//
+//    override suspend fun getNoticeDetail(
+//        accessToken: String,
+//        noticeId: Long
+//    ): NoteResponseBody<Notice> {
+//        return groupApi.getNoticeDetail(accessToken, noticeId)
+  //  }
 
     override suspend fun approveAllGroup(
         accessToken: String,
@@ -116,15 +116,15 @@ class GroupImpl @Inject constructor(
         return groupApi.deleteStudent(accessToken, groupId, userId)
     }
 
-    override suspend fun getDashboardsInHome(accessToken: String): NoteResponseBody<List<DashBoard>> {
-        return groupApi.getDashboardsInHome(accessToken)
-    }
-
-    override suspend fun getDashboardsInGroup(
-        accessToken: String,
-        groupId: Long
-    ): NoteResponseBody<List<DashBoard>> {
-        return groupApi.getDashboardsInGroup(accessToken, groupId)
-    }
+//    override suspend fun getDashboardsInHome(accessToken: String): NoteResponseBody<List<DashBoard>> {
+//        return groupApi.getDashboardsInHome(accessToken)
+//    }
+//
+//    override suspend fun getDashboardsInGroup(
+//        accessToken: String,
+//        groupId: Long
+//    ): NoteResponseBody<List<DashBoard>> {
+//        return groupApi.getDashboardsInGroup(accessToken, groupId)
+//    }
 
 }

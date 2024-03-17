@@ -7,25 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
 import com.app.note_lass.common.Resources
-import com.app.note_lass.module.group.data.groupList.GroupHashState
-import com.app.note_lass.module.group.data.groupList.GroupListState
-import com.app.note_lass.module.group.data.groupList.StudentHashState
-import com.app.note_lass.module.group.data.studentList.StudentListState
-import com.app.note_lass.module.group.domain.repository.GetDashBoardsInGroupUseCase
-import com.app.note_lass.module.group.domain.repository.GetDashBoardsInHomeUseCase
-import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
-import com.app.note_lass.module.group.domain.repository.GetStudentListUseCase
+import com.app.note_lass.module.dashboard.domain.GetDashBoardsInGroupUseCase
 import com.app.note_lass.module.home.tab.notice.DashBoard
-import com.app.note_lass.module.login.domain.LoginUseCase
-import com.app.note_lass.module.student.data.HandBookRequest
-import com.app.note_lass.module.student.data.HandBookSubmitState
 import com.app.note_lass.module.student.domain.usecase.GetNoticeListUseCase
-import com.app.note_lass.module.student.domain.usecase.PostHandBookUseCase
-import com.app.note_lass.module.upload.data.notice.NoticeListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.util.HashMap
 import javax.inject.Inject
 
 

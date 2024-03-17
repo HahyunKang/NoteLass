@@ -9,11 +9,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.app.note_lass.core.Proto.Role
-import com.app.note_lass.module.upload.ui.AssignmentUploadScreen
-import com.app.note_lass.module.upload.ui.MaterialDetailScreen
-import com.app.note_lass.module.upload.ui.ModifyDashboardScreen
-import com.app.note_lass.module.upload.ui.ModifyNoticeScreen
-import com.app.note_lass.module.upload.ui.NoticeDetailScreen
+import com.app.note_lass.module.dashboard.ui.assignment.AssignmentUploadScreen
+import com.app.note_lass.module.dashboard.ui.material.MaterialDetailScreen
+import com.app.note_lass.module.dashboard.ui.ModifyDashboardScreen
+import com.app.note_lass.module.dashboard.ui.notice.NoticeDetailScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.UploadNavGraph(navController: NavController) {

@@ -3,8 +3,8 @@ package com.app.note_lass.module.note.domain
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.note.data.NoteAccessedDto
-import com.app.note_lass.module.upload.data.Material.Material
-import com.app.note_lass.module.upload.data.notice.Materials
+import com.app.note_lass.module.dashboard.data.Material.Material
+import com.app.note_lass.module.dashboard.data.notice.Materials
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody

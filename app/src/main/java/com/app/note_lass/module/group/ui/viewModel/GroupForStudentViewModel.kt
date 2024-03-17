@@ -5,15 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.note_lass.common.File
 import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
-import com.app.note_lass.module.upload.data.notice.NoticeListState
-import com.app.note_lass.module.group.domain.repository.GetNoticeListUseCase
+import com.app.note_lass.module.dashboard.data.notice.NoticeListState
+import com.app.note_lass.module.dashboard.domain.notice.GetNoticeListUseCase
 import com.app.note_lass.module.home.material.MaterialFile
 import com.app.note_lass.module.note.domain.GetFileUsecase
 import com.app.note_lass.module.student.domain.usecase.GetMaterialListUseCase
-import com.app.note_lass.module.upload.data.Material.Material
+import com.app.note_lass.module.dashboard.data.Material.Material
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -22,10 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroupForStudentViewModel @Inject constructor(
-   val getNoticeListUseCase: GetNoticeListUseCase,
-   val getMaterialListUseCase: GetMaterialListUseCase,
-   val getMaterialFile : GetFileUsecase,
-   savedStateHandle: SavedStateHandle
+    val getNoticeListUseCase: GetNoticeListUseCase,
+    val getMaterialListUseCase: GetMaterialListUseCase,
+    val getMaterialFile : GetFileUsecase,
+    savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
     private val groupId = mutableStateOf(0)

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.RequestState
 import com.app.note_lass.common.Resource
 import com.app.note_lass.module.group.data.groupList.GroupListState
-import com.app.note_lass.module.group.domain.repository.GetDashBoardsInHomeUseCase
+import com.app.note_lass.module.dashboard.domain.GetDashBoardsInHomeUseCase
 import com.app.note_lass.module.group.domain.repository.GetGroupUseCase
 import com.app.note_lass.module.home.material.MaterialFile
 import com.app.note_lass.module.home.tab.notice.DashBoard
@@ -15,7 +15,7 @@ import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.note.domain.GetFileUsecase
 import com.app.note_lass.module.note.domain.GetLatestNoteUsecase
 import com.app.note_lass.module.note.domain.GetLatestUploadMaterialUsecase
-import com.app.note_lass.module.upload.data.Material.Material
+import com.app.note_lass.module.dashboard.data.Material.Material
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
