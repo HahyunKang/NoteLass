@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryGray
 
@@ -26,6 +27,7 @@ fun ToggleButton(
     }
     Text(
         text = text,
+        style = NoteLassTheme.Typography.fourteen_600_pretendard,
         modifier =
         if(selected.value)
             Modifier

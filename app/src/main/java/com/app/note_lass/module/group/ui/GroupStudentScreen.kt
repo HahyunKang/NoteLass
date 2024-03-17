@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,6 +37,7 @@ import com.app.note_lass.ui.component.DialogSelfEvaluationForStudent
 import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimaryBlack
+import com.app.note_lass.ui.theme.PrimaryGray
 import okhttp3.internal.notifyAll
 
 
@@ -134,44 +137,53 @@ fun GroupStudentScreen(
                             color = PrimaryBlack,
                             modifier = Modifier.padding(vertical = 10.dp)
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        AssignmentNotSubmit(title = "레포트 작성", deadline = 6)
-                        Spacer(modifier = Modifier.height(12.dp))
 
-                        AssignmentDoneStatus(
-                            title = "과제1",
-                            ratio = 10.toFloat() / 23,
-                            totalScore = 23,
-                            score = 10,
-                            isGraded = true
+                        Spacer(modifier = Modifier.height(40.dp))
+                        Text(
+                            text = "준비 중입니다.",
+                            color = PrimaryGray,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            style = NoteLassTheme.Typography.sixteem_600_pretendard
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
 
-                        AssignmentDoneStatus(
-                            title = "과제2",
-                            ratio = null,
-                            totalScore = 10,
-                            score = 0,
-                            isGraded = false
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        AssignmentDoneStatus(
-                            title = "과제3",
-                            ratio = 3.toFloat() / 10.toFloat(),
-                            totalScore = 10,
-                            score = 3,
-                            isGraded = true
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        AssignmentDoneStatus(
-                            title = "과제3",
-                            ratio = 9.toFloat() / 10,
-                            totalScore = 10,
-                            score = 9,
-                            isGraded = true
-                        )
+//                        AssignmentNotSubmit(title = "레포트 작성", deadline = 6)
+//                        Spacer(modifier = Modifier.height(12.dp))
+//
+//                        AssignmentDoneStatus(
+//                            title = "과제1",
+//                            ratio = 10.toFloat() / 23,
+//                            totalScore = 23,
+//                            score = 10,
+//                            isGraded = true
+//                        )
+//                        Spacer(modifier = Modifier.height(12.dp))
+//
+//                        AssignmentDoneStatus(
+//                            title = "과제2",
+//                            ratio = null,
+//                            totalScore = 10,
+//                            score = 0,
+//                            isGraded = false
+//                        )
+//                        Spacer(modifier = Modifier.height(12.dp))
+//
+//                        AssignmentDoneStatus(
+//                            title = "과제3",
+//                            ratio = 3.toFloat() / 10.toFloat(),
+//                            totalScore = 10,
+//                            score = 3,
+//                            isGraded = true
+//                        )
+//                        Spacer(modifier = Modifier.height(12.dp))
+//
+//                        AssignmentDoneStatus(
+//                            title = "과제3",
+//                            ratio = 9.toFloat() / 10,
+//                            totalScore = 10,
+//                            score = 9,
+//                            isGraded = true
+//                        )
 
                     }
 
@@ -196,7 +208,7 @@ fun GroupStudentScreen(
                     if (
                         materialState.value.isSuccess
                     ) {
-                        MaterialListScreen(list = materialState.value.result!!)
+                        MaterialListScreen(list = materialState.value.result!!.reversed())
                     } else {
                         Log.e("loading in material", "")
                     }

@@ -1,10 +1,10 @@
-package com.app.note_lass.module.login.domain
+package com.app.note_lass.module.note.domain
 
 import androidx.datastore.core.DataStore
 import com.app.note_lass.common.NoteResponseBody
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.Token
-import com.app.note_lass.module.login.domain.repository.LoginRepository
+import com.app.note_lass.module.note.data.Note
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -12,24 +12,23 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class LogoutUseCase @Inject constructor(
-    private val loginRepository:LoginRepository,
+class DeleteNoteUsecase @Inject constructor(
+    val noteRepository: NoteRepository,
     val dataStore : DataStore<Token>
 ) {
 
-    operator fun invoke() : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
+    operator fun invoke(id : Long) : Flow<Resource<NoteResponseBody<Nothing>>> = flow{
         try {
             emit(Resource.Loading())
             val token = "Bearer ${dataStore.data.first().accessToken}"
-            val refreshToken = "refresh_token=${dataStore.data.first().refreshToken}"
 
-            val logoutResponse = loginRepository.logout(accessToken = token,refreshToken = refreshToken)
+            val noteResponse = noteRepository.deleteNote(token,id)
 
             emit(
                 Resource.Success(
-                data = logoutResponse,
-                    code = logoutResponse.code,
-                    message = logoutResponse.message
+                    data = noteResponse,
+                    code = noteResponse.code,
+                    message = noteResponse.message
             )
 
             )

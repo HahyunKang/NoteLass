@@ -22,6 +22,7 @@ import com.app.note_lass.module.record.domain.usecase.GetGuidelineUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordScoreUseCase
 import com.app.note_lass.module.record.domain.usecase.GetRecordUseCase
 import com.app.note_lass.module.record.domain.usecase.GetStudentEvaluationsUseCase
+import com.app.note_lass.module.record.domain.usecase.GetStudentIntroductionUseCase
 import com.app.note_lass.module.record.domain.usecase.PostExcelUseCase
 import com.app.note_lass.module.record.domain.usecase.PostRecordUseCase
 import com.app.note_lass.module.student.data.HandBookListState
@@ -48,6 +49,7 @@ class RecordViewModel @Inject constructor(
     val deleteHandBookUseCase: DeleteHandBookUseCase,
     val modifyHandBookUseCase: ModifyHandBookUseCase,
     val getStudentEvaluationsUseCase: GetStudentEvaluationsUseCase,
+    val getStudentIntroductionUseCase: GetStudentIntroductionUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), DownloadStatusListener {
 
@@ -87,9 +89,15 @@ class RecordViewModel @Inject constructor(
     private val _getEvaluationsState  = mutableStateOf(RequestState<List<Evaluations>>())
     val getEvaluationState = _getEvaluationsState
 
+    private val _getIntroductionState  = mutableStateOf(RequestState<String>())
+    val getIntroductionState = _getIntroductionState
+
+
     init {
         userId = savedStateHandle.get<Long>("userId")!!
         getStudentHandBookList()
+        getStudentScore()
+        getIntroduction()
     }
 
     override fun onDownloadStatusUpdated(status: String) {
@@ -281,8 +289,8 @@ class RecordViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getStudentScore(percentage: Int) {
-        getRecordScoreUseCase(userId, percentage).onEach { result ->
+    fun getStudentScore() {
+        getRecordScoreUseCase(userId, 100).onEach { result ->
 
             when (result) {
 
@@ -413,6 +421,35 @@ class RecordViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     _getEvaluationsState.value = RequestState(
+                        isError = true,
+                    )
+                }
+            }
+
+
+        }.launchIn(viewModelScope)
+    }
+
+    fun getIntroduction(){
+        getStudentIntroductionUseCase(userId).onEach {
+                result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _getIntroductionState.value = RequestState(
+                        isLoading = true,
+                    )
+                }
+                is Resource.Success  ->{
+                    _getIntroductionState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                        result =result.data
+                    )
+
+
+                }
+                is Resource.Error -> {
+                    _getIntroductionState.value = RequestState(
                         isError = true,
                     )
                 }

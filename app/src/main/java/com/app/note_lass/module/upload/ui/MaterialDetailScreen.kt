@@ -45,7 +45,7 @@ fun MaterialDetailScreen(
     val detailState = materialDetailViewModel.materialDetailState
     val role =
         remember {
-            mutableStateOf(Token("", Role.NONE))
+            mutableStateOf(Token("", "",Role.NONE))
         }
     LaunchedEffect(role.value) {
         Log.e("role in Log(Test)",role.value.role.toString())
@@ -54,8 +54,17 @@ fun MaterialDetailScreen(
             role.value = newToken
         }
     }
-    val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",0))
+    val groupInfo =
+        remember {
+            mutableStateOf(GroupInfo("", "",null))
+        }
 
+    LaunchedEffect(groupInfo.value) {
+        Log.e("role in Log(Test)",role.value.role.toString())
+        protoViewModel.groupInfo.collect {
+            groupInfo.value = it
+        }
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -90,11 +99,13 @@ fun MaterialDetailScreen(
                         .padding(horizontal = 24.dp)
                 ) {
                     if(detailState.value.isSuccess) {
-                        if(role.value.role == Role.STUDENT)NoticeDetailInfo(
-                            title = detailState.value.result!!.title,
-                            content = detailState.value.result!!.content,
-                            file = detailState.value.result!!.file
-                        )else{
+                        if(role.value.role == Role.STUDENT || groupInfo.value.groupId == null ) {
+                            NoticeDetailInfo(
+                                title = detailState.value.result!!.title,
+                                content = detailState.value.result!!.content,
+                                file = detailState.value.result!!.file
+                            )
+                        }else{
                             NoticeDetailInfoForTeacher(
                                 title = detailState.value.result!!.title,
                                 content = detailState.value.result!!.content,

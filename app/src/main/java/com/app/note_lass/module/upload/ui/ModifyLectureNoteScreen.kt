@@ -70,7 +70,7 @@ fun ModifyLectureNoteScreen(
     val context= LocalContext.current
 
     val groupInfo  = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",-1))
-    val role  = protoViewModel.token.collectAsState(initial = Token("", Role.NONE))
+    val role  = protoViewModel.token.collectAsState(initial = Token("", "",Role.NONE))
     val fileState = viewModel.getMaterialFileState.value
     val materialTitle = remember{
         mutableStateOf(title)

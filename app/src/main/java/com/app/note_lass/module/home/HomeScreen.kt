@@ -60,7 +60,6 @@ import com.app.note_lass.ui.theme.arcYellow
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
-    navController: NavController,
     onClickLogout : () -> Unit,
     onClickGroup : (Int,String) -> Unit,
     onClickGroupAll : () -> Unit,
@@ -76,7 +75,13 @@ fun HomeScreen(
     val noteState = homeViewModel.getLatestNoteState
     val dashBoardState = homeViewModel.previewDashBoardsState
 
+
+
+
+
     LaunchedEffect(true) {
+        protoViewModel.updateGroupInfo(GroupInfo(null,null,null))
+        protoViewModel.groupInfo
         if(role == Role.TEACHER){
             homeViewModel.getLatestMaterial()
         }else{
@@ -127,7 +132,7 @@ fun HomeScreen(
                             .weight(2.3f)
                     ) {
 
-                        val list = listOf("공지/강의자료")
+                        val list = listOf("공지/학습자료")
                         if (dashBoardState.value.isSuccess) {
                             if(dashBoardState.value.result!=null){
                             dashBoardState.value.result?.let { it1 ->

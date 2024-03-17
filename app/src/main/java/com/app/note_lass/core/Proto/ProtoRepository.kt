@@ -12,6 +12,25 @@ class ProtoRepository @Inject constructor(
 
     val groupInfo : Flow<GroupInfo> = protoGroupDataStore.data
 
+    suspend fun updateToken(accessToken : String,refreshToken : String) {
+        protoDataStore.updateData { token ->
+            // preferences.toBuilder().setShowCompleted(completed).build()
+            token.copy(
+                accessToken = accessToken,
+                refreshToken = refreshToken
+            )
+        }
+    }
+    suspend fun updateRefreshToken(refreshToken: String) {
+        protoDataStore.updateData { token ->
+            // preferences.toBuilder().setShowCompleted(completed).build()
+            token.copy(
+                refreshToken = refreshToken
+            )
+        }
+    }
+
+
     suspend fun updateAccessToken(accessToken : String) {
         protoDataStore.updateData { token ->
             // preferences.toBuilder().setShowCompleted(completed).build()

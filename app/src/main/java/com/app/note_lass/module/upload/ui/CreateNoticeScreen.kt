@@ -80,7 +80,7 @@ fun CreateNoticeScreen(
     goBackToGroup: (Role, Long, String) -> Unit
 ){
     val groupInfo  = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",-1))
-    val role  = protoViewModel.token.collectAsState(initial = Token("", Role.NONE))
+    val role  = protoViewModel.token.collectAsState(initial = Token("", "",Role.NONE))
     val noticeTitle = remember{
         mutableStateOf("")
     }
@@ -444,7 +444,6 @@ fun DashBoardInfo(
    // createdTime: LocalDateTime
 ){
 
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -509,11 +508,7 @@ fun DashBoardInfo(
             )
         }
 
-
-
     }
-
-
 
 }
 

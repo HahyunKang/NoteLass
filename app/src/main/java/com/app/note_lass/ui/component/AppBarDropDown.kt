@@ -45,6 +45,7 @@ import com.app.note_lass.core.Proto.ProtoViewModel
 import com.app.note_lass.module.group.ui.viewModel.GroupForStudentViewModel
 import com.app.note_lass.module.login.ui.LoginViewModel
 import com.app.note_lass.module.note.NoteActivity
+import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.note.ui.NoteViewModel
 import com.app.note_lass.module.upload.data.Material.Material
 import com.app.note_lass.ui.theme.PrimaryGray
@@ -287,7 +288,7 @@ fun MaterialDropDown(
 //        launcher.launch(intent)
 //    }
 
-    Icon(painter = painterResource(id = R.drawable.material_more_small),
+    Icon(painter = painterResource(id = R.drawable.appbar_dropdown),
         contentDescription = null,
         tint = PrimaryGray,
         modifier = Modifier
@@ -342,6 +343,156 @@ fun MaterialDropDown(
 
                        }
                    }
+
+                }
+                ) {
+                    Text(text = text,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+
+    }
+}
+
+@Composable
+fun NoteDropDown(
+    noteId : Long,
+    onClickUpdate : () -> Unit
+) {
+
+    val noteViewModel : NoteViewModel = hiltViewModel()
+
+    val dropdownItems = listOf("내보내기", "복제하기","휴지통으로 이동")
+    var isContextMenuVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+
+    var pressOffset by remember {
+        mutableStateOf(DpOffset.Zero)
+    }
+    var pressIndex = remember {
+        mutableStateOf(0)
+    }
+    var itemWidth by remember {
+        mutableStateOf(0.dp)
+    }
+    val interactionSource = remember {
+        MutableInteractionSource()
+    }
+    val density = LocalDensity.current
+    val context = LocalContext.current
+
+    val noteDeleteState= noteViewModel.deleteNoteState
+
+    LaunchedEffect(key1 = noteDeleteState.value){
+        if(noteDeleteState.value.isSuccess) onClickUpdate()
+    }
+
+
+//   LaunchedEffect(fileState.value) {
+//        if(fileState.value.isSuccess) {
+//            when(pressIndex.value) {
+//                0-> {
+//                    if (material.files?.isNotEmpty() == true &&
+//                        fileState.value.result!!.fileId == material.files[0].id
+//                    ) {
+//                        val fileName = material.title
+//                        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+//                            addCategory(Intent.CATEGORY_OPENABLE)
+//                            type = "application/pdf"
+//                            putExtra(Intent.EXTRA_TITLE, fileName)
+//                        }
+//                        launcher.launch(intent)
+//                    }
+//                }
+//                2 -> {
+//                    if (material.files?.isNotEmpty() == true &&
+//                        fileState.value.result!!.fileId == material.files[0].id
+//                    ) {
+//                        val fileMaterial = java.io.File(context.filesDir, "myFile")
+//                        try {
+//                            FileOutputStream(fileMaterial).use { outputStream ->
+//                                val buffer = ByteArray(1024)
+//                                var length: Int
+//                                while (fileState.value.result!!.stream.read(buffer)
+//                                        .also { length = it } != -1
+//                                ) {
+//                                    outputStream.write(buffer, 0, length)
+//                                }
+//                            }
+//                            val intent = Intent(context, NoteActivity::class.java)
+//                            if (material.files?.get(0)?.originalFileName?.contains("pdf") == true) {
+//                                intent.putExtra("filePath", fileMaterial.absolutePath)
+//                                intent.putExtra("pdfTitle", material.files[0].originalFileName)
+//                            } else {
+//                                intent.putExtra("photoPath", fileMaterial.absolutePath)
+//                                intent.putExtra(
+//                                    "pdfTitle",
+//                                    material.files?.get(0)?.originalFileName
+//                                )
+//                            }
+//                            context.startActivity(intent)
+//
+//                        } catch (e: IOException) {
+//                            e.printStackTrace()
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//    }
+
+    Icon(painter = painterResource(id = R.drawable.note_arrow_down),
+        contentDescription = null,
+        tint = PrimaryGray,
+        modifier = Modifier
+            .indication(interactionSource, LocalIndication.current)
+            .pointerInput(true) {
+                detectTapGestures(
+                    onPress = {
+                        pressOffset = DpOffset(it.x.toDp(), it.y.toDp())
+                        isContextMenuVisible = true
+                    }
+                )
+
+            }
+            .onSizeChanged {
+                itemWidth = with(density) { it.width.toDp() }
+            }
+    )
+    Box(
+        contentAlignment = Alignment.TopEnd
+    ) {
+        DropdownMenu(
+            expanded = isContextMenuVisible,
+            onDismissRequest = { isContextMenuVisible = false },
+            offset = pressOffset.copy(
+                x = -5.dp,
+                y = pressOffset.y
+            )
+        ) {
+
+            dropdownItems.forEachIndexed {
+                    index,text->
+                DropdownMenuItem(onClick = {
+                    isContextMenuVisible = false
+                    pressIndex.value = index
+                    when(index){
+                        0 ->{
+//                            if(material.files!!.isNotEmpty())
+//                                groupForStudentViewModel.getFile(material.files[0].id)
+
+                        }
+                        1 ->{
+                        }
+                        2-> {
+                            noteViewModel.deleteNote(noteId)
+                        }
+                    }
 
                 }
                 ) {

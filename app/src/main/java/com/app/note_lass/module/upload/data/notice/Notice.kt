@@ -30,6 +30,7 @@ data class NoticePreview(
 
 data class NoticeDetail(
     val title: String,
+    val teacher : String,
     val content: String,
     val file: List<File>?,
     val createdDate: String?
@@ -47,7 +48,7 @@ fun Notice.toPreview(): NoticePreview {
 }
 
 fun Notice.toDetail() : NoticeDetail {
-    return NoticeDetail(title,content, files ,createdDate)
+    return NoticeDetail(title, teacher,content,files ,createdDate)
 }
 
 fun Materials.toDetail() : MaterialDetail {

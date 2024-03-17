@@ -27,7 +27,7 @@ fun FirstNoteScreen(
     protoViewModel : ProtoViewModel = hiltViewModel(),
     onClickLogout : () -> Unit
 ){
-    val role  = protoViewModel.token.collectAsState(initial = Token("", Role.STUDENT))
+    val role  = protoViewModel.token.collectAsState(initial = Token("","", Role.STUDENT))
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

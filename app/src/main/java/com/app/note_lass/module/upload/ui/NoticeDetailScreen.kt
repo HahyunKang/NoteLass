@@ -43,17 +43,25 @@ fun NoticeDetailScreen(
 ){
     val role =
         remember {
-            mutableStateOf(Token("", Role.NONE))
+            mutableStateOf(Token("", "",Role.NONE))
+        }
+
+    val groupInfo =
+        remember {
+            mutableStateOf(GroupInfo(null, null,null))
         }
     LaunchedEffect(role.value) {
-        Log.e("role in Log(Test)",role.value.role.toString())
         protoViewModel.token.collect { newToken ->
-            Log.e("role in Log(Test)",newToken.role.toString())
             role.value = newToken
         }
     }
+    LaunchedEffect(groupInfo.value) {
+        protoViewModel.groupInfo.collect {
+            groupInfo.value = it
+        }
+    }
     val detailState = noticeDetailViewModel.noticeDetailState
-    val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",0))
+    //val groupInfo = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",0))
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -88,16 +96,20 @@ fun NoticeDetailScreen(
                         .padding(horizontal = 24.dp)
                 ) {
                     if(detailState.value.isSuccess) {
-                        if(role.value.role == Role.STUDENT)NoticeDetailInfo(
-                            title = detailState.value.noticeDetail.title,
-                            content = detailState.value.noticeDetail.content,
-                            file = detailState.value.noticeDetail.file
-                        )else{
+                        Log.e("groupId_value",groupInfo.value.groupId.toString())
+                        if(role.value.role == Role.STUDENT || groupInfo.value.groupId == null ) {
+                            NoticeDetailInfo(
+                                title = detailState.value.noticeDetail.title,
+                                content = detailState.value.noticeDetail.content,
+                                file = detailState.value.noticeDetail.file
+                            )
+                        }else{
                             NoticeDetailInfoForTeacher(
                                 title = detailState.value.noticeDetail.title,
                                 content = detailState.value.noticeDetail.content,
                                 file = detailState.value.noticeDetail.file,
-                                goToModify = goToModify
+                                goToModify = goToModify,
+                                goBack = goBack
                             )
                         }
                     }
@@ -120,8 +132,11 @@ fun NoticeDetailScreen(
                         .fillMaxHeight()
                         .padding(horizontal = 24.dp, vertical = 15.dp)
                 ) {
-                    DashBoardInfo(groupInfo = groupInfo.value, title = "공지")
-
+                    if(detailState.value.isSuccess) {
+                        DashBoardInfo(groupInfo =GroupInfo(groupInfo.value.groupName?:"",
+                            groupInfo.value.teacherName?:detailState.value.noticeDetail.teacher,
+                            groupInfo.value.groupId), title = "공지")
+                    }
                 }
 
 

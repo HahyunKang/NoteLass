@@ -77,7 +77,7 @@ fun CreateLectureNoteScreen(
     goBackToGroup: (Role, Long,String) -> Unit
 ){
     val groupInfo  = protoViewModel.groupInfo.collectAsState(initial = GroupInfo("","",-1))
-    val role  = protoViewModel.token.collectAsState(initial = Token("",Role.NONE))
+    val role  = protoViewModel.token.collectAsState(initial = Token("","",Role.NONE))
 
     val title = remember{
         mutableStateOf("")

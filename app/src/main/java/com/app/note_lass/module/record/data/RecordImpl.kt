@@ -109,5 +109,13 @@ class RecordImpl @Inject constructor(
         return recordApi.getStudentEvaluations(token,groupId, userId)
     }
 
+    override suspend fun getIntroduction(
+        token: String,
+        groupId: Long,
+        userId: Long
+    ): NoteResponseBody<String> {
+        return recordApi.getIntroduction(token,groupId, userId)
+    }
+
 
 }

@@ -1,7 +1,10 @@
 package com.app.note_lass.module.student.di
 
+import androidx.datastore.core.DataStore
+import com.app.note_lass.common.AuthAuthenticator
 import com.app.note_lass.common.Constants
 import com.app.note_lass.common.OkhttpClient
+import com.app.note_lass.core.Proto.Token
 import com.app.note_lass.module.login.data.LoginApi
 import com.app.note_lass.module.login.data.LoginImpl
 import com.app.note_lass.module.login.domain.repository.LoginRepository
@@ -15,17 +18,21 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object StudentModule {
-    val client = OkhttpClient().httpClient
+
+
     @Provides
     @Singleton
-    fun studentApi() : StudentApi{
+    fun studentApi(client: OkHttpClient) : StudentApi{
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())

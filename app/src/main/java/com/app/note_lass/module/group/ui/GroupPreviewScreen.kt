@@ -26,17 +26,16 @@ fun NoticePreviewScreenForStudent(
     else emptyList()
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceEvenly
+        verticalArrangement = Arrangement.Top
     ) {
 
-        list.forEach {
-            val icon : Int = if(it.unread) R.drawable.notice_preview_unread
-            else R.drawable.notice_preview_read
-            val iconColor : Color =  if(it.unread) PrimarayBlue
-            else PrimaryGray
-            Box(
-                modifier = Modifier.weight(1f)
-            ) {
+        list.forEachIndexed { index, it ->
+            if (index < 4) {
+                val icon: Int = if (it.unread) R.drawable.notice_preview_unread
+                else R.drawable.notice_preview_read
+                val iconColor: Color = if (it.unread) PrimarayBlue
+                else PrimaryGray
+
                 IconAndText(
                     icon = icon,
                     iconColor = iconColor,
@@ -45,8 +44,9 @@ fun NoticePreviewScreenForStudent(
                         onClick(it.id)
                     },
                 )
+
+                Spacer(modifier = Modifier.height(5.dp))
             }
-            Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }

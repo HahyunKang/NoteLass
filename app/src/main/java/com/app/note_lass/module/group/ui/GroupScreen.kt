@@ -52,7 +52,7 @@ fun GroupScreen(
 
     val role =
         remember {
-            mutableStateOf(Token("", Role.STUDENT))
+            mutableStateOf(Token("", "",Role.STUDENT))
         }
     LaunchedEffect(true) {
         Log.e("role in Log(Test)",role.value.role.toString())

@@ -43,8 +43,8 @@ fun MaterialForStudent(
             Spacer(modifier = Modifier.width(16.dp))
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
-                    text = material.title,
-                    style = NoteLassTheme.Typography.fourteen_600_pretendard
+                    text = if (material.title.length > 4) "${material.title.substring(0, 5)}..." else material.title,
+                    style = NoteLassTheme.Typography.twelve_600_pretendard
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(

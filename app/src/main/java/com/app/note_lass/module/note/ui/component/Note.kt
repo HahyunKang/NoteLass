@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.app.note_lass.R
 import com.app.note_lass.common.DateFormatter
 import com.app.note_lass.module.note.NoteActivity
+import com.app.note_lass.ui.component.NoteDropDown
 import com.app.note_lass.ui.theme.NoteLassTheme
 import com.app.note_lass.ui.theme.PrimarayBlue
 import com.app.note_lass.ui.theme.PrimaryGray
@@ -37,10 +38,11 @@ import java.time.LocalDateTime
 fun Note(
     title : String,
     teacher : String,
-    fileId : Long,
+    noteId : Long,
     onClickAccess:() -> Unit,
     onClickArrow : () -> Unit = {},
-    onClickNote : (Boolean,String) -> Unit
+    onClickNote : (Boolean,String) -> Unit,
+    onClickUpdate : () -> Unit
 ){
     val context = LocalContext.current
 
@@ -80,7 +82,7 @@ fun Note(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
-            Icon(painter = painterResource(id = R.drawable.note_arrow_down),tint = PrimarayBlue, contentDescription = null)
+            NoteDropDown(noteId = noteId,onClickUpdate= onClickUpdate)
             Spacer(modifier = Modifier.width(24.dp))
             Icon(painter = painterResource(id = R.drawable.note_star_small),tint = PrimarayBlue, contentDescription = null)
 

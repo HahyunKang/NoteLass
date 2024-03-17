@@ -32,6 +32,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +49,7 @@ import com.app.note_lass.ui.component.DialogDeleteConfirm
 import com.app.note_lass.ui.component.DialogDeleteGroup
 import com.app.note_lass.ui.component.DialogDeleteStudent
 import com.app.note_lass.ui.component.DialogGroupInfo
+import com.app.note_lass.ui.component.EmptyContent
 import com.app.note_lass.ui.component.IconAndText
 import com.app.note_lass.ui.component.SectionHeader
 import com.app.note_lass.ui.component.SectionHeaderWithCreate
@@ -292,25 +294,25 @@ fun GroupTeacherScreen(
                             )
                             .padding(horizontal = 24.dp)
                     ) {
-                        SectionHeader(title = "과제별 성적 열람")
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("과제별 성적 열람",
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                                fontWeight = FontWeight(700),
+                                color = PrimaryBlack,
+                            ),
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                        Spacer(modifier = Modifier.height(25.dp))
+                        Text(
+                            text = "준비 중입니다.",
+                            color = PrimaryGray,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            style = NoteLassTheme.Typography.sixteem_600_pretendard
+                        )
 
-                        assignmentList.forEachIndexed { index: Int, assignment: String ->
-
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxWidth()
-                            ) {
-                                IconAndText(
-                                    icon = R.drawable.group_grade_small,
-                                    iconColor = PrimarayBlue,
-                                    text = assignment
-                                )
-                            }
-
-                        }
-                    }
+                                            }
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Column(
@@ -329,7 +331,23 @@ fun GroupTeacherScreen(
                             .fillMaxWidth()
 
                     ) {
-
+                        Text("성적별 성적 열람",
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+                                fontWeight = FontWeight(700),
+                                color = PrimaryBlack,
+                            ),
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                        Spacer(modifier = Modifier.height(25.dp))
+                        Text(
+                            text = "준비 중입니다.",
+                            color = PrimaryGray,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            style = NoteLassTheme.Typography.sixteem_600_pretendard
+                        )
                     }
                 }
 

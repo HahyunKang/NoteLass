@@ -56,8 +56,8 @@ class NoteActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityNoteBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
+
         var bitmap: Bitmap? = null
 
         nextButton = binding.nextButton

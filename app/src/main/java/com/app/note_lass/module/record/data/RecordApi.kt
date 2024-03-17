@@ -122,4 +122,11 @@ interface RecordApi {
         @Path(value = "groupId") groupId: Long,
         @Path(value = "userId") userId : Long
     ) : NoteResponseBody<List<Evaluations>>
+
+    @GET("api/record/introduction/{groupId}/{userId}")
+    suspend fun getIntroduction(
+        @Header(value = "Authorization") accessToken: String,
+        @Path(value = "groupId") groupId: Long,
+        @Path(value = "userId") userId : Long
+    ) : NoteResponseBody<String>
 }

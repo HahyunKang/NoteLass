@@ -16,6 +16,19 @@ class ProtoViewModel @Inject constructor(
 
     val groupInfo = protoRepository.groupInfo
 
+    fun updateToken(accessToken : String,refreshToken : String) {
+        viewModelScope.launch {
+            Log.e("토큰 업데이트",refreshToken)
+            protoRepository.updateToken(accessToken, refreshToken)
+        }
+    }
+
+    fun updateRefreshToken(refreshToken : String) {
+        viewModelScope.launch {
+            protoRepository.updateRefreshToken(refreshToken)
+        }
+    }
+
     fun updateAccessToken(accessToken : String) {
         viewModelScope.launch {
             protoRepository.updateAccessToken(accessToken)

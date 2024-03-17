@@ -2,6 +2,7 @@ package com.app.note_lass.module.login.domain
 
 import android.util.Log
 import com.app.note_lass.common.Resource
+import com.app.note_lass.module.login.data.Auth
 import com.app.note_lass.module.login.data.LoginDto
 import com.app.note_lass.module.login.data.LoginRequest
 import com.app.note_lass.module.login.domain.repository.LoginRepository
@@ -12,10 +13,10 @@ import java.io.IOException
 import javax.inject.Inject
 
 class LoginUseCase @Inject constructor(
-    val loginRepository: LoginRepository
+    private val loginRepository: LoginRepository
 ) {
 
-    operator fun invoke(loginRequest: LoginRequest) : Flow<Resource<LoginDto>> = flow{
+    operator fun invoke(loginRequest: LoginRequest) : Flow<Resource<Auth>> = flow{
         try {
             emit(Resource.Loading())
             Log.e("loginRequest",loginRequest.email)

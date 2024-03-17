@@ -16,6 +16,6 @@ data class NoticeDetailState (
     val isLoading : Boolean = false,
     val isSuccess : Boolean = false,
     val isError : Boolean = false,
-    val noticeDetail: NoticeDetail = NoticeDetail("","",null,null),
+    val noticeDetail: NoticeDetail = NoticeDetail("","","",null,null),
     val isMessage : String = ""
 )

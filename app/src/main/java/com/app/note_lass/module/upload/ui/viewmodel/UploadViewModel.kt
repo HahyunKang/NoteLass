@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UploadViewModel @Inject constructor(
     val createNoticeUseCase: CreateNoticeUseCase,
-    val  makeMaterialUseCase: PostMaterialUseCase,
+    val makeMaterialUseCase: PostMaterialUseCase,
     val getMaterialFile : GetFileUsecase,
     val modifyNoticeUseCase: ModifyNoticeUseCase,
     val modifyMaterialUseCase: ModifyMaterialUseCase,

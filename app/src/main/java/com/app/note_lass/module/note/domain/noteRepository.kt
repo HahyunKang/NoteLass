@@ -19,6 +19,6 @@ interface NoteRepository {
     suspend fun getFile(accessToken: String,fileId : Long) : ResponseBody
     suspend fun getMaterialDetail(accessToken: String,materialId: Long) : NoteResponseBody<Materials>
     suspend fun modifyMaterial(accessToken: String, groupId: Long, materialId: Long, noteRequest: RequestBody, fileList: MultipartBody.Part?) : NoteResponseBody<Nothing>
-
+    suspend fun deleteNote(accessToken: String,noteId:Long) : NoteResponseBody<Nothing>
 
 }

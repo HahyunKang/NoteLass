@@ -30,7 +30,6 @@ class CreateNoticeUseCase @Inject constructor(
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
 
-
             emit(Resource.Loading())
             val notice = NoticeContents(title, content)
             val jsonObject = JSONObject("{\"title\":\"${title}\",\"content\":\"${content}\"}").toString()

@@ -4,7 +4,8 @@ import androidx.datastore.core.DataStore
 import com.app.note_lass.common.Resource
 import com.app.note_lass.core.Proto.GroupInfo
 import com.app.note_lass.core.Proto.Token
-import com.app.note_lass.module.record.data.RecordScore
+import com.app.note_lass.module.record.data.EvaluationQuestion
+import com.app.note_lass.module.record.data.Evaluations
 import com.app.note_lass.module.record.domain.RecordRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -13,20 +14,20 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class GetRecordScoreUseCase @Inject constructor(
+class GetStudentIntroductionUseCase @Inject constructor(
     private val recordRepository: RecordRepository,
     val dataStore : DataStore<Token>,
-    val dataGroupStore : DataStore<GroupInfo>
+    private val dataGroupStore : DataStore<GroupInfo>
 ) {
 
-    operator fun invoke(userId :Long,percentage : Int ) : Flow<Resource<RecordScore>> = flow{
+    operator fun invoke(userId : Long) : Flow<Resource<String>> = flow{
         try {
             val token = "Bearer ${dataStore.data.first().accessToken}"
             val groupId= dataGroupStore.data.first().groupId
 
             emit(Resource.Loading())
 
-            val recordResponse = recordRepository.getRecordScore(token,groupId!!.toLong(),userId,100)
+            val recordResponse = recordRepository.getIntroduction(token,groupId!!.toLong(),userId)
 
             emit(
                 Resource.Success(
@@ -34,6 +35,7 @@ class GetRecordScoreUseCase @Inject constructor(
                     code = recordResponse.code,
                     message = recordResponse.message
             )
+
             )
         }
         catch (e: HttpException) {

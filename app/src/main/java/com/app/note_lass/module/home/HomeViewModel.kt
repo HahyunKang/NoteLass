@@ -42,6 +42,8 @@ class HomeViewModel @Inject constructor(
     val previewDashBoardsState = _previewDashBoardsState
     private val _dashBoardsState = mutableStateOf(RequestState<List<DashBoard>>())
     val dashBoardState = _dashBoardsState
+
+
    init {
        Log.e("viewModel LifeCycle","Test")
        getGroupList()

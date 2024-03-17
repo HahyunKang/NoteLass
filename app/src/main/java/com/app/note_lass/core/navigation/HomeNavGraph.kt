@@ -19,7 +19,7 @@ fun NavGraphBuilder.HomeNavGraph(navController: NavController,outerNavController
 
     navigation(startDestination = HomeScreen.Home.route, route = HOME_ROUTE) {
         composable(HomeScreen.Home.route) {
-            HomeScreen(navController,
+            HomeScreen(
                 onClickLogout = {
                     outerNavController.navigate(AUTH_ROUTE){
                         launchSingleTop = true

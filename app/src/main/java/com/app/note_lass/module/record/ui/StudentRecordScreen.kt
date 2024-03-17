@@ -110,7 +110,7 @@ fun StudentRecordScreen(
     val getRecordState = recordViewModel.getRecordState
     val getScoreState = recordViewModel.getScoreState
     val getGuidelineState = recordViewModel.getGuidelineState
-
+    val getIntroductionState = recordViewModel.getIntroductionState
 //    LaunchedEffect(key1 = getRecordState.value.isSuccess) {
 //        if (getRecordState.value.isSuccess) {
 //            content.value = getRecordState.value.content
@@ -168,43 +168,41 @@ fun StudentRecordScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                ) {
+
                     Text(
                         text = "활동기록 총 정리",
                         style = NoteLassTheme.Typography.twenty_700_pretendard,
                         color = PrimaryBlack,
                     )
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Row(
-                        modifier = Modifier
-                            .size(width = 169.dp, height = 32.dp)
-                            .border(1.dp, PrimarayBlue, RoundedCornerShape(20.dp))
-                            .clickable {
-                                val percentage = percentCriteria.value
-                                    .dropLast(1)
-                                    .toIntOrNull()
-                                if (percentage != null) {
-                                    recordViewModel.getStudentScore(percentage)
-                                }
-                            },
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "과제 데이터 불러오기",
-                            style = NoteLassTheme.Typography.fourteen_600_pretendard,
-                            color = PrimaryBlack
-                        )
-                        Icon(
-                            painter = painterResource(id = R.drawable.record_arrow_small),
-                            contentDescription = null,
-                            tint = Color.Unspecified
-                        )
+//                    Spacer(modifier = Modifier.width(5.dp))
+//                    Row(
+//                        modifier = Modifier
+//                            .size(width = 169.dp, height = 32.dp)
+//                            .border(1.dp, PrimarayBlue, RoundedCornerShape(20.dp))
+//                            .clickable {
+//                                val percentage = percentCriteria.value
+//                                    .dropLast(1)
+//                                    .toIntOrNull()
+//                                if (percentage != null) {
+//                                    recordViewModel.getStudentScore(percentage)
+//                                }
+//                            },
+//                        horizontalArrangement = Arrangement.Center,
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        Text(
+//                            text = "과제 데이터 불러오기",
+//                            style = NoteLassTheme.Typography.fourteen_600_pretendard,
+//                            color = PrimaryBlack
+//                        )
+//                        Icon(
+//                            painter = painterResource(id = R.drawable.record_arrow_small),
+//                            contentDescription = null,
+//                            tint = Color.Unspecified
+//                        )
+//
+//                    }
 
-                    }
-                }
 
                 Box(modifier = Modifier.size(width = 74.dp, height = 40.dp)) {
                     RectangleEnabledButton(text = "저장하기") {
@@ -216,7 +214,8 @@ fun StudentRecordScreen(
             }
 
             Text(
-                text = "태도 점수: ${getScoreState.value.score.attitudeScore}점 발표횟수: ${getScoreState.value.score.presentationNum}회",
+                text = "태도 점수: ${getScoreState.value.score.attitudeScore}점 (상위 ${getScoreState.value.score.attitudeScoreRank}%) " +
+                        "발표 횟수: ${getScoreState.value.score.presentationNum}회 (상위 ${getScoreState.value.score.presentationRank}%)",
                 style = NoteLassTheme.Typography.fourteen_600_pretendard,
                 color = PrimaryBlack,
                 modifier = Modifier.padding(vertical = 4.dp)
@@ -225,66 +224,67 @@ fun StudentRecordScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = stringResource(R.string.percentage_criteria),
+                if(getIntroductionState.value.isSuccess)Text(
+                    text = getIntroductionState.value.result!!,
                     style = NoteLassTheme.Typography.fourteen_600_pretendard,
                     color = PrimaryBlack,
                     modifier = Modifier.padding(vertical = 10.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-
-                BasicTextField(
-                    value = percentCriteria.value,
-                    onValueChange = { it ->
-                        if (!it.contains("%")) percentCriteria.value = "$it%"
-                        else percentCriteria.value = it
-                    },
-                    textStyle = NoteLassTheme.Typography.twelve_600_underline_pretendard,
-                    modifier = Modifier
-                        .height(22.dp)
-                        .width(47.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-
-                ) {
-                    TextFieldDefaults.TextFieldDecorationBox(
-                        value = percentCriteria.value,
-                        innerTextField = it,
-                        singleLine = true,
-                        enabled = true,
-                        visualTransformation = VisualTransformation.None,
-                        interactionSource = interactionSource,
-                        colors = TextFieldDefaults.colors(
-                            focusedTextColor = PrimarayBlue,
-                            unfocusedTextColor = PrimarayBlue,
-                            focusedContainerColor = BackgroundBlue,
-                            unfocusedContainerColor = BackgroundBlue,
-                            focusedIndicatorColor = BackgroundBlue,
-                            unfocusedIndicatorColor = BackgroundBlue
-                        ),
-                        contentPadding = PaddingValues(0.dp)
-                    )
-
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text(
-                    text = ":",
-                    style = NoteLassTheme.Typography.fourteen_600_pretendard,
-                    color = PrimaryBlack,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
-
-                getScoreState.value.score.highScoreAssignmentList.forEach {
-                    Text(
-                        text = it.toString(),
-                        style = NoteLassTheme.Typography.fourteen_600_pretendard,
-                        color = PrimaryBlack,
-                        modifier = Modifier.padding(vertical = 10.dp)
-                    )
-
-                }
-
+//                Spacer(modifier = Modifier.width(8.dp))
+//
+//                BasicTextField(
+//                    value = percentCriteria.value,
+//                    onValueChange = { it ->
+//                        if (!it.contains("%")) percentCriteria.value = "$it%"
+//                        else percentCriteria.value = it
+//                    },
+//                    textStyle = NoteLassTheme.Typography.twelve_600_underline_pretendard,
+//                    modifier = Modifier
+//                        .height(22.dp)
+//                        .width(47.dp),
+//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+//
+//                ) {
+//                    TextFieldDefaults.TextFieldDecorationBox(
+//                        value = percentCriteria.value,
+//                        innerTextField = it,
+//                        singleLine = true,
+//                        enabled = true,
+//                        visualTransformation = VisualTransformation.None,
+//                        interactionSource = interactionSource,
+//                        colors = TextFieldDefaults.colors(
+//                            focusedTextColor = PrimarayBlue,
+//                            unfocusedTextColor = PrimarayBlue,
+//                            focusedContainerColor = BackgroundBlue,
+//                            unfocusedContainerColor = BackgroundBlue,
+//                            focusedIndicatorColor = BackgroundBlue,
+//                            unfocusedIndicatorColor = BackgroundBlue
+//                        ),
+//                        contentPadding = PaddingValues(0.dp)
+//                    )
+//
+//                }
+//
+//                Spacer(modifier = Modifier.width(8.dp))
+//
+//                Text(
+//                    text = ":",
+//                    style = NoteLassTheme.Typography.fourteen_600_pretendard,
+//                    color = PrimaryBlack,
+//                    modifier = Modifier.padding(vertical = 10.dp)
+//                )
+//
+//                getScoreState.value.score.highScoreAssignmentList.forEach {
+//                    Text(
+//                        text = it.toString(),
+//                        style = NoteLassTheme.Typography.fourteen_600_pretendard,
+//                        color = PrimaryBlack,
+//                        modifier = Modifier.padding(vertical = 10.dp)
+//                    )
+//
+//                }
+//
+//            }
             }
 
             Box(
@@ -328,7 +328,8 @@ fun StudentRecordScreen(
                 .weight(1.2f),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(vertical = 5.dp),
             ) {
                 Text(
                     text = "가이드라인 문장",
@@ -339,15 +340,7 @@ fun StudentRecordScreen(
                 Row(
                     modifier = Modifier
                         .height(32.dp)
-                        .border(1.dp, PrimarayBlue, RoundedCornerShape(20.dp))
-                        .clickable {
-                            val percentage = percentCriteria.value
-                                .dropLast(1)
-                                .toIntOrNull()
-                            if (percentage != null) {
-                                recordViewModel.getStudentScore(percentage)
-                            }
-                        },
+                        .border(1.dp, PrimarayBlue, RoundedCornerShape(20.dp)),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -450,7 +443,7 @@ fun StudentRecordScreen(
 
                     Button(
                         shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.size(35.dp),
+                        modifier = Modifier.size(28.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = BackgroundBlue,
                             contentColor = Color.Black

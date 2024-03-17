@@ -35,6 +35,10 @@ class NoteImpl @Inject constructor(
         return noteApi.modifyMaterial(accessToken,groupId,materialId,noteRequest,fileList)
     }
 
+    override suspend fun deleteNote(accessToken: String, noteId: Long): NoteResponseBody<Nothing> {
+        return noteApi.deleteNote(accessToken,noteId)
+    }
+
     override suspend fun getMaterialToNote(
         accessToken: String,
         materialId: Long

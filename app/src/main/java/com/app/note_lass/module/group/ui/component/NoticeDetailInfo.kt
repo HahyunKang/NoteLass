@@ -38,7 +38,7 @@ fun NoticeDetailInfo(
 //        mutableStateOf<Uri?>(fileUrl?.toUri())
 //    }
 
-    val token = protoViewModel.token.collectAsState(Token("", Role.NONE)).value.accessToken
+    val token = protoViewModel.token.collectAsState(Token("", "",Role.NONE)).value.accessToken
     val context = LocalContext.current
 
     Column(

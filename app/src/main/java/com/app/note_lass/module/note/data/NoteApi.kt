@@ -6,6 +6,7 @@ import com.app.note_lass.module.upload.data.notice.Materials
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -71,5 +72,11 @@ interface NoteApi {
         @Header(value = "Authorization") accessToken : String,
         @Query(value = "materialId") materialId : Long
     ) : NoteResponseBody<Materials>
+
+    @DELETE("api/note/{noteId}")
+    suspend fun deleteNote(
+        @Header(value = "Authorization") accessToken : String,
+        @Path(value = "noteId") materialId : Long
+    ) : NoteResponseBody<Nothing>
 
 }

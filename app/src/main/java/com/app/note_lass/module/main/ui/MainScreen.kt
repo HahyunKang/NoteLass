@@ -68,7 +68,7 @@ fun MainScreen(
 
 ){
 
-    val role = protoViewModel.token.collectAsState(initial = Token("",Role.NONE)).value.role
+    val role = protoViewModel.token.collectAsState(initial = Token("","",Role.NONE)).value.role
     val isDialogShow = remember{
         mutableStateOf(false)
     }

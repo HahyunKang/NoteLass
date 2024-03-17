@@ -116,7 +116,7 @@ fun HandBookListScreen(
                         isModify(handbook.content, handbook.id.toLong())
                     }
                 )
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(15.dp))
 
             }
 

@@ -30,7 +30,7 @@ fun MaterialSection(
         modifier = Modifier.fillMaxSize()
             .padding(horizontal = 24.dp),
     ) {
-        SectionHeader(title = "최근 업로드한 강의자료")
+        SectionHeader(title = "최근 업로드한 학습자료")
         Spacer(modifier = Modifier.height(12.dp))
         LazyRow(
             horizontalArrangement = Arrangement.Start,

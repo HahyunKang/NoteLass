@@ -41,8 +41,9 @@ class LoginViewModel @Inject constructor(
                                 isSuccess = true,
                                 isMessage = result.data?.token!!
                             )
+                            tokenViewModel.updateToken(result.data.token,result.data.refreshToken)
                             tokenViewModel.updateAccessToken(result.data.token)
-                            if(result.data.role == "STUDENT") tokenViewModel.updateRole(Role.STUDENT)
+                            if(result.data.role == "ROLE_STUDENT") tokenViewModel.updateRole(Role.STUDENT)
                             else tokenViewModel.updateRole(Role.TEACHER)
                         }
                         is Resource.Error -> {

@@ -15,6 +15,7 @@ object ProtoSerializer : Serializer<Token> {
     override val defaultValue: Token
         get() = Token(
             accessToken = null,
+            refreshToken = null,
             role = Role.NONE
         )
 

@@ -48,4 +48,8 @@ interface RecordRepository {
     suspend fun getStudentEvaluations(
         token: String,groupId: Long,userId: Long
     ) : NoteResponseBody<List<Evaluations>>
+
+    suspend fun getIntroduction(
+        token: String,groupId: Long,userId: Long
+    ) : NoteResponseBody<String>
 }

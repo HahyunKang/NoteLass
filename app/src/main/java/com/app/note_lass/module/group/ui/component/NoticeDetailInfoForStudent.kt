@@ -52,7 +52,7 @@ fun NoticeDetailInfoForTeacher(
 //        mutableStateOf<Uri?>(fileUrl?.toUri())
 //    }
 
-    val token = protoViewModel.token.collectAsState(Token("", Role.NONE)).value.accessToken
+    val token = protoViewModel.token.collectAsState(Token("", "",Role.NONE)).value.accessToken
     var fileName by remember { mutableStateOf<String?>(null) }
     var fileSize by remember { mutableStateOf<Long?>(null) }
     val fileManager = FileManager()

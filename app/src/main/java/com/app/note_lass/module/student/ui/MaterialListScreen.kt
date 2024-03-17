@@ -24,7 +24,7 @@ fun MaterialListScreen(
 ) {
     Column(modifier = Modifier.fillMaxHeight()
         .padding(start =13.dp)) {
-        Text(text = "강의 자료",
+        Text(text = "학습 자료",
             style = NoteLassTheme.Typography.twenty_700_pretendard,
             modifier = Modifier.padding(vertical = 24.dp)
         )

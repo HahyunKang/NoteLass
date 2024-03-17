@@ -7,12 +7,19 @@ import javax.inject.Inject
 class LoginImpl @Inject constructor(
     private val loginApi: LoginApi
 ): LoginRepository {
-    override suspend fun login(loginRequest: LoginRequest): NoteResponseBody<LoginDto> {
+    override suspend fun login(loginRequest: LoginRequest): NoteResponseBody<Auth> {
         return loginApi.login(loginRequest)
     }
 
-    override suspend fun logout(accessToken : String) : NoteResponseBody<Nothing>{
-        return loginApi.logout(accessToken)
+    override suspend fun logout(accessToken : String,refreshToken: String) : NoteResponseBody<Nothing>{
+        return loginApi.logout(accessToken,refreshToken)
+    }
+
+    override suspend fun refresh(
+        accessToken: String,
+        refreshToken: String
+    ): NoteResponseBody<Auth> {
+        return loginApi.refresh(accessToken, refreshToken)
     }
 
 }

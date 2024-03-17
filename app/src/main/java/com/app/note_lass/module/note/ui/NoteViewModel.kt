@@ -1,6 +1,8 @@
 package com.app.note_lass.module.note.ui
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.note_lass.common.RequestState
@@ -12,6 +14,7 @@ import com.app.note_lass.module.note.data.Note
 import com.app.note_lass.module.note.data.NoteAccessedDto
 import com.app.note_lass.module.note.data.NoteRequest
 import com.app.note_lass.module.note.domain.AccessNoteUsecase
+import com.app.note_lass.module.note.domain.DeleteNoteUsecase
 import com.app.note_lass.module.note.domain.GetFileUsecase
 import com.app.note_lass.module.note.domain.GetLatestNoteUsecase
 import com.app.note_lass.module.note.domain.GetMaterialToNoteUseCase
@@ -33,9 +36,12 @@ class NoteViewModel @Inject constructor(
     val getMaterialToNoteUseCase: GetMaterialToNoteUseCase,
     val getLatestNoteUsecase: GetLatestNoteUsecase,
     val getMaterialFile : GetFileUsecase,
-    val accessNoteUsecase: AccessNoteUsecase
+    val accessNoteUsecase: AccessNoteUsecase,
+    val deleteNoteUsecase: DeleteNoteUsecase
     ): ViewModel() {
 
+    private var _notesState = mutableStateListOf<Note>()
+    val notesState =_notesState
 
     private val _groupHashState = mutableStateOf(GroupHashState())
     val groupHashState = _groupHashState
@@ -57,6 +63,9 @@ class NoteViewModel @Inject constructor(
     private val _getMaterialFileState = mutableStateOf(RequestState<MaterialFile>())
     val getMaterialFileState = _getMaterialFileState
 
+
+    private val _deleteNoteState = mutableStateOf(RequestState<Nothing>())
+    val deleteNoteState = _deleteNoteState
 
     init {
         getNoteList()
@@ -117,6 +126,7 @@ class NoteViewModel @Inject constructor(
                         isSuccess = true,
                         result = result.data
                     )
+                    result.data?.let { _notesState.addAll(it) }
                 }
 
                 is Resource.Error -> {
@@ -251,4 +261,38 @@ class NoteViewModel @Inject constructor(
 
     }
 
+    fun deleteNote(id : Long) {
+        deleteNoteUsecase(id).onEach { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _deleteNoteState.value = RequestState(
+                        isLoading = true,
+                        isSuccess = false
+                    )
+                }
+
+                is Resource.Success -> {
+                    _deleteNoteState.value = RequestState(
+                        isLoading = false,
+                        isSuccess = true,
+                    )
+                    deleteNoteById(id)
+                }
+
+                is Resource.Error -> {
+                    _deleteNoteState.value = RequestState(
+                        isError = true,
+                    )
+                }
+
+
+            }
+        }.launchIn(viewModelScope)
+
+    }
+
+
+    fun deleteNoteById(noteId : Long){
+        _notesState.removeIf { it.id == noteId }
+    }
 }
