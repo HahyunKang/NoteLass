@@ -63,16 +63,17 @@ class AuthAuthenticator @Inject constructor(
                     auth ->
                     runBlocking {
                         tokenManager.updateData {
-                            Token(
-                                accessToken= auth.token,
-                                refreshToken = auth.refreshToken,
-                                role = it.role
+                                token ->
+                            // preferences.toBuilder().setShowCompleted(completed).build()
+                            token.copy(
+                                accessToken = auth.token,
+                                refreshToken = auth.refreshToken
                             )
                         }
                     }
                 }
                 refreshResponse
-            }else null
+            } else null
         } catch (e : Exception){
             null
         }
